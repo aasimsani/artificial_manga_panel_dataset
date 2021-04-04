@@ -136,3 +136,4 @@ raw.tar.gz
 .vscode/
 /datasets
 config/
+.DS_Store
