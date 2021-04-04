@@ -13,9 +13,9 @@ def download_file(url, filepath):
         # total_length = int(total_length)
 
         # Content-Length is returned wrong
-        total_length = 223948800
+        total_length = int(223948808/1024)
         with open(filepath, 'wb') as f:
-            for data in tqdm(r.iter_content(chunk_size=8192), total=total_length, unit='B', unit_scale=True, unit_divisor=1024): 
+            for data in tqdm(r.iter_content(chunk_size=1024), total=total_length, unit='KB', unit_scale=False, unit_divisor=1024): 
                 # If you have chunk encoded response uncomment if
                 # and set chunk_size parameter to None.
                 #if chunk: 
@@ -23,15 +23,13 @@ def download_file(url, filepath):
 
 def download_and_extract_jesc():
     url = "https://nlp.stanford.edu/projects/jesc/data/raw.tar.gz"
-    filepath = "data/raw.tar.gz"
+    filepath = "datasets/raw.tar.gz"
     if os.path.isfile(filepath):
         print("File already exists")
     else:
         print("Downloading JESC text corpus")
         downloaded_file = download_file(url, filepath)
     
-    tar_archive = tarfile.open(filepath)
     
-    tarfile.extract
     
 

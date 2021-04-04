@@ -1,0 +1,3 @@
+from scraping.download_texts import download_and_extract_jesc
+
+download_and_extract_jesc()
