@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# User defined
+*.gz
+*.tar.gz
+raw.tar.gz
+
+.vscode/
