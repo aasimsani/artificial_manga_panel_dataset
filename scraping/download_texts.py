@@ -29,6 +29,19 @@ def download_and_extract_jesc():
     else:
         print("Downloading JESC text corpus")
         downloaded_file = download_file(url, filepath)
+
+    text_dataset_dir = "datasets/text_dataset/"
+    if not os.path.isdir(text_dataset_dir): 
+        os.mkdir(text_dataset_dir)
+
+    print("Extracting archive now!")
+    tar_arch = tarfile.open(filepath)
+    tar_arch.extractall(text_dataset_dir)
+    tar_arch.close()
+
+    os.rename(text_dataset_dir+"raw/raw", text_dataset_dir+"raw.txt")
+    os.removedirs(text_dataset_dir+"raw/")
+    
     
     
     

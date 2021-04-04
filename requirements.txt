@@ -1,0 +1,7 @@
+requests
+tqdm
+pandas
+dask
+pyarrow
+jupyterlab
+dvc

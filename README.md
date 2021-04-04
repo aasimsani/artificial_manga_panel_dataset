@@ -13,8 +13,11 @@ Steps:
 - [ ] Create a few manga page layout templates
 - [ ] Create manga panels by combining the above elements
 - [ ] Replace layout templates with manga panel generator
+- [ ] Upload dataset to Kaggle
 
 
 ### Resources used:
 
 1. [JESC dataset](https://nlp.stanford.edu/projects/jesc/)
+2. [Tagged nime illustrations Kaggle dataset](https://www.kaggle.com/mylesoneill/tagged-anime-illustrations)
+3. [Comic book pages Kaggle dataset](https://www.kaggle.com/cenkbircanoglu/comic-books-classification)

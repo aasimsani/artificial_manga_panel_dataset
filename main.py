@@ -1,3 +1,5 @@
 from scraping.download_texts import download_and_extract_jesc
+from preprocesing.format_changer import convert_jesc_to_dataframe
 
 download_and_extract_jesc()
+convert_jesc_to_dataframe()
