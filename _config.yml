@@ -1,4 +1,3 @@
 # Site settings
 title: AMP-D - Artificial Manga Panel Dataset
-baseurl: "/ampd"
 theme: jekyll-theme-cayman
