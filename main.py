@@ -5,9 +5,15 @@ from preprocesing.extract_and_verify_fonts import extract_fonts, get_font_files,
 
 
 if __name__ == '__main__':
+
+    # Wrangling with the text dataset
     # download_and_extract_jesc()
     # convert_jesc_to_dataframe()
-    # get_font_links()
+
+    # Font dataset
+    # get_font_links() # Go and manually download files after this
+
+    # Font verification
     # extract_fonts()
     # get_font_files()
-    verify_font_files()
+    # verify_font_files()
