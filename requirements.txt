@@ -5,3 +5,5 @@ dask
 pyarrow
 jupyterlab
 dvc
+fonttools
+Pillow

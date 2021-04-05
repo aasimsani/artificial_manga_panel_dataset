@@ -5,10 +5,20 @@ import time
 from pathlib import Path
 import shutil
 from PIL import Image, ImageFont, ImageDraw
+import dask.dataframe as dd
+import itertools
+from fontTools.ttLib import TTFont
+from fontTools.unicode import Unicode
+from fontTools.ttLib import TTLibError
+from tqdm import tqdm
 
-fonts_raw_dir = "datasets/font_dataset/font_file_raw_downloads/"
-fonts_zip_output = "datasets/font_dataset/fonts_zip_output/"
-font_file_dir = "datasets/font_dataset/font_files/"
+font_dataset_path = "datasets/font_dataset/"
+text_dataset_path = "datasets/text_dataset/"
+fonts_raw_dir = font_dataset_path+"font_file_raw_downloads/"
+fonts_zip_output = font_dataset_path+"fonts_zip_output/"
+font_file_dir = font_dataset_path+"font_files/"
+dataframe_file = text_dataset_path+"jesc_dialogues"
+render_text_test_file = font_dataset_path + "render_test_text.txt"
 
 def unzip_file(paths):
     with zipfile.ZipFile(paths[0], 'r') as zip_ref:
@@ -51,13 +61,76 @@ def get_font_files():
     shutil.rmtree(fonts_zip_output)
     shutil.rmtree(fonts_raw_dir)
 
+def make_char_list(row):
+    words = set(row.split())
+    all_chars = []
+    for word in words:
+        chars = [char for char in word]
+        all_chars += chars
+    return all_chars
+
+def create_character_test_string():
+    df = dd.read_parquet(dataframe_file)
+    print("Loaded DF. Now seperating word to characters")
+    char_sep = df['Japanese'].apply(make_char_list, meta=("Japanese", "object")).compute()
+    print("Char sep done. Starting making lists of characters")
+    char_lists = char_sep.aggregate(lambda x: x.tolist())
+    print("Made lists. Now aggregating them")
+    agg_chars = list(itertools.chain.from_iterable(char_lists))
+    print("Aggregation done. Now making a set")
+    char_set = list(set(agg_chars))
+    test_string = " ".join(char_set)
+    print("Writing file")
+    with open(render_text_test_file, "w+") as wf:
+        wf.write(test_string)
+
+def has_glyph(font, glyph):
+    for table in font['cmap'].tables:
+        if ord(glyph) in table.cmap.keys():
+            return 1
+    return 0
+
 def verify_font_files():
-    # for font in os.listdir(font_file_dir):
-    return None
+    if not os.path.isfile(render_text_test_file):
+        print("Character test string does exist. Generating!")
+        create_character_test_string()
 
-        
+    test_string = "" 
+    with open(render_text_test_file, "r") as test_file:
+        test_string = test_file.readlines()[0]
+    
+    chars = test_string.split(" ")
+    all_fonts = os.listdir(font_file_dir) 
 
 
+    total_chars = len(chars)
 
+    coverages = []
+    print("Starting verification")
+    for font_name in tqdm(all_fonts):
+        if font_name == ".DS_Store":
+            continue
+        font_path = font_file_dir + font_name 
+        try:
+            font = TTFont(font_path)
+        except TTLibError as e:
+            print(font_path)
+
+        has_glyph_list = []
+        for char in chars:
+            has_glyph_list.append(has_glyph(font, char))
+
+        coverage = sum(has_glyph_list)/total_chars
+        coverages.append([font_path, coverage])
+
+    print("Writing viability to file:", font_dataset_path+"viable_fonts.csv")
+    with open(font_dataset_path+"viable_fonts.csv", "w+") as viable_font_file: 
+        for font in coverages:
+            # Coverge %
+            if font[1] > 0.8:
+                viable = True
+            else:
+                viable = False
+            viable_font_file.write(font[0] + ","+str(viable)+"\n")
             
 
