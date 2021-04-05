@@ -1,2 +1,3 @@
-theme: jekyll-theme-cayman
+# Site settings
 title: AMP-D: Artificial Manga Panel Dataset
+theme: jekyll-theme-cayman
