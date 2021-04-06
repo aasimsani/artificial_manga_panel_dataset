@@ -22,3 +22,4 @@ Steps:
 2. [Tagged anime illustrations Kaggle dataset](https://www.kaggle.com/mylesoneill/tagged-anime-illustrations)
 3. [Comic book pages Kaggle dataset](https://www.kaggle.com/cenkbircanoglu/comic-books-classification)
 4. [Fonts allowed for commerical use from Free Japanese Fonts](https://www.freejapanesefont.com/)
+5. [Object Detection for Comics using Manga109 Annotations](https://arxiv.org/pdf/1803.08670.pdf) - Used as benchmark
