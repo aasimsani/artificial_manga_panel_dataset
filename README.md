@@ -8,13 +8,18 @@ This repository contains the associated files and links to create an artificial 
 Steps:
 - [x] Find relevant japanese dialogue dataset
 - [x] Find manga like japanese fonts
-- [ ] Find different text bubble types
+- [x] Find different text bubble types
 - [ ] Find manga images or other black and white images to use to fill panels
 - [ ] Create a few manga page layout templates
 - [ ] Create manga panels by combining the above elements
+- [ ] Create font transformations
 - [ ] Replace layout templates with manga panel generator
 - [ ] Upload dataset to Kaggle
 
+## Data variety
+- 196 fonts with >80% character coverage
+- 728 Speech bubble types (182 untransformed)
+- 2,801,388 sentence pairs in Japanese and English
 
 ### Resources used:
 
