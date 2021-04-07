@@ -7,4 +7,3 @@ jupyterlab
 fonttools
 Pillow
 dvc
-dvc[gdrive]

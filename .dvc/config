@@ -1,4 +1,4 @@
 [core]
-    remote = storage
-['remote "storage"']
-    url = gdrive://1ZfNlHZnEcfqQRnHlL5UaOKUPIaEIe5G2
+    remote = gcloud
+['remote "gcloud"']
+    url = gs://datasets-personal/ampd
