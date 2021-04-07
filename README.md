@@ -57,3 +57,33 @@ archivePrefix = "arXiv",
 ```
 
 [**Speech bubble PSD file Licence**](https://friendlystock.com/terms-of-use/)
+
+
+### How does the layouting engine work?
+1. Each Manga Page Image is represented by a JSON file. The page description contains the following
+    1. Layout types and how they're denoted (here for easy search of particular panel types)
+        1. Horizontal panels only - ```h```
+        2. Vertical panel only - ```v```
+        3. Vertical and horizontal panels - ```vh```
+        4. All of the above with panel shape transforms - ```vht``` or ```ht```
+        5. All of the above on a background - ```vhtb```
+        6. All of the above on a background with panel xy mis-alignment (sin/wave/etc) - ```vhtbm```
+        7. All of the above with white space insertions - ```vhtbmw```
+    2. Page size
+    3. Page type (currently only single)
+    4. Panel boundary widths
+    5. Panel boundary types
+2. Each Page then has N panels layed out in a particular format which is described as follows:
+    1. Each panel has a rectangular baseline and a transformation matrix that changes it if needed. Each panel is represented as follows:
+      1. Coords + Dims: (((topx, topy), (bottomx, bottomy), width, height))
+      2. Transformations: ()
+    2. Each panel also has a list of images that it's comprised of and how they've been inserted.
+        1. Coords + Dims: (topx, topy, bottomx, bottomy, width, height)
+        2. Transformations: ()
+3. With the Panels each page also has a number of text bubbles on them. Usually the number being within (#panels-2 <= #bubbles <= #panels+2) of each panel on the depending on how large the panel is. Most bubbles are within the vicinity of a panel or within them with a small % of them peaking between panels. Each bubble has the following properties:
+    1. Bubble type
+    2. Bubble text (as a reference)
+    3. Bubble text font
+    4. Bubble text font size
+    5. Coords + Dims: (topx, topy, bottomx, bottomy, width, height) 
+    6. Transformations: ()
