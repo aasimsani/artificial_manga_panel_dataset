@@ -21,6 +21,17 @@ Steps:
 - 728 Speech bubble types (182 untransformed)
 - 2,801,388 sentence pairs in Japanese and English
 
+### How this dataset was made?
+1. Downloaded JESC dataset to get sentence pairs
+2. Found fonts from fonts website mentioned below
+3. Downloaded Tagged Anime Illustrations dataset from Kaggle
+4. Found and created different types of speech bubbles
+5. Verified which fonts were viable and could cover at least 80% of the characters in the JESC dataset
+6. Converted all the images to black and white 
+7. Created default layout set/layouting engine
+8. Created renderer which generates images by sampling from the text, fonts, images, speech bubbles and layouts
+9. Used renderer to create dataset of fixed size
+
 ### Resources used:
 
 1. [JESC dataset](https://nlp.stanford.edu/projects/jesc/)
@@ -29,7 +40,6 @@ Steps:
 4. [Fonts allowed for commerical use from Free Japanese Fonts](https://www.freejapanesefont.com/) - Licences are on individual pages
 5. [Object Detection for Comics using Manga109 Annotations](https://arxiv.org/pdf/1803.08670.pdf) - Used as benchmark
 6. [Speech bubbles PSD file](https://www.deviantart.com/zombiesmile/art/300-Free-Speech-Bubbles-Download-419223430)
-
 
 ### Licences and Legal
 **JESC dataset**
