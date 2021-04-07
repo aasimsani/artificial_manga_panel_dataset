@@ -4,6 +4,7 @@ pandas
 dask
 pyarrow
 jupyterlab
-dvc
 fonttools
 Pillow
+dvc
+dvc[gdrive]
