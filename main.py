@@ -3,6 +3,8 @@ from scraping.download_fonts import get_font_links
 from preprocesing.text_dataset_format_changer import convert_jesc_to_dataframe
 from preprocesing.extract_and_verify_fonts import extract_fonts, get_font_files, verify_font_files
 from preprocesing.convert_images import convert_images_to_bw
+from preprocesing.layout_engine.page_creator import create_single_page
+from preprocesing.layout_engine.page_dataset_creator import create_page_metadata
 
 
 if __name__ == '__main__':
@@ -18,4 +20,8 @@ if __name__ == '__main__':
     # extract_fonts()
     # get_font_files()
     # verify_font_files()
-    convert_images_to_bw()
+    # convert_images_to_bw()
+
+    # Page creation
+    # create_single_page()
+    create_page_metadata()
