@@ -306,6 +306,7 @@ def create_page_metadata():
 
             num_base = np.random.choice([2,3])
             num_base = 3
+            ret_list = []
             if num_base == 2:
                 # Draw two rectangles 
                 horizontal_vertical = np.random.choice(["h", "v"])
@@ -314,7 +315,6 @@ def create_page_metadata():
                 next_div = invert_for_next(horizontal_vertical)
 
                 type_choice = np.random.choice(["eq", "uneq", "div"]) 
-                ret_list = []
                 if type_choice == "eq":
                 # Divide each into 2 rectangles equally
                     shift_min = 25
@@ -368,10 +368,25 @@ def create_page_metadata():
                 horizontal_vertical = np.random.choice(["h", "v"])
                 p1, p2, p3 = draw_three(topleft, topright, bottomright, bottomleft, horizontal_vertical)
 
-                pick_one = np.random.choice([1, 2, 3])
-                if pick_one == 1:
-
                 # Pick one and divide it into two
+                pick_one = np.random.choice([1, 2, 3])
+                next_div = invert_for_next(horizontal_vertical)
+                if pick_one == 1:
+                    choice = p1
+                    p4, p5 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
+                    ret_list = [p2, p3, p4, p5]
+                elif pick_one == 2:
+                    choice = p2
+                    p4, p5 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
+                    ret_list = [p1, p3, p4, p5]
+                else:
+                    choice = p3
+                    p4, p5 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
+                    ret_list = [p1, p2, p4, p5]
+                
+                test_render(ret_list)
+                    
+
         
         if num_panels == 5:
             # Draw 2 rectangles 
@@ -387,85 +402,6 @@ def create_page_metadata():
                 #Pick two and divide each into two
 
             pass
-    
-
-        if num_panels == 5:
-            
-            # All of 4's combos in 1 half of the page with a vertical or horizontal line seperating them from the rest of the page
-            # This covers 2 vertical and horizontal line
-            # Bisect page then do 4's calc's in one half
-            combo1 = dict(
-                full_vertical_lines = 1,
-                combo_of_four = None
-            )
-
-            combo2 = dict(
-                full_horizontal_lines = 1,
-                combo_of_four = None
-            )
-
-            # 4's combos plus one panel (restrict this to halves) with an extra half line
-            combo3 = dict(
-                full_vertical_lines = 1,
-                full_horizontal_lines = 1,
-                half_line = 1
-            )
-
-            combo4 = dict(
-                full_vertical_lines = 0,
-                full_horizontal_lines = 1,
-                half_line = 3
-            )
-
-            combo5 = dict(
-                full_vertical_lines = 1,
-                full_horizontal_lines = 0,
-                half_line = 3
-            )
-
-            combo4 = dict(
-                full_vertical_lines = 1,
-                full_horizontal_lines = 0,
-                half_line = 2,
-                quarter_line = 1
-            )
-
-            combo5 = dict(
-                full_vertical_lines = 0,
-                full_horizontal_lines = 1,
-                half_line = 2,
-                quarter_line = 1
-            )
-
-
-            # 4's combos plus one panel with an extra quarter line
-            combo6 = dict(
-                full_vertical_lines = 0,
-                full_horizontal_lines = 1,
-                half_line = 2,
-                quarter_line = 1
-            )
-
-            combo7 = dict(
-                full_vertical_lines = 1,
-                full_horizontal_lines = 0,
-                half_line = 2,
-                quarter_line = 1
-            )
-
-            combo8 = dict(
-                full_vertical_lines = 1,
-                full_horizontal_lines = 0,
-                half_line = 1,
-                quarter_line = 2
-            )
-
-            combo9 = dict(
-                full_vertical_lines = 0,
-                full_horizontal_lines = 1,
-                half_line = 1,
-                quarter_line = 2
-            )
 
         if num_panels == 6:
 
