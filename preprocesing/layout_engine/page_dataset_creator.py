@@ -34,13 +34,13 @@ def draw_two(topleft, topright, bottomright, bottomleft, horizontal_vertical):
     if horizontal_vertical == "h":
         r1x1y1 = topleft
         r1x2y2 = topright
-        r1x3y3 = (bottomright[0], bottomright[1]/2)
-        r1x4y4 = (bottomleft[0], bottomleft[1]/2)
+        r1x3y3 = (bottomright[0], bottomright[1]/2.0)
+        r1x4y4 = (bottomleft[0], bottomleft[1]/2.0)
 
         poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
 
-        r2x1y1 = (bottomleft[0], bottomleft[1]/2)
-        r2x2y2 = (bottomright[0], bottomright[1]/2)
+        r2x1y1 = (bottomleft[0], bottomleft[1]/2.0)
+        r2x2y2 = (bottomright[0], bottomright[1]/2.0)
         r2x3y3 = bottomright
         r2x4y4 = bottomleft
 
@@ -48,8 +48,8 @@ def draw_two(topleft, topright, bottomright, bottomleft, horizontal_vertical):
     
     if horizontal_vertical == "v":
         r1x1y1 = topleft
-        r1x2y2 = (topright[0]/2, topright[1])
-        r1x3y3 = (bottomright[0]/2, bottomright[1])
+        r1x2y2 = (topright[0]/2.0, topright[1])
+        r1x3y3 = (bottomright[0]/2.0, bottomright[1])
         r1x4y4 = bottomleft
 
         poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
@@ -264,7 +264,7 @@ def create_page_metadata():
         
         max_num_panels = 8
         # num_panels = np.random.randint(2, max_num_panels+1)
-        num_panels = 4
+        num_panels = 5
 
         topleft = (0.0, 0.0)
         topright = (1700, 0.0)
@@ -389,17 +389,57 @@ def create_page_metadata():
 
         
         if num_panels == 5:
-            # Draw 2 rectangles 
+            num_base = np.random.choice([2,3,4])
+            num_base = 2
+            ret_list = []
+
+            # Draw two rectangles 
+            if num_base == 2:
+                horizontal_vertical = np.random.choice(["h", "v"])
+                horizontal_vertical = "v"
+                p1, p2 = draw_two(topleft, topright, bottomright, bottomleft, horizontal_vertical)
                 # Pick one and divide it into two then
+                pick_one = np.random.random()
+                pick_one = 0.4
+                if pick_one > 0.5:
+                    choice = p1
+                    next_div = invert_for_next(horizontal_vertical)
+                    p3, p4 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
                     # Divide each into 2 rectangles equally
+                    next_div = invert_for_next(next_div)
+                    p5, p6 = draw_two(p3[0], p3[1], p3[2], p3[3], next_div)
+                    p7, p8 = draw_two(p4[0], p4[1], p4[2], p4[3], next_div)
+                    ret_list = [p2, p5, p6, p7, p8]
+                else:
+                    choice = p2
+                    print(p2)
+                    next_div = invert_for_next(horizontal_vertical)
+                    p3, p4 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
+                    print(p3)
+                    print(p4)
+                    # Divide each into 2 rectangles equally
+                    next_div = invert_for_next(next_div)
+                    p5, p6 = draw_two(p3[0], p3[1], p3[2], p3[3], next_div)
+                    p7, p8 = draw_two(p4[0], p4[1], p4[2], p4[3], next_div)
+
+                    print(p5)
+                    print(p6)
+                    ret_list = [p1, p5, p6, p7, p8]
+            
+            test_render(ret_list)
                     # Divide each into 2 rectangles unequally
-                    # Pick one and divide into 2 rectangles
-                        # Pick one of these two and divide that into 2 rectangles
+            
+            # Draw two rectangles
+                # Divide both equally
+                    # Pick one of all of them and divide into two
 
             # Draw 3 rectangles (horizontally or vertically)
                 # Pick one and divide into two
                     # Pick one of these and divide into two
                 #Pick two and divide each into two
+            
+            # Draw 4 rectangles vertically
+                # Pick one and divide into two
 
             pass
 
