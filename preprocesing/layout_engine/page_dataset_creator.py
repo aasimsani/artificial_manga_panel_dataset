@@ -3,6 +3,7 @@ import numpy as np
 import math
 import time
 from copy import deepcopy
+import random
 
 # TODO: Figure out page type distributions
 
@@ -28,41 +29,6 @@ def test_render(dims):
 
     page.show()
 
-def draw_two(topleft, topright, bottomright, bottomleft, horizontal_vertical):
-
-
-    if horizontal_vertical == "h":
-        r1x1y1 = topleft
-        r1x2y2 = topright
-        r1x3y3 = (bottomright[0], bottomright[1]/2.0)
-        r1x4y4 = (bottomleft[0], bottomleft[1]/2.0)
-
-        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
-
-        r2x1y1 = (bottomleft[0], bottomleft[1]/2.0)
-        r2x2y2 = (bottomright[0], bottomright[1]/2.0)
-        r2x3y3 = bottomright
-        r2x4y4 = bottomleft
-
-        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4)
-    
-    if horizontal_vertical == "v":
-        r1x1y1 = topleft
-        r1x2y2 = (topright[0]/2.0, topright[1])
-        r1x3y3 = (bottomright[0]/2.0, bottomright[1])
-        r1x4y4 = bottomleft
-
-        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
-
-        r2x1y1 = (topright[0]/2, topright[1])
-        r2x2y2 = topright
-        r2x3y3 = bottomright
-        r2x4y4 = (bottomright[0]/2, bottomright[1])
-
-        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4)
-   
-    return poly1, poly2
-
 def draw_three(topleft, topright, bottomright, bottomleft, horizontal_vertical):
 
     if horizontal_vertical == "h":
@@ -71,21 +37,21 @@ def draw_three(topleft, topright, bottomright, bottomleft, horizontal_vertical):
         r1x3y3 = (bottomright[0], bottomright[1]/3)
         r1x4y4 = (bottomleft[0], bottomleft[1]/3)
 
-        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
+        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4, r1x1y1)
 
         r2x1y1 = (bottomleft[0], bottomleft[1]/3)
         r2x2y2 = (bottomright[0], bottomright[1]/3)
         r2x3y3 = (bottomright[0], bottomright[1]*(2/3))
         r2x4y4 = (bottomleft[0], bottomleft[1]*(2/3))
 
-        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4)
+        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
 
         r3x1y1 = (bottomleft[0], bottomleft[1]*(2/3))
         r3x2y2 = (bottomright[0], bottomright[1]*(2/3))
         r3x3y3 = bottomright
         r3x4y4 = bottomleft 
 
-        poly3 = (r3x1y1, r3x2y2, r3x3y3, r3x4y4)
+        poly3 = (r3x1y1, r3x2y2, r3x3y3, r3x4y4, r3x1y1)
 
     
     if horizontal_vertical == "v":
@@ -94,21 +60,21 @@ def draw_three(topleft, topright, bottomright, bottomleft, horizontal_vertical):
         r1x3y3 = (bottomright[0]/3, bottomright[1])
         r1x4y4 = bottomleft
 
-        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
+        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4, r1x1y1)
 
         r2x1y1 = (topright[0]/3, topright[1])
         r2x2y2 = (topright[0]*(2/3), topright[1])
         r2x3y3 = (bottomright[0]*(2/3), bottomright[1])
         r2x4y4 = (bottomright[0]/3, bottomright[1])
 
-        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4)
+        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
 
         r3x1y1 = (topright[0]*(2/3), topright[1])
         r3x2y2 = topright
         r3x3y3 = bottomright
         r3x4y4 = (bottomright[0]*(2/3), bottomright[1])
 
-        poly3 = (r3x1y1, r3x2y2, r3x3y3, r3x4y4)
+        poly3 = (r3x1y1, r3x2y2, r3x3y3, r3x4y4, r3x1y1)
     
     return poly1, poly2, poly3
 
@@ -123,33 +89,33 @@ def draw_two_shifted(topleft, topright, bottomright, bottomleft, horizontal_vert
     if horizontal_vertical == "h":
         r1x1y1 = topleft
         r1x2y2 = topright
-        r1x3y3 = (bottomright[0], bottomright[1]*shift)
-        r1x4y4 = (bottomleft[0], bottomleft[1]*shift)
+        r1x3y3 = (bottomright[0], topright[1] + (bottomright[1] - topright[1])*shift)
+        r1x4y4 = (bottomleft[0], topleft[1] + (bottomleft[1] - topleft[1])*shift)
 
-        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
+        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4, r1x1y1)
 
-        r2x1y1 = (bottomleft[0], bottomleft[1]*shift)
-        r2x2y2 = (bottomright[0], bottomright[1]*shift)
+        r2x1y1 = (bottomleft[0], topleft[1] + (bottomleft[1] - topleft[1])*shift)
+        r2x2y2 = (bottomright[0], topright[1] + (bottomright[1] - topright[1])*shift)
         r2x3y3 = bottomright
         r2x4y4 = bottomleft
 
-        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4)
+        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
     
     if horizontal_vertical == "v":
-
+        
         r1x1y1 = topleft
-        r1x2y2 = (topright[0]*shift, topright[1])
-        r1x3y3 = (bottomright[0]*shift, bottomright[1])
+        r1x2y2 = (topleft[0] + (topright[0] - topleft[0])*shift, topright[1])
+        r1x3y3 = (bottomleft[0] + (bottomright[0] - bottomleft[0])*shift, bottomright[1])
         r1x4y4 = bottomleft
 
-        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
+        poly1 = (r1x1y1, r1x2y2, r1x3y3, r1x4y4, r1x1y1)
 
-        r2x1y1 = (topright[0]*shift, topright[1])
+        r2x1y1 = (topleft[0] + (topright[0] - topleft[0])*shift, topright[1])
         r2x2y2 = topright
         r2x3y3 = bottomright
-        r2x4y4 = (bottomright[0]*shift, bottomright[1])
+        r2x4y4 = (bottomleft[0] + (bottomright[0] - bottomleft[0])*shift, bottomright[1])
 
-        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4)
+        poly2 = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
    
     return poly1, poly2
 
@@ -158,6 +124,16 @@ def invert_for_next(current):
         return "v"
     else:
         return "h"
+
+def choose_and_return(choices):
+
+    # Shuffle for random picking
+    random.shuffle(choices)
+
+    # Pop one after shuffling
+    choice = choices.pop(0)
+
+    return choice, choices
 
 def create_page_metadata():
 
@@ -270,173 +246,151 @@ def create_page_metadata():
         topright = (1700, 0.0)
         bottomleft = (0.0, 2400)
         bottomright = (1700, 2400)
+        dims = [
+            topleft,
+            topright,
+            bottomright,
+            bottomleft
+        ]
 
         if num_panels == 2:
             # Draw 2 rectangles
                 # vertically or horizontally
             horizontal_vertical = np.random.choice(["h", "v"])
-            p1, p2 = draw_two_shifted(topleft, topright, bottomright, bottomleft, horizontal_vertical)
+            p1, p2 = draw_two_shifted(*dims, horizontal_vertical)
             ret_list = [p1, p2]
             test_render(ret_list)
     
         if num_panels == 3:
             # Draw 2 rectangles
                 # Vertically or Horizontally
-                # Pick one and divide it into 2 rectangles
 
             horizontal_vertical = np.random.choice(["h", "v"])
-            p1, p2 = draw_two_shifted(topleft, topright, bottomright, bottomleft, horizontal_vertical)
+            p1, p2 = draw_two_shifted(*dims, horizontal_vertical)
 
             next_div = invert_for_next(horizontal_vertical)
 
             ret_list = []
-            pick_one = np.random.random()
-            if pick_one > 0.5:
-                choice = p1
-                p3, p4 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                ret_list = [p2, p3, p4]
-            else:
-                choice = p2
-                p3, p4 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                ret_list = [p1, p3, p4]
+
+            # Pick one and divide it into 2 rectangles
+            choice, left_choices = choose_and_return([p1, p2])
+
+            p3, p4 = draw_two_shifted(*choice[0:4], next_div)
+            ret_list = left_choices + [p3, p4]
 
             test_render(ret_list)
 
         if num_panels == 4:
 
-            num_base = np.random.choice([2,3])
-            num_base = 3
             ret_list = []
-            if num_base == 2:
-                # Draw two rectangles 
-                horizontal_vertical = np.random.choice(["h", "v"])
-                p1, p2 = draw_two(topleft, topright, bottomright, bottomleft, horizontal_vertical)
+            # Draw two rectangles 
+            horizontal_vertical = np.random.choice(["h", "v"])
+            p1, p2 = draw_two_shifted(*dims, horizontal_vertical, shift=0.5)
 
-                next_div = invert_for_next(horizontal_vertical)
+            next_div = invert_for_next(horizontal_vertical)
 
-                type_choice = np.random.choice(["eq", "uneq", "div"]) 
-                if type_choice == "eq":
-                # Divide each into 2 rectangles equally
-                    shift_min = 25
-                    shift_max = 75
-                    shift = np.random.randint(shift_min, shift_max)
-                    shift = shift/100 
+            type_choice = np.random.choice(["eq", "uneq", "div", "trip"]) 
+            if type_choice == "eq":
+            # Divide each into 2 rectangles equally
+                shift_min = 25
+                shift_max = 75
+                shift = np.random.randint(shift_min, shift_max)
+                shift = shift/100 
 
-                    p3, p4 = draw_two_shifted(p1[0], p1[1], p1[2], p1[3], next_div, shift)
-                    p5, p6 = draw_two_shifted(p2[0], p2[1], p2[2], p2[3], next_div, shift)
-                    ret_list = [p3, p4, p5, p6]
+                p3, p4 = draw_two_shifted(*p1[0:4], next_div, shift)
+                p5, p6 = draw_two_shifted(*p2[0:4], next_div, shift)
+                ret_list = [p3, p4, p5, p6]
 
-                # Divide each into 2 rectangles unequally
-                elif type_choice == "uneq":
-                    p3, p4 = draw_two_shifted(p1[0], p1[1], p1[2], p1[3], next_div)
-                    p5, p6 = draw_two_shifted(p2[0], p2[1], p2[2], p2[3], next_div)
-                    ret_list = [p3, p4, p5, p6]
+            # Divide each into 2 rectangles unequally
+            elif type_choice == "uneq":
+                p3, p4 = draw_two_shifted(*p1[0:4], next_div)
+                p5, p6 = draw_two_shifted(*p2[0:4], next_div)
+                ret_list = [p3, p4, p5, p6]
 
+            elif type_choice == "div":
+                pick_one = np.random.random()
                 # Pick one and divide into 2 rectangles
-                        # Pick one of these two and divide that into 2 rectangles
-                elif type_choice == "div":
-                    pick_one = np.random.random()
-                    if pick_one > 0.5:
-                        choice = p1
-                        p3, p4 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                        pick_one_again = np.random.random()
-                        next_div = invert_for_next(next_div)
-                        if pick_one_again > 0.5:
-                            choice = p3
-                            p5, p6 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                            ret_list = [p2, p4, p5, p6]
-                        else:
-                            choice = p4
-                            p5, p6 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                            ret_list = [p2, p3, p5, p6]
-                    else:
-                        choice = p2
-                        p3, p4 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                        pick_one_again = np.random.random()
-                        next_div = invert_for_next(next_div)
-                        if pick_one_again > 0.5:
-                            choice = p3
-                            p5, p6 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                            ret_list = [p1, p4, p5, p6]
-                        else:
-                            choice = p4
-                            p5, p6 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                            ret_list = [p1, p3, p5, p6]
-                
+                choice1, left_choices1 = choose_and_return([p1, p2]) 
+                p3, p4 = draw_two_shifted(*choice1[0:4], next_div)
+
+                # Pick one of these two and divide that into 2 rectangles
+                choice2, left_choices2 = choose_and_return([p3, p4])
+                next_div = invert_for_next(next_div)
+                p5, p6 = draw_two_shifted(*choice2[0:4], next_div)
+
+                ret_list = left_choices1 + left_choices2 + [p5, p6]
+            
             # Draw three rectangles
-            if num_base == 3:
+            elif type_choice == "trip":
                 horizontal_vertical = np.random.choice(["h", "v"])
-                p1, p2, p3 = draw_three(topleft, topright, bottomright, bottomleft, horizontal_vertical)
+                p1, p2, p3 = draw_three(*dims, horizontal_vertical)
 
                 # Pick one and divide it into two
-                pick_one = np.random.choice([1, 2, 3])
+                choice, left_choices = choose_and_return([p1, p2, p3])
                 next_div = invert_for_next(horizontal_vertical)
-                if pick_one == 1:
-                    choice = p1
-                    p4, p5 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                    ret_list = [p2, p3, p4, p5]
-                elif pick_one == 2:
-                    choice = p2
-                    p4, p5 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                    ret_list = [p1, p3, p4, p5]
-                else:
-                    choice = p3
-                    p4, p5 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                    ret_list = [p1, p2, p4, p5]
-                
-                test_render(ret_list)
-                    
+                p4, p5 = draw_two_shifted(*choice[0:4], next_div)
 
+                ret_list = left_choices + [p4, p5]
+                
+            test_render(ret_list)
+                    
         
         if num_panels == 5:
-            num_base = np.random.choice([2,3,4])
-            num_base = 2
+
             ret_list = []
-
             # Draw two rectangles 
-            if num_base == 2:
-                horizontal_vertical = np.random.choice(["h", "v"])
-                horizontal_vertical = "v"
-                p1, p2 = draw_two(topleft, topright, bottomright, bottomleft, horizontal_vertical)
-                # Pick one and divide it into two then
-                pick_one = np.random.random()
-                pick_one = 0.4
-                if pick_one > 0.5:
-                    choice = p1
-                    next_div = invert_for_next(horizontal_vertical)
-                    p3, p4 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                    # Divide each into 2 rectangles equally
-                    next_div = invert_for_next(next_div)
-                    p5, p6 = draw_two(p3[0], p3[1], p3[2], p3[3], next_div)
-                    p7, p8 = draw_two(p4[0], p4[1], p4[2], p4[3], next_div)
-                    ret_list = [p2, p5, p6, p7, p8]
-                else:
-                    choice = p2
-                    print(p2)
-                    next_div = invert_for_next(horizontal_vertical)
-                    p3, p4 = draw_two_shifted(choice[0], choice[1], choice[2], choice[3], next_div)
-                    print(p3)
-                    print(p4)
-                    # Divide each into 2 rectangles equally
-                    next_div = invert_for_next(next_div)
-                    p5, p6 = draw_two(p3[0], p3[1], p3[2], p3[3], next_div)
-                    p7, p8 = draw_two(p4[0], p4[1], p4[2], p4[3], next_div)
+            horizontal_vertical = np.random.choice(["h", "v"])
+            p1, p2 = draw_two_shifted(*dims, horizontal_vertical, shift=0.5)
+            
+            type_choice = np.random.choice(["eq", "uneq", "div", "twothree"])
+            type_choice = "div"
+            if type_choice == "eq" or type_choice == "uneq":
 
-                    print(p5)
-                    print(p6)
-                    ret_list = [p1, p5, p6, p7, p8]
-            
-            test_render(ret_list)
+                # Pick one and divide it into two then
+                choice, left_choices = choose_and_return([p1, p2])
+                next_div = invert_for_next(horizontal_vertical)
+                p3, p4 = draw_two_shifted(*choice[0:4], next_div)                    
+
+                # Divide each into 2 rectangles equally
+                if type_choice == "eq":
+                    shift_min = 25
+                    shift_max = 75
+                    shift = np.random.randint(shift_min, shift_max) 
+                    set_shift = shift/100
+                else:
                     # Divide each into 2 rectangles unequally
-            
+                    set_shift = None
+
+                next_div = invert_for_next(next_div)
+                p5, p6 = draw_two_shifted(*p3[0:4], next_div, shift=set_shift)
+                p7, p8 = draw_two_shifted(*p4[0:4], next_div, shift=set_shift)
+                ret_list = left_choices + [p5, p6, p7, p8]
+
+
             # Draw two rectangles
+            elif type_choice == "div":
                 # Divide both equally
-                    # Pick one of all of them and divide into two
+                next_div = invert_for_next(horizontal_vertical)
+                p3, p4 = draw_two_shifted(*p1[0:4], next_div)
+                p5, p6 = draw_two_shifted(*p2[0:4], next_div)
+
+                # Pick one of all of them and divide into two
+                choice, left_choices = choose_and_return([p3, p4, p5, p6])
+                next_div = invert_for_next(next_div)
+                p7, p8 = draw_two_shifted(*choice[0:4], horizontal_vertical=next_div, shift=0.5)
+
+                ret_list = left_choices + [p7, p8]
+        
+
+            # elif type_choice == "twothree":
+
+            test_render(ret_list) 
+            # Draw two rectangles
+                # Divide one into 2
+                # Divide other into 3
 
             # Draw 3 rectangles (horizontally or vertically)
-                # Pick one and divide into two
-                    # Pick one of these and divide into two
-                #Pick two and divide each into two
+                # Pick two and divide each into two
             
             # Draw 4 rectangles vertically
                 # Pick one and divide into two
