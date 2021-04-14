@@ -1,4 +1,3 @@
-from PIL import Image, ImageDraw
 import numpy as np 
 import math
 import time
@@ -13,21 +12,6 @@ def create_single_panel_metadata():
     # Dims
     # 
     pass
-
-def test_render(dims):
-
-    W = 1700
-    H = 2400
-    print(dims)
-    page = Image.new(size=(W,H), mode="L", color="white")
-    draw_rect = ImageDraw.Draw(page)
-
-    for rect in dims:
-        # draw_rect.rectangle(rect, fill=None, outline="white", width=20)
-        draw_rect.line(rect, fill="black", width=20)
-        # draw_rect.polygon(rect, fill="red", outline="yellow")
-
-    page.show()
 
 def draw_n_shifted(n, topleft, topright, bottomright, bottomleft, horizontal_vertical, shifts=[]):
 
@@ -353,7 +337,7 @@ def create_page_metadata():
         
         max_num_panels = 8
         num_panels = np.random.randint(2, max_num_panels+1)
-        
+
         if num_panels == 2:
             # Draw 2 rectangles
                 # vertically or horizontally
@@ -797,6 +781,5 @@ def create_page_metadata():
 
                     ret_list += three_split + four_split
 
-
-    test_render(ret_list)
+    return ret_list
      
