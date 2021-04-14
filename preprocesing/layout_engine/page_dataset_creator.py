@@ -336,23 +336,24 @@ def create_page_metadata():
 
     layout_type = "vh"
 
+# TODO: Fit in getting black pages sperately
     if layout_type == "v":
         max_num_panels = 4
 
-        num_panels = np.random.randint(1, max_num_panels+1)
+        num_panels = np.random.randint(2, max_num_panels+1)
         ret_list = draw_n_shifted(num_panels, *dims, "v")
         
     elif layout_type == "h":
         max_num_panels = 6
 
-        num_panels = np.random.randint(1, max_num_panels+1)
+        num_panels = np.random.randint(2, max_num_panels+1)
         ret_list = draw_n_shifted(num_panels, *dims, "h")
     
     elif layout_type == "vh":
         
         max_num_panels = 8
         # num_panels = np.random.randint(2, max_num_panels+1)
-        num_panels = 7
+        num_panels = 8
 
         if num_panels == 2:
             # Draw 2 rectangles
@@ -513,7 +514,7 @@ def create_page_metadata():
             
             # Draw 4 rectangles vertically
             elif type_choice == "fourtwoone":
-                panels = draw_n(5, *dims, horizontal_vertical)
+                panels = draw_n(4, *dims, horizontal_vertical)
 
                 # Pick one and divide into two
                 choice, left_choices = choose_and_return(panels)
@@ -698,22 +699,105 @@ def create_page_metadata():
                 ret_list += choice
             
         if num_panels == 8:
-            combo1 = dict(
-                full_vertical_lines = 1,
-                full_horizontal_lines = 3
-            )
+            types = ["fourfourxtwoeq", "fourfourxtwouneq", "threethreethreetwo", "threefourtwotwo", "threethreefourone"]
+            type_choice = np.random.choice(types) 
 
-            combo2 = dict(
-                full_vertical_lines = 3,
-                full_horizontal_lines = 1
-            )
+            # Draw 4 x 2
+            if type_choice == "fourfourxtwoeq" or type_choice =="fourfourxtwouneq":
+                # panels = draw_n_shifted(4, *dims, "h")
+                panels = draw_n(4, *dims, "h")
+                # Equal 
+                if type_choice == "fourfourxtwoeq":
+                    shift_min = 25
+                    shift_max = 75
+                    shift = np.random.randint(shift_min, shift_max) 
+                    set_shift = shift/100 
+                # Unequal
+                else:
+                    set_shift = None
 
-            # Combo of 6 plus 2 extra half lines
+                for panel in panels:
+                    
+                    split = draw_two_shifted(*panel[0:4], "v",shift=set_shift)
+                    ret_list += list(split)
+            
+            if type_choice in types[2:]:
+                # Draw three - H
+                panels = draw_n(3, *dims, "h")
 
-            # 2 combos of 4
-            # one combo of 2 one combo of 6
-            # two combos of 3 one combo of two
-            # one combo fof 5 one combo of 3
+                # Draw 3 3-3-2 - H
+                if type_choice == "threethreethreetwo":
+                    choice, left_choices = choose_and_return(panels)
+                    two_split = draw_two_shifted(*choice[0:4], "v")
+
+                    ret_list += list(two_split)
+                    for panel in left_choices:
+                        # Some issue with the function calls and seeding
+                        n = 3
+                        shifts = []
+                        choice_max = round((100/n)*1.5)
+                        choice_min = round((100/n)*0.5)
+                        for i in range(0, n):
+                            shift_choice = np.random.randint(choice_min, choice_max)
+                            choice_max = choice_max + ((100/n) - shift_choice)
+                            shifts.append(shift_choice)
+                        
+                        to_add_or_remove = (100 - sum(shifts))/len(shifts)
+
+                        normalized_shifts = []
+                        for shift in shifts:
+                            new_shift = shift + to_add_or_remove
+                            normalized_shifts.append(new_shift/100)
+
+                        split = draw_n_shifted(3, *panel[0:4], "v", shifts=normalized_shifts)
+                        ret_list += split
+
+                # Draw 3 4-2-2 - H
+                elif type_choice == "threefourtwotwo":
+                    choice, left_choices = choose_and_return(panels)
+
+                    four_split = draw_n_shifted(4, *choice[0:4], "v")
+
+                    ret_list += four_split
+
+                    for panel in left_choices:
+                        split = draw_two_shifted(*panel[0:4], "v")
+                        ret_list += list(split)
+                    
+                # Draw 3 3-4-1 - H 
+
+                elif type_choice == "threethreefourone":
+                    choice, left_choices = choose_and_return(panels)
+                    other = left_choices[0]
+
+                    # 1
+                    ret_list += left_choices[1]
+
+                    #3
+                    three_split = draw_n_shifted(3, *choice[0:4], "v")
+
+                    #4
+                    # Some issue with the function calls and seeding
+                    n = 4
+                    shifts = []
+                    choice_max = round((100/n)*1.5)
+                    choice_min = round((100/n)*0.5)
+                    for i in range(0, n):
+                        shift_choice = np.random.randint(choice_min, choice_max)
+                        choice_max = choice_max + ((100/n) - shift_choice)
+                        shifts.append(shift_choice)
+                    
+                    to_add_or_remove = (100 - sum(shifts))/len(shifts)
+
+                    normalized_shifts = []
+                    for shift in shifts:
+                        new_shift = shift + to_add_or_remove
+                        normalized_shifts.append(new_shift/100)
+                    
+                    four_split = draw_n_shifted(4, *other[0:4], "v", shifts=normalized_shifts)
+
+                    ret_list += three_split + four_split
+
 
     test_render(ret_list)
      
