@@ -49,7 +49,6 @@ def draw_n_shifted(n, topleft, topright, bottomright, bottomleft, horizontal_ver
 
         polys = []
 
-        horizontal_vertical = "v"
         if horizontal_vertical == "h":
             shift_level = 0.0 
             for i in range(0, n):
@@ -319,98 +318,46 @@ def create_page_metadata():
     # Select panel boundary type
     # Select panel boundary widths
 
-    # Each page is a 2x4 grid
 
-    panel_dims = []
+    # Polygons to return
+    ret_list = []
 
-    layout_type = "vh"
+    layout_type = "h"
 
-    # TODO: Rehaul this to be more standardized
     if layout_type == "v":
         max_num_panels = 4
 
-        # Doesn't guarantee this number due to edge cases and fitting
+        topleft = (0.0, 0.0)
+        topright = (1700, 0.0)
+        bottomleft = (0.0, 2400)
+        bottomright = (1700, 2400)
+        dims = [
+            topleft,
+            topright,
+            bottomright,
+            bottomleft
+        ]
+
         num_panels = np.random.randint(1, max_num_panels+1)
-
-        panel_widths = {}
-        # Randomly increase or decrease each panel by "x%"
-        panel_width_default = 425
-        if num_panels > 1:
-            for panel in range(0, num_panels-1):
-
-                change = np.random.randint(-50,50)
-                pw = round(panel_width_default*(1 - (change/100)), -1)
-                panel_widths[panel] = pw 
-
-        # Deal with exceeding width
-        total_widths = sum(panel_widths.values())
-        if total_widths > 1700:
-            extra_width = total_widths - 1700
-            to_remove = math.ceil(extra_width/len(panel_widths))
-            # divide it amongst the panels
-            for panel in panel_widths:
-                panel_widths[panel] = (panel_widths[panel] - to_remove)
-
-        last_pw = 1700 - total_widths 
-        if last_pw> 0:
-            panel_widths[len(panel_widths)] = last_pw 
-
-        panel_coords = []
-        current_axis_location = 0        
-        for panel in panel_widths:
-            x1 = current_axis_location
-            y1 = 0.0
-
-            x2 = current_axis_location + panel_widths[panel]
-            y2 = 2400
-
-            current_axis_location = x2
-
-            coord = ((x1, y1), (x2, y2))
-            panel_coords.append(coord)
+        ret_list = draw_n_shifted(num_panels, *dims, "v")
         
-    # TODO: Rehaul this to be more standardized
     elif layout_type == "h":
         max_num_panels = 6
 
+        topleft = (0.0, 0.0)
+        topright = (1700, 0.0)
+        bottomleft = (0.0, 2400)
+        bottomright = (1700, 2400)
+        dims = [
+            topleft,
+            topright,
+            bottomright,
+            bottomleft
+        ]
+
         num_panels = np.random.randint(1, max_num_panels+1)
+        ret_list = draw_n_shifted(num_panels, *dims, "h")
 
-        panel_heights = {}
-        # Randomly increase or decrease each panel by "x%"
-        panel_height_default = 600
-        if num_panels > 1:
-            for panel in range(0, num_panels-1):
-
-                change = np.random.randint(-25,25)
-                ph = round(panel_height_default*(1 - (change/100)), -1)
-                panel_heights[panel] = ph 
-
-        # Deal with exceeding height
-        total_heights = sum(panel_heights.values())
-        if total_heights > 2400:
-            extra_height = total_heights - 2400
-            to_remove = math.ceil(extra_height/len(panel_heights))
-            # divide it amongst the panels
-            for panel in panel_heights:
-                panel_heights[panel] = (panel_heights[panel] - to_remove)
-
-        last_ph = 2400 - total_heights
-        if last_ph> 0:
-            panel_heights[len(panel_heights)] = last_ph
-
-        panel_coords = []
-        current_axis_location = 0.0 
-        for panel in panel_heights:
-            x1 = 0.0 
-            y1 = current_axis_location
-
-            x2 = 1700
-            y2 = current_axis_location + panel_heights[panel]
-
-            current_axis_location = y2
-
-            coord = ((x1, y1), (x2, y2))
-            panel_coords.ppend(coord)
     
     elif layout_type == "vh":
         
@@ -429,13 +376,14 @@ def create_page_metadata():
             bottomleft
         ]
 
+  
+
         if num_panels == 2:
             # Draw 2 rectangles
                 # vertically or horizontally
             horizontal_vertical = np.random.choice(["h", "v"])
             p1, p2 = draw_two_shifted(*dims, horizontal_vertical)
             ret_list = [p1, p2]
-            test_render(ret_list)
     
         if num_panels == 3:
             # Draw 2 rectangles
@@ -446,19 +394,13 @@ def create_page_metadata():
 
             next_div = invert_for_next(horizontal_vertical)
 
-            ret_list = []
-
             # Pick one and divide it into 2 rectangles
             choice, left_choices = choose_and_return([p1, p2])
 
             p3, p4 = draw_two_shifted(*choice[0:4], next_div)
             ret_list = left_choices + [p3, p4]
 
-            test_render(ret_list)
-
         if num_panels == 4:
-
-            ret_list = []
             horizontal_vertical = np.random.choice(["h", "v"])
             type_choice = np.random.choice(["eq", "uneq", "div", "trip"]) 
 
@@ -511,18 +453,13 @@ def create_page_metadata():
                 p4, p5 = draw_two_shifted(*choice[0:4], next_div)
 
                 ret_list = left_choices + [p4, p5]
-                
-            test_render(ret_list)
-                    
         
         if num_panels == 5:
 
-            ret_list = []
             # Draw two rectangles 
             horizontal_vertical = np.random.choice(["h", "v"])
             
-            type_choice = np.random.choice(["eq", "uneq", "div", "2-(2+3)", "3-(2+2+1)", "4-(2+(3x1))"])
-            type_choice = "4-(2+(3x1))"
+            type_choice = np.random.choice(["eq", "uneq", "div", "twotwothree", "threetwotwo", "fourtwoone"])
             if type_choice == "eq" or type_choice == "uneq":
 
                 p1, p2 = draw_two_shifted(*dims, horizontal_vertical, shift=0.5)
@@ -565,7 +502,7 @@ def create_page_metadata():
                 ret_list = left_choices + [p7, p8]
         
             # Draw two rectangles
-            elif type_choice == "2-(2+3)":
+            elif type_choice == "twotwothree":
                 
                 p1, p2 = draw_two_shifted(*dims, horizontal_vertical, shift=0.5)
                 next_div = invert_for_next(horizontal_vertical)
@@ -584,7 +521,7 @@ def create_page_metadata():
                 ret_list = [p3, p4, p5, p6, p7]
 
             # Draw 3 rectangles (horizontally or vertically)
-            elif type_choice == "3-(2+2+1)":
+            elif type_choice == "threetwotwo":
 
                 p1, p2, p3 = draw_three(*dims, horizontal_vertical)
                 next_div = invert_for_next(horizontal_vertical)
@@ -599,91 +536,33 @@ def create_page_metadata():
                 ret_list = left_choices2 + [p4, p5, p6, p7]
             
             # Draw 4 rectangles vertically
-            elif type_choice == "4-(2+(3x1))":
-                # p1, p2, p3, p4 = draw_four(*dims, horizontal_vertical)
+            elif type_choice == "fourtwoone":
+                panels = draw_n(5, *dims, horizontal_vertical)
 
-                # # Pick one and divide into two
-                # choice, left_choices = choose_and_return([p1, p2, p3, p4])
-                # next_div = invert_for_next(horizontal_vertical)
-                # p5, p6 = draw_two_shifted(*choice[0:4], next_div)
+                # Pick one and divide into two
+                choice, left_choices = choose_and_return(panels)
+                next_div = invert_for_next(horizontal_vertical)
+                p5, p6 = draw_two_shifted(*choice[0:4], next_div)
 
-                # ret_list = left_choices + [p5, p6]
+                ret_list = left_choices + [p5, p6]
 
-                # ret_list = draw_n(4, *dims, horizontal_vertical)
-                ret_list = draw_n_shifted(2, *dims, horizontal_vertical)
-
-            test_render(ret_list) 
-
-           
-
-            pass
 
         if num_panels == 6:
+            
+            type_choice = np.random.choice(["tripeq", "tripuneq", "twofourtwo","twothreethree", "fourtwo"])
 
-            # 2 V 1 H
-            # 2 H 1 V
+            # if type_choice == "tripeq":
+            # Draw 3 rectangles (V OR H)
+                # Split each equally
+                # Split each unequally
 
-            combo1 = dict(
-                full_vertical_lines = 2,
-                full_horizontal_lines = 1
-            )
+            # Draw 2 rectangles
+                # Split into 4 one half 2 in another
+                # Split 3 in each
+            
+            # Draw 4 rectangles
+                # Split two of them
 
-            combo2 = dict(
-                full_vertical_lines = 1,
-                full_horizontal_lines = 2
-            )
-
-            # 5 in one half
-            combo3 = dict(
-                full_vertical_lines = 1,
-                combo_of_five = None
-
-            )
-
-            combo4 = dict(
-                full_horizontal_lines = 1,
-                combo_of_five = None
-            )
-
-            # 3 in both halves
-            combo5 = dict(
-                full_vertical_lines = 1,
-                combo_of_three_one = None,
-                combo_of_three_two = None
-
-            )
-
-            combo6 = dict(
-                full_horizontal_lines = 1,
-                combo_of_three_one = None,
-                combo_of_three_two = None
-            )
-
-
-            # 2 in 3 parts
-            combo7 = dict(
-                full_vertical_lines = 3,
-                half_lines = 3
-            )
-            combo8 = dict(
-                full_horizontal_lines = 3,
-                half_lines = 3
-            )
-
-            # 4 in one half 
-            # 2 in another
-            combo9 = dict(
-                full_vertical_lines = 1,
-                combo_of_four = None,
-                half_line = 1
-
-            )
-
-            combo10 = dict(
-                full_horizontal_lines = 1,
-                combo_of_four = None,
-                half_line = 1
-            )
         if num_panels == 7:
 
             # Combo of 6 plus one extra half line
@@ -707,5 +586,5 @@ def create_page_metadata():
             # two combos of 3 one combo of two
             # one combo fof 5 one combo of 3
 
-
+    test_render(ret_list)
      
