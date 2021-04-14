@@ -352,7 +352,7 @@ def create_page_metadata():
         
         max_num_panels = 8
         # num_panels = np.random.randint(2, max_num_panels+1)
-        num_panels = 6
+        num_panels = 7
 
         if num_panels == 2:
             # Draw 2 rectangles
@@ -530,7 +530,6 @@ def create_page_metadata():
             horizontal_vertical = np.random.choice(["v", "h"])
 
             # Draw 3 rectangles (V OR H)
-            type_choice = "fourtwo"
             if type_choice == "tripeq" or type_choice == "tripuneq":
                 panels = draw_n_shifted(3, *dims, horizontal_vertical)
                 # Split each equally
@@ -597,9 +596,106 @@ def create_page_metadata():
                 ret_list = left_choices2 + list(split1) + list(split2)
 
         if num_panels == 7:
+            
+            types = ["twothreefour", "threethreetwotwo", "threefourtwoone","threethreextwoone","fourthreextwo"]
+            type_choice = np.random.choice(types)
 
-            # Combo of 6 plus one extra half line
-            pass
+            # Draw two split 3-4 - HV
+            if type_choice == "twothreefour":
+                horizontal_vertical = np.random.choice(["h", "v"])
+
+                panels = draw_two_shifted(*dims, horizontal_vertical, shift=0.5)
+
+                choice, left_choices = choose_and_return(list(panels))
+                other = left_choices[0]
+
+                next_div = invert_for_next(horizontal_vertical)
+                
+                split1 = draw_n_shifted(4, *choice[0:4], next_div)
+
+                # Some issue with the function calls and seeding
+                n = 3
+                shifts = []
+                choice_max = round((100/n)*1.5)
+                choice_min = round((100/n)*0.5)
+                for i in range(0, n):
+                    shift_choice = np.random.randint(choice_min, choice_max)
+                    choice_max = choice_max + ((100/n) - shift_choice)
+                    shifts.append(shift_choice)
+                
+                to_add_or_remove = (100 - sum(shifts))/len(shifts)
+
+                normalized_shifts = []
+                for shift in shifts:
+                    new_shift = shift + to_add_or_remove
+                    normalized_shifts.append(new_shift/100)
+
+                split2 = draw_n_shifted(3, *other[0:4], next_div, shifts=normalized_shifts) 
+
+                ret_list = list(split1) + list(split2)
+
+            # Draw 3 split 3-2-2 - H only
+            elif type_choice == "threethreetwotwo":
+                panels = draw_three(*dims, "h")
+
+                choice, left_choices = choose_and_return(list(panels))
+
+                split1 = draw_n_shifted(3, *choice[0:4], "v")
+                split2 = draw_two_shifted(*left_choices[0][0:4], "v")
+                split3 = draw_two_shifted(*left_choices[1][0:4], "v")
+
+                ret_list = list(split1) + list(split2) + list(split3)
+
+            # Draw 3 split 4-2-1 - H only
+            elif type_choice == "threefourtwoone":
+                panels = draw_three(*dims, "h")
+                choice, left_choices = choose_and_return(list(panels))
+
+                split1 = draw_n_shifted(4, *choice[0:4], "v")
+                split2 = draw_two_shifted(*left_choices[0][0:4], "v")
+
+                ret_list = left_choices + split1 +list(split2)
+
+            # Draw 3 split 3-3-1 - H
+            elif type_choice == "threethreextwoone":
+                panels = draw_three(*dims, "h")
+                choice, left_choices = choose_and_return(list(panels))
+
+                split1 = draw_n_shifted(3, *choice[0:4], "v")
+                # Some issue with the function calls and seeding
+                n = 3
+                shifts = []
+                choice_max = round((100/n)*1.5)
+                choice_min = round((100/n)*0.5)
+                for i in range(0, n):
+                    shift_choice = np.random.randint(choice_min, choice_max)
+                    choice_max = choice_max + ((100/n) - shift_choice)
+                    shifts.append(shift_choice)
+                
+                to_add_or_remove = (100 - sum(shifts))/len(shifts)
+
+                normalized_shifts = []
+                for shift in shifts:
+                    new_shift = shift + to_add_or_remove
+                    normalized_shifts.append(new_shift/100)
+
+                split2 = draw_n_shifted(3, *left_choices[0][0:4], "v", shifts=normalized_shifts)
+
+                ret_list = left_choices + split1 + split2
+
+            # Draw 4 split 3x2 - HV
+            elif type_choice == "fourthreextwo":
+                horizontal_vertical = np.random.choice(["h", "v"])
+                panels = draw_n(4, *dims, horizontal_vertical)
+
+                choice, left_choices = choose_and_return(panels)
+
+                next_div = invert_for_next(horizontal_vertical)
+                for panel in left_choices:
+                    split = draw_two_shifted(*panel[0:4], next_div)
+                    ret_list += list(split)
+
+                ret_list += choice
             
         if num_panels == 8:
             combo1 = dict(
