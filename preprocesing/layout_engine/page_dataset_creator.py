@@ -40,12 +40,14 @@ def draw_n_shifted(n, topleft, topright, bottomright, bottomleft, horizontal_ver
                 choice_max = choice_max + ((100/n) - shift_choice)
                 shifts.append(shift_choice)
         
-        to_add_or_remove = (100 - sum(shifts))/len(shifts)
+            to_add_or_remove = (100 - sum(shifts))/len(shifts)
 
-        normalized_shifts = []
-        for shift in shifts:
-            new_shift = shift + to_add_or_remove
-            normalized_shifts.append(new_shift/100)
+            normalized_shifts = []
+            for shift in shifts:
+                new_shift = shift + to_add_or_remove
+                normalized_shifts.append(new_shift/100)
+        else:
+            normalized_shifts = shifts
 
         polys = []
 
@@ -319,24 +321,23 @@ def create_page_metadata():
     # Select panel boundary widths
 
 
+    topleft = (0.0, 0.0)
+    topright = (1700, 0.0)
+    bottomleft = (0.0, 2400)
+    bottomright = (1700, 2400)
+    dims = [
+        topleft,
+        topright,
+        bottomright,
+        bottomleft
+    ]
     # Polygons to return
     ret_list = []
 
-    layout_type = "h"
+    layout_type = "vh"
 
     if layout_type == "v":
         max_num_panels = 4
-
-        topleft = (0.0, 0.0)
-        topright = (1700, 0.0)
-        bottomleft = (0.0, 2400)
-        bottomright = (1700, 2400)
-        dims = [
-            topleft,
-            topright,
-            bottomright,
-            bottomleft
-        ]
 
         num_panels = np.random.randint(1, max_num_panels+1)
         ret_list = draw_n_shifted(num_panels, *dims, "v")
@@ -344,39 +345,14 @@ def create_page_metadata():
     elif layout_type == "h":
         max_num_panels = 6
 
-        topleft = (0.0, 0.0)
-        topright = (1700, 0.0)
-        bottomleft = (0.0, 2400)
-        bottomright = (1700, 2400)
-        dims = [
-            topleft,
-            topright,
-            bottomright,
-            bottomleft
-        ]
-
         num_panels = np.random.randint(1, max_num_panels+1)
         ret_list = draw_n_shifted(num_panels, *dims, "h")
-
     
     elif layout_type == "vh":
         
         max_num_panels = 8
         # num_panels = np.random.randint(2, max_num_panels+1)
-        num_panels = 5
-
-        topleft = (0.0, 0.0)
-        topright = (1700, 0.0)
-        bottomleft = (0.0, 2400)
-        bottomright = (1700, 2400)
-        dims = [
-            topleft,
-            topright,
-            bottomright,
-            bottomleft
-        ]
-
-  
+        num_panels = 6
 
         if num_panels == 2:
             # Draw 2 rectangles
@@ -551,17 +527,74 @@ def create_page_metadata():
             
             type_choice = np.random.choice(["tripeq", "tripuneq", "twofourtwo","twothreethree", "fourtwo"])
 
-            # if type_choice == "tripeq":
+            horizontal_vertical = np.random.choice(["v", "h"])
+
             # Draw 3 rectangles (V OR H)
+            type_choice = "fourtwo"
+            if type_choice == "tripeq" or type_choice == "tripuneq":
+                panels = draw_n_shifted(3, *dims, horizontal_vertical)
                 # Split each equally
+                if type_choice == "tripeq":
+                    shift = np.random.randint(25, 75)
+                    shift = shift/100
                 # Split each unequally
+                else:
+                    shift = None
+
+                next_div = invert_for_next(horizontal_vertical)
+                for panel in panels:
+                    p1, p2 = draw_two_shifted(*panel[0:4], next_div, shift=shift)
+                    ret_list += [p1, p2]
 
             # Draw 2 rectangles
+            elif type_choice == "twofourtwo":
+                p1, p2 = draw_two_shifted(*dims, horizontal_vertical)
                 # Split into 4 one half 2 in another
+                next_div = invert_for_next(horizontal_vertical)
+                ret_list += draw_n_shifted(4, *p1[0:4], next_div)
+                ret_list += draw_two_shifted(*p2[0:4], next_div)
+
+            # Draw 2 rectangles
+            elif type_choice == "twothreethree":
                 # Split 3 in each
-            
+                panels = draw_two_shifted(*dims, horizontal_vertical)
+                next_div = invert_for_next(horizontal_vertical)
+
+                for panel in panels:
+                    # Allow each inital panel to grow to up to 75% of 100/n
+                    n = 3
+                    shifts = []
+                    choice_max = round((100/n)*1.5)
+                    choice_min = round((100/n)*0.5)
+                    for i in range(0, n):
+                        shift_choice = np.random.randint(choice_min, choice_max)
+                        choice_max = choice_max + ((100/n) - shift_choice)
+                        shifts.append(shift_choice)
+                    
+                    to_add_or_remove = (100 - sum(shifts))/len(shifts)
+
+                    normalized_shifts = []
+                    for shift in shifts:
+                        new_shift = shift + to_add_or_remove
+                        normalized_shifts.append(new_shift/100)
+
+
+                    split_panels = draw_n_shifted(3, *panel[0:4], next_div, shifts=normalized_shifts) 
+                    ret_list += split_panels
+
             # Draw 4 rectangles
+            elif type_choice == "fourtwo": 
+                panels = draw_n_shifted(4, *dims, horizontal_vertical)
+
                 # Split two of them
+                choice1, left_choices1 = choose_and_return(panels)
+                choice2, left_choices2 = choose_and_return(left_choices1)
+
+                next_div = invert_for_next(horizontal_vertical)
+                split1 = draw_two_shifted(*choice1[0:4], next_div)
+                split2 = draw_two_shifted(*choice2[0:4], next_div)
+
+                ret_list = left_choices2 + list(split1) + list(split2)
 
         if num_panels == 7:
 
