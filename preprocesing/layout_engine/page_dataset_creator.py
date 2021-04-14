@@ -352,9 +352,8 @@ def create_page_metadata():
     elif layout_type == "vh":
         
         max_num_panels = 8
-        # num_panels = np.random.randint(2, max_num_panels+1)
-        num_panels = 8
-
+        num_panels = np.random.randint(2, max_num_panels+1)
+        
         if num_panels == 2:
             # Draw 2 rectangles
                 # vertically or horizontally
