@@ -24,6 +24,9 @@ class Panel:
             (self.x4y4, self.x1y1)
         ]
 
+        self.area = (self.x2y2[0] - self.x1y1[0])*(self.x3y3[1] - self.x2y2[1])
+        self.area_proportion = round(self.area/(2400*1700), 2)
+
         adjacency_list = dict(
             above = [],
             below = [],
@@ -86,6 +89,14 @@ class Panel:
     def get_child(self, idx):
 
         return self.children[idx]
+
+class Page(Panel):
+
+    def __init__(self, dims, page_type, num_panels, children=[]):
+        super().__init__(dims, "page", None, [])
+
+        self.num_panels = num_panels
+        self.page_type = page_type
 
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
 
@@ -282,42 +293,144 @@ def choose_and_return_other(parent):
 
     return choice_idx, choices
 
-def choose_and_return_multiple(panels):
 
-    chosen_panel = np.random.choice(panels) 
+def get_min_area_panels(panel, min_area=0.1, ret_panels=[]):
 
-    choice_idx = choose(chosen_panel)
+    for child in panel.children:
 
-    return choice_idx, chosen_panel
+        if len(child.children) > 1:
+            get_min_area_panels(child, min_area, ret_panels)
+        else:
+            if child.area_proportion >= min_area:
+                ret_panels.append(child)
+
+def single_slice_panels(page):
+
+    # Remove panels which are too small 
+    relevant_panels = [] 
+    get_min_area_panels(page, 0.1, ret_panels=relevant_panels) 
+
+    # Shuffle panels for randomness
+    random.shuffle(relevant_panels)
+
+    # single slice close
+    type_choice =  np.random.choice(["center", "side"])
+    type_choice =  "center"
+
+    # TODO: Remember to add number of panels increase to page 
+    # Center
+    if type_choice == "center":
+        if len(relevant_panels) > 1:
+            number_to_slice = np.random.randint(1, len(relevant_panels))
+        else:
+            number_to_slice = 1
+
+        for idx in range(0, number_to_slice):
+            panel = relevant_panels[idx]
+
+            # Decide which direction to cut in
+            horizontal_vertical = np.random.choice(["h", "v"])
+
+            # Get center line
+            # Vertical slice
+            if horizontal_vertical == "v":
+                panel_chosen_dim_length = (panel.x2y2[0] - panel.x1y1[0])/2
+
+                # Slice panel
+                draw_n(2, panel, "v")
+
+                # Skew it left or right
+                skew_side = np.random.choice(["left", "right"])
+
+                # Skew it by a percentage
+                skew_amount = np.random.randint(20, 100)/100
+                skew_amount = skew_amount*panel_chosen_dim_length
+
+                # Perform transform
+                p1 = panel.get_child(0)
+                p2 = panel.get_child(1)
+                if skew_side == "left":
+                    p1.x2y2 = (p1.x2y2[0] - skew_amount, p1.x2y2[1])
+                    p1.x3y3 = (p1.x3y3[0] + skew_amount, p1.x3y3[1])
+
+                    p2.x1y1 = (p2.x1y1[0] - skew_amount, p2.x1y1[1])
+                    p2.x4y4 = (p2.x4y4[0] + skew_amount, p2.x4y4[1])
+                else:
+                    p1.x2y2 = (p1.x2y2[0] + skew_amount, p1.x2y2[1])
+                    p1.x3y3 = (p1.x3y3[0] - skew_amount, p1.x3y3[1])
+
+                    p2.x1y1 = (p2.x1y1[0] + skew_amount, p2.x1y1[1])
+                    p2.x4y4 = (p2.x4y4[0] - skew_amount, p2.x4y4[1])
+            # Horizontal slice
+            else:
+                panel_chosen_dim_length = (panel.x3y3[1] - panel.x2y2[1])/2
+
+                # Slice panel
+                draw_n(2, panel, "h")
+
+                # Skew it left or right
+                skew_side = np.random.choice(["down", "up"])
+
+                # Skew it by a percentage
+                skew_amount = np.random.randint(20, 100)/100
+                skew_amount = skew_amount*panel_chosen_dim_length
+
+                p1 = panel.get_child(0)
+                p2 = panel.get_child(1)
+                if skew_side == "down":
+                    p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] + skew_amount)
+                    p1.x3y3 = (p1.x3y3[0], p1.x3y3[1] - skew_amount)
+
+                    p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] + skew_amount)
+                    p2.x2y2 = (p2.x2y2[0], p2.x2y2[1] - skew_amount)
+
+                else:
+                    p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] - skew_amount)
+                    p1.x3y3 = (p1.x3y3[0], p1.x3y3[1] + skew_amount)
+
+                    p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] - skew_amount)
+                    p2.x2y2 = (p2.x2y2[0], p2.x2y2[1] + skew_amount)
+
+    # Sides
+
+    return page
 
 def add_transforms(page):
-    # Create adjacency relationships/get them
-
-    
     # Transform types
-        # Slicing panels - all types
-        # single slice close to center
-        # single slice close to sides
+
+    # Allow choosing multiple
+    transform_choice = np.random.choice(["slice", "bend", "boundary"])
+    transform_choice = "slice"
+
+    # Slicing panels
+    if transform_choice == "slice":
+        page = single_slice_panels(page)
 
 
-        # TODO: 3 panel skew - Takes too much effort rn
-            # 1 panel moves and two smaller ones besides it get skewed
+        # double slice 
+            # V
+            # sides
 
-        # Box transforms
-            # Turn into trapezoid
-                # All rows
-            # Turn into rhombus
-                # only 3 panels or greater types
-            # 2's 3's and 4s skew
+    # 4 panel skew
+    # 3 panel skew
+    # 2 panel skew
+        # 1 panel moves and two smaller ones besides it get skewed
 
-        # Boundary removal 
-            # bottom panel
-                # Single side
-                # all sides
-            # top panel
-                # Single side
-                # all sides
-    
+    # Box transforms
+        # Turn into trapezoid
+            # All rows
+        # Turn into rhombus
+            # only 3 panels or greater types
+        # Full page back and forth
+
+    # Boundary removal 
+        # bottom panel
+            # Single side
+            # all sides
+        # top panel
+            # Single side
+            # all sides
+
     return page 
 
 def add_misalignment(panels):
@@ -344,7 +457,7 @@ def create_single_panel_metadata():
     pass
 
 
-def get_base_panels():
+def get_base_panels(num_panels=0, layout_type=None):
 
     # TODO: Skew panel number distribution
 
@@ -359,32 +472,33 @@ def get_base_panels():
         bottomleft
     ]
 
+    if layout_type is None:
+        layout_type = np.random.choice(["v", "h", "vh"])
+
     # Panels encapsulated and returned within page
-
-    layout_type = "vh"
-    # layout_type = np.random.choice(["v", "h", "vh"])
-
-    page = Panel(dims, "page", None, children=[])
+    page = Page(dims, layout_type, num_panels)
 
     # TODO: Fit in getting black pages sperately
-    if layout_type == "v":
-        # max_num_panels = 4
 
-        num_panels = np.random.choice([3, 4])
+    if layout_type == "v":
+        max_num_panels = 4
+        if num_panels < 1:
+            num_panels = np.random.choice([3, 4])
 
         draw_n_shifted(num_panels, page, "v")
         
     elif layout_type == "h":
         max_num_panels = 5
-
-        num_panels = np.random.randint(3, max_num_panels+1)
+        if num_panels < 1:
+            num_panels = np.random.randint(3, max_num_panels+1)
         draw_n_shifted(num_panels, page, "h")
 
     
     elif layout_type == "vh":
         
         max_num_panels = 8
-        num_panels = np.random.randint(2, max_num_panels+1)
+        if num_panels < 1:
+            num_panels = np.random.randint(2, max_num_panels+1)
 
         if num_panels == 2:
             # Draw 2 rectangles
@@ -397,6 +511,7 @@ def get_base_panels():
                 # Vertically or Horizontally
 
             horizontal_vertical = np.random.choice(["h", "v"])
+            horizontal_vertical = "v"
             draw_two_shifted(page, horizontal_vertical)
 
             next_div = invert_for_next(horizontal_vertical)
@@ -828,7 +943,7 @@ def create_page_metadata():
     # Select panel boundary widths
     # TODO: Remember some panels can just be left blank
 
-    page = get_base_panels()
+    page = get_base_panels(5, "vh")
     transformed_page = add_transforms(page)
 
     return transformed_page

@@ -28,12 +28,12 @@ def test_render(page):
     get_leaf_panels(page, leaf_children)
 
     coords = []
+    print(len(leaf_children))
     for panel in leaf_children:
         coords.append(panel.get_polygon())
     W = 1700
     H = 2400
 
-    print(coords)
     page = Image.new(size=(W,H), mode="L", color="white")
     draw_rect = ImageDraw.Draw(page)
 
