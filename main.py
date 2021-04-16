@@ -5,6 +5,7 @@ from preprocesing.extract_and_verify_fonts import extract_fonts, get_font_files,
 from preprocesing.convert_images import convert_images_to_bw
 from preprocesing.layout_engine.page_creator import create_single_page, test_render
 from preprocesing.layout_engine.page_dataset_creator import create_page_metadata
+from tqdm import tqdm
 
 import time
 
@@ -26,6 +27,14 @@ if __name__ == '__main__':
 
     # Page creation
     # create_single_page()
-    for i in range(0, 5):
-        panels = create_page_metadata()
-        test_render(panels)
+    # dt = []
+    # for i in tqdm(range(1000000)):
+    #     t1 = time.perf_counter()
+    #     panels = create_page_metadata()
+    #     t2 = time.perf_counter()
+    #     delta = t2-t1
+    #     dt.append(delta)
+    # print(sum(dt)/len(dt))
+    # print("This took: ", (t2-t1))
+    panels = create_page_metadata()
+    test_render(panels)
