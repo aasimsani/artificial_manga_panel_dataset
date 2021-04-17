@@ -39,7 +39,7 @@ def test_render(page):
 
     for rect in coords:
         # draw_rect.rectangle(rect, fill=None, outline="white", width=20)
-        draw_rect.line(rect, fill="black", width=20)
+        draw_rect.line(rect, fill="black", width=10)
         # draw_rect.polygon(rect, fill="red", outline="yellow")
 
     page.show()

@@ -8,7 +8,7 @@ import random
 
 class Panel:
 
-    def __init__(self, dims, name, parent, children=[]):
+    def __init__(self, dims, name, parent, children=[], non_rect=False):
 
         self.x1y1 = dims[0]
         self.x2y2 = dims[1]
@@ -16,6 +16,9 @@ class Panel:
         self.x4y4 = dims[3]
         self.name = name
         self.parent = parent
+
+        self.dims = dims
+        self.non_rect = non_rect
 
         self.lines = [
             (self.x1y1, self.x2y2),
@@ -35,7 +38,7 @@ class Panel:
         )
 
         self.children = children
-    
+
     def get_relative_location(self, panel):
         
         pos = ""
@@ -60,14 +63,17 @@ class Panel:
         return pos
     
     def get_polygon(self):
+        if self.non_rect:
+            return tuple(self.dims)
+        else:
 
-        return (
-            self.x1y1,
-            self.x2y2,
-            self.x3y3,
-            self.x4y4,
-            self.x1y1
-        )
+            return (
+                self.x1y1,
+                self.x2y2,
+                self.x3y3,
+                self.x4y4,
+                self.x1y1
+            )
 
     def is_adjacent(self, panel):
 
@@ -308,14 +314,14 @@ def single_slice_panels(page):
 
     # Remove panels which are too small 
     relevant_panels = [] 
-    get_min_area_panels(page, 0.1, ret_panels=relevant_panels) 
+    get_min_area_panels(page, 0.2, ret_panels=relevant_panels) 
 
     # Shuffle panels for randomness
     random.shuffle(relevant_panels)
 
     # single slice close
     type_choice =  np.random.choice(["center", "side"])
-    type_choice =  "center"
+    type_choice =  "side"
 
     # TODO: Remember to add number of panels increase to page 
     # Center
@@ -392,6 +398,35 @@ def single_slice_panels(page):
                     p2.x2y2 = (p2.x2y2[0], p2.x2y2[1] + skew_amount)
 
     # Sides
+    # TODO: Add multiple sides by refactoring Panel to be fully polygon
+    else:
+        number_to_slice = np.random.choice([1, 2])
+        number_to_slice = 1
+
+        panel = relevant_panels[0]
+
+        draw_n(2, panel, "h")
+
+        p1 = panel.get_child(0)
+        p2 = panel.get_child(1)
+
+        # Panels are non standard polygons
+        p1.non_rect = True
+        p2.non_rect = True
+
+        cut_y_length = (panel.x4y4[1] - panel.x1y1[1])*0.3
+        cut_x_length = (panel.x3y3[0] - panel.x4y4[0])*0.4
+
+        # bottom left corner
+        p1_cut_x1y1 = (panel.x4y4[0], panel.x4y4[1]-cut_y_length)
+        p1_cut_x2y2 = (panel.x4y4[0] + cut_x_length, panel.x4y4[1])
+        p1_cut_x3y3 = (panel.x4y4)
+
+        p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
+
+        p2.dims = [panel.x1y1, panel.x2y2, panel.x3y3, p1_cut_x2y2, p1_cut_x1y1, panel.x1y1] 
+
+
 
     return page
 
