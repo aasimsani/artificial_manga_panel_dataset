@@ -8,7 +8,7 @@ import random
 
 class Panel:
 
-    def __init__(self, dims, name, parent, children=[], non_rect=False):
+    def __init__(self, dims, name, parent, orientation, children=[], non_rect=False):
 
         self.x1y1 = dims[0]
         self.x2y2 = dims[1]
@@ -27,7 +27,10 @@ class Panel:
             (self.x4y4, self.x1y1)
         ]
 
-        self.area = (self.x2y2[0] - self.x1y1[0])*(self.x3y3[1] - self.x2y2[1])
+        self.width = (self.x2y2[0] - self.x1y1[0])
+        self.height = (self.x3y3[1] - self.x2y2[1])
+
+        self.area = self.width*self.height
         self.area_proportion = round(self.area/(2400*1700), 2)
 
         adjacency_list = dict(
@@ -38,6 +41,10 @@ class Panel:
         )
 
         self.children = children
+
+        self.sliced = False
+
+        self.orientation = orientation 
 
     def get_relative_location(self, panel):
         
@@ -99,7 +106,7 @@ class Panel:
 class Page(Panel):
 
     def __init__(self, dims, page_type, num_panels, children=[]):
-        super().__init__(dims, "page", None, [])
+        super().__init__(dims, "page", None, None, [])
 
         self.num_panels = num_panels
         self.page_type = page_type
@@ -150,7 +157,7 @@ def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
                     x4y4 = (bottomleft[0], topleft[1] + (bottomleft[1] - topleft[1])*next_shift_level)
 
                 poly_dims = (x1y1, x2y2, x3y3, x4y4)
-                poly = Panel(poly_dims, parent.name+"-"+str(i), parent=parent, children=[])
+                poly = Panel(poly_dims, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
                 parent.add_child(poly)
         
         if horizontal_vertical == "v":
@@ -173,7 +180,7 @@ def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
                     x3y3 = (bottomleft[0] + (bottomright[0] - bottomleft[0])*next_shift_level, bottomright[1])
 
                 poly_dims = (x1y1, x2y2, x3y3, x4y4)
-                poly = Panel(poly_dims, parent.name+"-"+str(i), parent=parent, children=[])
+                poly = Panel(poly_dims, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
                 parent.add_child(poly)
 
 def draw_n(n, parent, horizontal_vertical):
@@ -200,7 +207,7 @@ def draw_n(n, parent, horizontal_vertical):
                     x4y4 = (bottomleft[0], topleft[1] + (bottomleft[1] - topleft[1])*((i+1)/n))
 
                 poly_dims = (x1y1, x2y2, x3y3, x4y4)
-                poly = Panel(poly_dims, parent.name+"-"+str(i), parent=parent, children=[])
+                poly = Panel(poly_dims, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
                 parent.add_child(poly)
         
         if horizontal_vertical == "v":
@@ -221,7 +228,7 @@ def draw_n(n, parent, horizontal_vertical):
                     x3y3 = (bottomleft[0] + (bottomright[0] - bottomleft[0])*((i+1)/n), bottomright[1])
 
                 poly_dims = (x1y1, x2y2, x3y3, x4y4)
-                poly = Panel(poly_dims, parent.name+"-"+str(i), parent=parent, children=[])
+                poly = Panel(poly_dims, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
                 parent.add_child(poly)
 
 def draw_two_shifted(parent, horizontal_vertical, shift=None):
@@ -252,8 +259,8 @@ def draw_two_shifted(parent, horizontal_vertical, shift=None):
 
         poly2_dims = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
 
-        poly1 = Panel(poly1_dims, parent.name + "-0", parent=parent, children=[])
-        poly2 = Panel(poly2_dims, parent.name + "-1", parent=parent, children=[])
+        poly1 = Panel(poly1_dims, parent.name + "-0", orientation=horizontal_vertical, parent=parent, children=[])
+        poly2 = Panel(poly2_dims, parent.name + "-1", orientation=horizontal_vertical, parent=parent, children=[])
 
         parent.add_children([poly1, poly2])
     
@@ -273,8 +280,8 @@ def draw_two_shifted(parent, horizontal_vertical, shift=None):
 
         poly2_dims = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
 
-        poly1 = Panel(poly1_dims, parent.name + "-0", parent, children=[])
-        poly2 = Panel(poly2_dims, parent.name + "-1", parent, children=[])
+        poly1 = Panel(poly1_dims, parent.name + "-0", orientation=horizontal_vertical, parent=parent, children=[])
+        poly2 = Panel(poly2_dims, parent.name + "-1", orientation=horizontal_vertical, parent=parent, children=[])
 
         parent.add_children([poly1, poly2])
 
@@ -299,7 +306,6 @@ def choose_and_return_other(parent):
 
     return choice_idx, choices
 
-
 def get_min_area_panels(panel, min_area=0.1, ret_panels=[]):
 
     for child in panel.children:
@@ -307,10 +313,10 @@ def get_min_area_panels(panel, min_area=0.1, ret_panels=[]):
         if len(child.children) > 1:
             get_min_area_panels(child, min_area, ret_panels)
         else:
-            if child.area_proportion >= min_area:
+            if child.area_proportion >= min_area and not child.sliced:
                 ret_panels.append(child)
 
-def single_slice_panels(page):
+def single_slice_panels(page, type_choice=None):
 
     # Remove panels which are too small 
     relevant_panels = [] 
@@ -320,11 +326,12 @@ def single_slice_panels(page):
     random.shuffle(relevant_panels)
 
     # single slice close
-    type_choice =  np.random.choice(["center", "side"])
-    type_choice =  "side"
+    if type_choice == None:
+        type_choice =  np.random.choice(["center", "side"])
 
-    # TODO: Remember to add number of panels increase to page 
+    num_panels_added = 0
     # Center
+    # TODO: Remember to add number of panels increase to page 
     if type_choice == "center":
         if len(relevant_panels) > 1:
             number_to_slice = np.random.randint(1, len(relevant_panels))
@@ -333,6 +340,7 @@ def single_slice_panels(page):
 
         for idx in range(0, number_to_slice):
             panel = relevant_panels[idx]
+            num_panels_added += 1
 
             # Decide which direction to cut in
             horizontal_vertical = np.random.choice(["h", "v"])
@@ -355,6 +363,9 @@ def single_slice_panels(page):
                 # Perform transform
                 p1 = panel.get_child(0)
                 p2 = panel.get_child(1)
+
+                p1.sliced = True
+                p2.sliced = True
                 if skew_side == "left":
                     p1.x2y2 = (p1.x2y2[0] - skew_amount, p1.x2y2[1])
                     p1.x3y3 = (p1.x3y3[0] + skew_amount, p1.x3y3[1])
@@ -383,6 +394,9 @@ def single_slice_panels(page):
 
                 p1 = panel.get_child(0)
                 p2 = panel.get_child(1)
+
+                p1.sliced = True
+                p2.sliced = True
                 if skew_side == "down":
                     p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] + skew_amount)
                     p1.x3y3 = (p1.x3y3[0], p1.x3y3[1] - skew_amount)
@@ -400,71 +414,248 @@ def single_slice_panels(page):
     # Sides
     # TODO: Add multiple sides by refactoring Panel to be fully polygon
     else:
-        number_to_slice = np.random.choice([1, 2])
-        number_to_slice = 1
+        number_to_slice = np.random.choice([1, 3])
 
-        panel = relevant_panels[0]
+        for panel in relevant_panels[0:number_to_slice]:                
+            side = np.random.choice(["tr", "tl", "br", "bl"])
 
-        draw_n(2, panel, "h")
+            draw_n(2, panel, "h")
+            num_panels_added += 1
 
-        p1 = panel.get_child(0)
-        p2 = panel.get_child(1)
+            p1 = panel.get_child(0)
+            p2 = panel.get_child(1)
 
-        # Panels are non standard polygons
-        p1.non_rect = True
-        p2.non_rect = True
+            # Panels are non standard polygons
+            p1.non_rect = True
+            p2.non_rect = True
 
-        cut_y_length = (panel.x4y4[1] - panel.x1y1[1])*0.3
-        cut_x_length = (panel.x3y3[0] - panel.x4y4[0])*0.4
+            p1.sliced = True
+            p2.sliced = True
 
-        # bottom left corner
-        p1_cut_x1y1 = (panel.x4y4[0], panel.x4y4[1]-cut_y_length)
-        p1_cut_x2y2 = (panel.x4y4[0] + cut_x_length, panel.x4y4[1])
-        p1_cut_x3y3 = (panel.x4y4)
+            cut_y_proportion = np.random.randint(30, 75)/100
+            cut_x_proportion = np.random.randint(30, 75)/100
+            cut_y_length = (panel.x4y4[1] - panel.x1y1[1])*cut_y_proportion
+            cut_x_length = (panel.x3y3[0] - panel.x4y4[0])*cut_x_proportion
 
-        p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
+            # bottom left corner
+            if side == "bl":
 
-        p2.dims = [panel.x1y1, panel.x2y2, panel.x3y3, p1_cut_x2y2, p1_cut_x1y1, panel.x1y1] 
+                p1_cut_x1y1 = (panel.x4y4[0], panel.x4y4[1] - cut_y_length)
+                p1_cut_x2y2 = (panel.x4y4[0] + cut_x_length, panel.x4y4[1])
+                p1_cut_x3y3 = (panel.x4y4)
 
+                p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
 
+                p2.dims = [panel.x1y1, panel.x2y2, panel.x3y3, p1_cut_x2y2, p1_cut_x1y1, panel.x1y1] 
+            
+            # bottom right corner
+            elif side == "br":
+
+                p1_cut_x1y1 = (panel.x3y3[0], panel.x3y3[1] - cut_y_length)
+                p1_cut_x2y2 = (panel.x3y3)
+                p1_cut_x3y3 = (panel.x3y3[0] - cut_x_length, panel.x3y3[1])
+
+                p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
+                p2.dims = [panel.x1y1, panel.x2y2, p1_cut_x1y1, p1_cut_x3y3, panel.x4y4, panel.x1y1] 
+
+            # top left corner 
+            elif side == "tl":
+
+                p1_cut_x1y1 = panel.x1y1
+                p1_cut_x2y2 = (panel.x1y1[0] + cut_x_length, panel.x1y1[1])
+                p1_cut_x3y3 = (panel.x1y1[0], panel.x1y1[1] + cut_y_length)
+
+                p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
+                p2.dims = [p1_cut_x2y2, panel.x2y2, panel.x3y3, panel.x4y4, p1_cut_x3y3, p1_cut_x1y1] 
+
+            # top right corner
+            else:
+                p1_cut_x1y1 = (panel.x2y2[0] - cut_x_length, panel.x2y2[1])
+                p1_cut_x2y2 = panel.x2y2 
+                p1_cut_x3y3 = (panel.x2y2[0], panel.x2y2[1] + cut_y_length)
+
+                p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
+                p2.dims = [panel.x1y1, p1_cut_x1y1, p1_cut_x3y3, panel.x3y3, panel.x4y4, panel.x1y1]
+
+    page.num_panels +=  num_panels_added
 
     return page
 
+def get_leaf_panels(page, panels=[]):
+
+    for child in page.children:
+        
+        if len(child.children) > 0:
+            get_leaf_panels(child, panels)
+        else:
+            panels.append(child)
+
+def find_parent_with_multiple_children(page, n):
+    
+    panels = []
+    get_leaf_panels(page, panels)
+    relevant_panels = []
+
+    for panel in panels:
+        if panel.parent not in relevant_panels:
+            if len(panel.parent.children) == n:
+                relevant_panels.append(panel.parent)
+    
+    return relevant_panels
+
+def box_transform_panels(page, type_choice=None):
+
+    if type_choice == None:
+        type_choice = np.random.choice(["trapezoid", "rhombus", "fprho"])
+    
+    type_choice = "trapezoid"
+
+    if type_choice == "trapezoid":
+        if page.num_panels > 2:
+            relevant_panels = find_parent_with_multiple_children(page, 3)
+            if len(relevant_panels) > 0:
+
+                panel = relevant_panels[0]
+                
+                print(panel.orientation)
+
+                # Since panels are created in order
+                p1 = panel.get_child(0)
+                p2 = panel.get_child(1)
+                p3 = panel.get_child(2)
+
+                min_width = math.inf
+                min_height = math.inf
+
+                for child in [p1, p2, p3]:
+
+                    if child.width < min_width:
+                        min_width = child.width
+                    
+                    if child.height < min_height:
+                        min_height = child.height
+
+                trapezoid_pattern = np.random.choice(["A", "V"])
+                trapezoid_pattern = "V"
+
+                movement_proportion = np.random.randint(10, 50)
+
+                if panel.orientation == "h":
+                    
+                    x_movement = min_width*(movement_proportion/100)
+
+                    if trapezoid_pattern == "A":
+                        line_one_top = (p1.x2y2[0] + x_movement, p1.x2y2[1])
+                        line_one_bottom = (p1.x3y3[0] - x_movement, p1.x3y3[1])
+
+                        p1.x2y2 = line_one_top
+                        p1.x3y3 = line_one_bottom
+
+                        p2.x1y1 = line_one_top
+                        p2.x4y4 =line_one_bottom 
+
+                        line_two_top = (p2.x2y2[0] - x_movement, p2.x2y2[1])
+                        line_two_bottom = (p2.x3y3[0] + x_movement, p2.x3y3[1])
+
+                        p2.x2y2 = line_two_top
+                        p2.x3y3 = line_two_bottom
+
+                        p3.x1y1 = line_two_top
+                        p3.x4y4 = line_two_bottom 
+                    
+                    else:
+
+                        line_one_top = (p1.x2y2[0] - x_movement, p1.x2y2[1])
+                        line_one_bottom = (p1.x3y3[0] + x_movement, p1.x3y3[1])
+
+                        p1.x2y2 = line_one_top
+                        p1.x3y3 = line_one_bottom
+
+                        p2.x1y1 = line_one_top
+                        p2.x4y4 =line_one_bottom 
+
+                        line_two_top = (p2.x2y2[0] + x_movement, p2.x2y2[1])
+                        line_two_bottom = (p2.x3y3[0] - x_movement, p2.x3y3[1])
+
+                        p2.x2y2 = line_two_top
+                        p2.x3y3 = line_two_bottom
+
+                        p3.x1y1 = line_two_top
+                        p3.x4y4 = line_two_bottom 
+                else:
+                    y_movement = min_height*(movement_proportion/100)
+
+                    if trapezoid_pattern == "A":
+
+                        line_one_top = (p2.x2y2[0], p2.x2y2[1] + y_movement)
+                        line_one_bottom = (p2.x1y1[0], p2.x1y1[1] - y_movement)
+
+                        p2.x2y2 = line_one_top
+                        p2.x1y1 = line_one_bottom
+
+                        p1.x3y3 = line_one_top
+                        p1.x4y4 = line_one_bottom
+
+                        line_two_top = (p2.x3y3[0], p2.x3y3[1] - y_movement)
+                        line_two_bottom = (p2.x4y4[0], p2.x4y4[1] + y_movement)
+
+                        p2.x3y3  = line_two_top
+                        p2.x4y4  = line_two_bottom
+
+                        p3.x1y1 = line_two_bottom
+                        p3.x2y2 = line_two_top
+                    else:
+
+                        line_one_top = (p2.x2y2[0], p2.x2y2[1] - y_movement)
+                        line_one_bottom = (p2.x1y1[0], p2.x1y1[1] + y_movement)
+
+                        p2.x2y2 = line_one_top
+                        p2.x1y1 = line_one_bottom
+
+                        p1.x3y3 = line_one_top
+                        p1.x4y4 = line_one_bottom
+
+                        line_two_top = (p2.x3y3[0], p2.x3y3[1] + y_movement)
+                        line_two_bottom = (p2.x4y4[0], p2.x4y4[1] - y_movement)
+
+                        p2.x3y3  = line_two_top
+                        p2.x4y4  = line_two_bottom
+
+                        p3.x1y1 = line_two_bottom
+                        p3.x2y2 = line_two_top
+
+    elif type_choice == "rhombus":
+        pass
+
+    
+    return page
+    
 def add_transforms(page):
     # Transform types
 
     # Allow choosing multiple
-    transform_choice = np.random.choice(["slice", "bend", "boundary"])
-    transform_choice = "slice"
+    # transform_choice = ["slice", "box"]
+    transform_choice = ["box"]
 
     # Slicing panels
-    if transform_choice == "slice":
+
+    # Works best with large panels
+    if "slice" in transform_choice:
         page = single_slice_panels(page)
 
+        # Makes v cuts happen more often 1/4 chance
+        if np.random.choice([0, 1, 2, 3]) == 1:
+            page = single_slice_panels(page)
 
-        # double slice 
-            # V
-            # sides
+    if "box" in transform_choice:
 
-    # 4 panel skew
-    # 3 panel skew
-    # 2 panel skew
-        # 1 panel moves and two smaller ones besides it get skewed
-
+        page = box_transform_panels(page)
     # Box transforms
         # Turn into trapezoid
             # All rows
         # Turn into rhombus
             # only 3 panels or greater types
         # Full page back and forth
-
-    # Boundary removal 
-        # bottom panel
-            # Single side
-            # all sides
-        # top panel
-            # Single side
-            # all sides
 
     return page 
 
@@ -519,6 +710,7 @@ def get_base_panels(num_panels=0, layout_type=None):
         max_num_panels = 4
         if num_panels < 1:
             num_panels = np.random.choice([3, 4])
+            page.num_panels = num_panels
 
         draw_n_shifted(num_panels, page, "v")
         
@@ -526,6 +718,8 @@ def get_base_panels(num_panels=0, layout_type=None):
         max_num_panels = 5
         if num_panels < 1:
             num_panels = np.random.randint(3, max_num_panels+1)
+            page.num_panels = num_panels
+
         draw_n_shifted(num_panels, page, "h")
 
     
@@ -534,6 +728,7 @@ def get_base_panels(num_panels=0, layout_type=None):
         max_num_panels = 8
         if num_panels < 1:
             num_panels = np.random.randint(2, max_num_panels+1)
+            page.num_panels = num_panels
 
         if num_panels == 2:
             # Draw 2 rectangles
@@ -559,7 +754,7 @@ def get_base_panels(num_panels=0, layout_type=None):
 
         if num_panels == 4:
             horizontal_vertical = np.random.choice(["h", "v"])
-            type_choice = np.random.choice(["eq", "uneq", "div", "trip"]) 
+            type_choice = np.random.choice(["eq", "uneq", "div", "trip", "twoonethree"]) 
 
             # Draw two rectangles 
             if type_choice == "eq":
@@ -612,6 +807,18 @@ def get_base_panels(num_panels=0, layout_type=None):
                 next_div = invert_for_next(horizontal_vertical)
 
                 draw_two_shifted(choice, next_div)
+
+            elif type_choice == "twoonethree":
+
+                draw_two_shifted(page, horizontal_vertical)
+
+                choice_idx = choose(page)
+                choice = page.get_child(choice_idx)
+
+                next_div = invert_for_next(horizontal_vertical)
+
+                draw_n_shifted(3, choice, next_div)
+
         
         if num_panels == 5:
 
@@ -619,6 +826,7 @@ def get_base_panels(num_panels=0, layout_type=None):
             horizontal_vertical = np.random.choice(["h", "v"])
             
             type_choice = np.random.choice(["eq", "uneq", "div", "twotwothree", "threetwotwo", "fourtwoone"])
+            type_choice = "twotwothree"
 
             if type_choice == "eq" or type_choice == "uneq":
 
