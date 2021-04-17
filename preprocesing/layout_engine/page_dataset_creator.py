@@ -506,128 +506,245 @@ def find_parent_with_multiple_children(page, n):
 def box_transform_panels(page, type_choice=None):
 
     if type_choice == None:
-        type_choice = np.random.choice(["trapezoid", "rhombus", "fprho"])
+        type_choice = np.random.choice(["trapezoid", "rhombus", "fprho", "fptrapezoid"])
     
-    type_choice = "trapezoid"
+    type_choice = "rhombus"
 
     if type_choice == "trapezoid":
         if page.num_panels > 2:
             relevant_panels = find_parent_with_multiple_children(page, 3)
             if len(relevant_panels) > 0:
-
-                panel = relevant_panels[0]
-                
-                print(panel.orientation)
-
-                # Since panels are created in order
-                p1 = panel.get_child(0)
-                p2 = panel.get_child(1)
-                p3 = panel.get_child(2)
-
-                min_width = math.inf
-                min_height = math.inf
-
-                for child in [p1, p2, p3]:
-
-                    if child.width < min_width:
-                        min_width = child.width
-                    
-                    if child.height < min_height:
-                        min_height = child.height
-
-                trapezoid_pattern = np.random.choice(["A", "V"])
-                trapezoid_pattern = "V"
-
-                movement_proportion = np.random.randint(10, 50)
-
-                if panel.orientation == "h":
-                    
-                    x_movement = min_width*(movement_proportion/100)
-
-                    if trapezoid_pattern == "A":
-                        line_one_top = (p1.x2y2[0] + x_movement, p1.x2y2[1])
-                        line_one_bottom = (p1.x3y3[0] - x_movement, p1.x3y3[1])
-
-                        p1.x2y2 = line_one_top
-                        p1.x3y3 = line_one_bottom
-
-                        p2.x1y1 = line_one_top
-                        p2.x4y4 =line_one_bottom 
-
-                        line_two_top = (p2.x2y2[0] - x_movement, p2.x2y2[1])
-                        line_two_bottom = (p2.x3y3[0] + x_movement, p2.x3y3[1])
-
-                        p2.x2y2 = line_two_top
-                        p2.x3y3 = line_two_bottom
-
-                        p3.x1y1 = line_two_top
-                        p3.x4y4 = line_two_bottom 
-                    
-                    else:
-
-                        line_one_top = (p1.x2y2[0] - x_movement, p1.x2y2[1])
-                        line_one_bottom = (p1.x3y3[0] + x_movement, p1.x3y3[1])
-
-                        p1.x2y2 = line_one_top
-                        p1.x3y3 = line_one_bottom
-
-                        p2.x1y1 = line_one_top
-                        p2.x4y4 =line_one_bottom 
-
-                        line_two_top = (p2.x2y2[0] + x_movement, p2.x2y2[1])
-                        line_two_bottom = (p2.x3y3[0] - x_movement, p2.x3y3[1])
-
-                        p2.x2y2 = line_two_top
-                        p2.x3y3 = line_two_bottom
-
-                        p3.x1y1 = line_two_top
-                        p3.x4y4 = line_two_bottom 
+                if len(relevant_panels) > 1:
+                    num_panels = np.random.choice(1, len(relevant_panels)) 
                 else:
-                    y_movement = min_height*(movement_proportion/100)
+                    num_panels = 1
 
-                    if trapezoid_pattern == "A":
+                for idx in range(0, num_panels):
 
-                        line_one_top = (p2.x2y2[0], p2.x2y2[1] + y_movement)
-                        line_one_bottom = (p2.x1y1[0], p2.x1y1[1] - y_movement)
+                    panel = relevant_panels[idx]
 
-                        p2.x2y2 = line_one_top
-                        p2.x1y1 = line_one_bottom
+                    # Since panels are created in order
+                    p1 = panel.get_child(0)
+                    p2 = panel.get_child(1)
+                    p3 = panel.get_child(2)
 
-                        p1.x3y3 = line_one_top
-                        p1.x4y4 = line_one_bottom
+                    min_width = math.inf
+                    min_height = math.inf
 
-                        line_two_top = (p2.x3y3[0], p2.x3y3[1] - y_movement)
-                        line_two_bottom = (p2.x4y4[0], p2.x4y4[1] + y_movement)
+                    for child in [p1, p2, p3]:
 
-                        p2.x3y3  = line_two_top
-                        p2.x4y4  = line_two_bottom
+                        if child.width < min_width:
+                            min_width = child.width
+                        
+                        if child.height < min_height:
+                            min_height = child.height
 
-                        p3.x1y1 = line_two_bottom
-                        p3.x2y2 = line_two_top
+                    trapezoid_pattern = np.random.choice(["A", "V"])
+
+                    movement_proportion = np.random.randint(10, 50)
+
+                    if panel.orientation == "h":
+                        
+                        x_movement = min_width*(movement_proportion/100)
+
+                        if trapezoid_pattern == "A":
+                            line_one_top = (p1.x2y2[0] + x_movement, p1.x2y2[1])
+                            line_one_bottom = (p1.x3y3[0] - x_movement, p1.x3y3[1])
+
+                            p1.x2y2 = line_one_top
+                            p1.x3y3 = line_one_bottom
+
+                            p2.x1y1 = line_one_top
+                            p2.x4y4 =line_one_bottom 
+
+                            line_two_top = (p2.x2y2[0] - x_movement, p2.x2y2[1])
+                            line_two_bottom = (p2.x3y3[0] + x_movement, p2.x3y3[1])
+
+                            p2.x2y2 = line_two_top
+                            p2.x3y3 = line_two_bottom
+
+                            p3.x1y1 = line_two_top
+                            p3.x4y4 = line_two_bottom 
+                        
+                        else:
+
+                            line_one_top = (p1.x2y2[0] - x_movement, p1.x2y2[1])
+                            line_one_bottom = (p1.x3y3[0] + x_movement, p1.x3y3[1])
+
+                            p1.x2y2 = line_one_top
+                            p1.x3y3 = line_one_bottom
+
+                            p2.x1y1 = line_one_top
+                            p2.x4y4 =line_one_bottom 
+
+                            line_two_top = (p2.x2y2[0] + x_movement, p2.x2y2[1])
+                            line_two_bottom = (p2.x3y3[0] - x_movement, p2.x3y3[1])
+
+                            p2.x2y2 = line_two_top
+                            p2.x3y3 = line_two_bottom
+
+                            p3.x1y1 = line_two_top
+                            p3.x4y4 = line_two_bottom 
                     else:
+                        y_movement = min_height*(movement_proportion/100)
 
-                        line_one_top = (p2.x2y2[0], p2.x2y2[1] - y_movement)
-                        line_one_bottom = (p2.x1y1[0], p2.x1y1[1] + y_movement)
+                        if trapezoid_pattern == "A":
 
-                        p2.x2y2 = line_one_top
-                        p2.x1y1 = line_one_bottom
+                            line_one_top = (p2.x2y2[0], p2.x2y2[1] + y_movement)
+                            line_one_bottom = (p2.x1y1[0], p2.x1y1[1] - y_movement)
 
-                        p1.x3y3 = line_one_top
-                        p1.x4y4 = line_one_bottom
+                            p2.x2y2 = line_one_top
+                            p2.x1y1 = line_one_bottom
 
-                        line_two_top = (p2.x3y3[0], p2.x3y3[1] + y_movement)
-                        line_two_bottom = (p2.x4y4[0], p2.x4y4[1] - y_movement)
+                            p1.x3y3 = line_one_top
+                            p1.x4y4 = line_one_bottom
 
-                        p2.x3y3  = line_two_top
-                        p2.x4y4  = line_two_bottom
+                            line_two_top = (p2.x3y3[0], p2.x3y3[1] - y_movement)
+                            line_two_bottom = (p2.x4y4[0], p2.x4y4[1] + y_movement)
 
-                        p3.x1y1 = line_two_bottom
-                        p3.x2y2 = line_two_top
+                            p2.x3y3  = line_two_top
+                            p2.x4y4  = line_two_bottom
+
+                            p3.x1y1 = line_two_bottom
+                            p3.x2y2 = line_two_top
+                        else:
+
+                            line_one_top = (p2.x2y2[0], p2.x2y2[1] - y_movement)
+                            line_one_bottom = (p2.x1y1[0], p2.x1y1[1] + y_movement)
+
+                            p2.x2y2 = line_one_top
+                            p2.x1y1 = line_one_bottom
+
+                            p1.x3y3 = line_one_top
+                            p1.x4y4 = line_one_bottom
+
+                            line_two_top = (p2.x3y3[0], p2.x3y3[1] + y_movement)
+                            line_two_bottom = (p2.x4y4[0], p2.x4y4[1] - y_movement)
+
+                            p2.x3y3  = line_two_top
+                            p2.x4y4  = line_two_bottom
+
+                            p3.x1y1 = line_two_bottom
+                            p3.x2y2 = line_two_top
 
     elif type_choice == "rhombus":
-        pass
+        if page.num_panels > 1:
+            relevant_panels = find_parent_with_multiple_children(page, 3)
+            if len(relevant_panels) > 0:
 
-    
+                if len(relevant_panels) > 1:
+                    num_panels = np.random.choice(1, len(relevant_panels)) 
+                else:
+                    num_panels = 1
+
+                for idx in range(0, num_panels):
+
+                    panel = relevant_panels[idx]
+                    
+                    # Since panels are created in order
+                    p1 = panel.get_child(0)
+                    p2 = panel.get_child(1)
+                    p3 = panel.get_child(2)
+
+                    min_width = math.inf
+                    min_height = math.inf
+
+                    for child in [p1, p2, p3]:
+
+                        if child.width < min_width:
+                            min_width = child.width
+                        
+                        if child.height < min_height:
+                            min_height = child.height
+
+                    trapezoid_pattern = np.random.choice(["left", "right"])
+
+                    movement_proportion = np.random.randint(10, 50)
+
+                    if panel.orientation == "h":
+                        
+                        x_movement = min_width*(movement_proportion/100)
+
+                        if trapezoid_pattern == "left":
+                            line_one_top = (p1.x2y2[0] - x_movement, p1.x2y2[1])
+                            line_one_bottom = (p1.x3y3[0] + x_movement, p1.x3y3[1])
+
+                            p1.x2y2 = line_one_top
+                            p1.x3y3 = line_one_bottom
+
+                            p2.x1y1 = line_one_top
+                            p2.x4y4 =line_one_bottom 
+
+                            line_two_top = (p2.x2y2[0] - x_movement, p2.x2y2[1])
+                            line_two_bottom = (p2.x3y3[0] + x_movement, p2.x3y3[1])
+
+                            p2.x2y2 = line_two_top
+                            p2.x3y3 = line_two_bottom
+
+                            p3.x1y1 = line_two_top
+                            p3.x4y4 = line_two_bottom 
+                        
+                        else:
+
+                            line_one_top = (p1.x2y2[0] + x_movement, p1.x2y2[1])
+                            line_one_bottom = (p1.x3y3[0] - x_movement, p1.x3y3[1])
+
+                            p1.x2y2 = line_one_top
+                            p1.x3y3 = line_one_bottom
+
+                            p2.x1y1 = line_one_top
+                            p2.x4y4 =line_one_bottom 
+
+                            line_two_top = (p2.x2y2[0] + x_movement, p2.x2y2[1])
+                            line_two_bottom = (p2.x3y3[0] - x_movement, p2.x3y3[1])
+
+                            p2.x2y2 = line_two_top
+                            p2.x3y3 = line_two_bottom
+
+                            p3.x1y1 = line_two_top
+                            p3.x4y4 = line_two_bottom 
+                    else:
+                        y_movement = min_height*(movement_proportion/100)
+
+                        if trapezoid_pattern == "right":
+
+                            line_one_top = (p2.x2y2[0], p2.x2y2[1] + y_movement)
+                            line_one_bottom = (p2.x1y1[0], p2.x1y1[1] - y_movement)
+
+                            p2.x2y2 = line_one_top
+                            p2.x1y1 = line_one_bottom
+
+                            p1.x3y3 = line_one_top
+                            p1.x4y4 = line_one_bottom
+
+                            line_two_top = (p2.x3y3[0], p2.x3y3[1] + y_movement)
+                            line_two_bottom = (p2.x4y4[0], p2.x4y4[1] - y_movement)
+
+                            p2.x3y3  = line_two_top
+                            p2.x4y4  = line_two_bottom
+
+                            p3.x1y1 = line_two_bottom
+                            p3.x2y2 = line_two_top
+                        else:
+
+                            line_one_top = (p2.x2y2[0], p2.x2y2[1] - y_movement)
+                            line_one_bottom = (p2.x1y1[0], p2.x1y1[1] + y_movement)
+
+                            p2.x2y2 = line_one_top
+                            p2.x1y1 = line_one_bottom
+
+                            p1.x3y3 = line_one_top
+                            p1.x4y4 = line_one_bottom
+
+                            line_two_top = (p2.x3y3[0], p2.x3y3[1] - y_movement)
+                            line_two_bottom = (p2.x4y4[0], p2.x4y4[1] + y_movement)
+
+                            p2.x3y3  = line_two_top
+                            p2.x4y4  = line_two_bottom
+
+                            p3.x1y1 = line_two_bottom
+                            p3.x2y2 = line_two_top
+
     return page
     
 def add_transforms(page):
@@ -635,7 +752,7 @@ def add_transforms(page):
 
     # Allow choosing multiple
     # transform_choice = ["slice", "box"]
-    transform_choice = ["box"]
+    transform_choice = ["box", "slice"]
 
     # Slicing panels
 
@@ -826,7 +943,6 @@ def get_base_panels(num_panels=0, layout_type=None):
             horizontal_vertical = np.random.choice(["h", "v"])
             
             type_choice = np.random.choice(["eq", "uneq", "div", "twotwothree", "threetwotwo", "fourtwoone"])
-            type_choice = "twotwothree"
 
             if type_choice == "eq" or type_choice == "uneq":
 
@@ -1186,7 +1302,7 @@ def create_page_metadata():
     # Select panel boundary widths
     # TODO: Remember some panels can just be left blank
 
-    page = get_base_panels(5, "vh")
+    page = get_base_panels(0, "vh")
     transformed_page = add_transforms(page)
 
     return transformed_page
