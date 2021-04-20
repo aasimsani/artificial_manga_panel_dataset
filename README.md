@@ -67,8 +67,7 @@ archivePrefix = "arXiv",
         3. Vertical and horizontal panels - ```vh```
         4. All of the above with panel shape transforms - ```vht``` or ```ht```
         5. All of the above on a background - ```vhtb```
-        6. All of the above on a background with panel xy mis-alignment (sin/wave/etc) - ```vhtbm```
-        7. All of the above with white space insertions - ```vhtbmw```
+        7. All of the above with white space insertions - ```vhtbw```
         8. Panel randomly overlaying each other (future)
         9. Figures across panels
     2. Page size

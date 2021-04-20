@@ -4,7 +4,31 @@ import time
 from copy import deepcopy
 import random
 from PIL import Image, ImageDraw
+import pyclipper
 
+
+def test_render(page):
+
+    leaf_children = []
+    get_leaf_panels(page, leaf_children)
+
+    coords = []
+    for panel in leaf_children:
+        coords.append(panel.get_polygon())
+
+    W = 1700
+    H = 2400
+
+    page = Image.new(size=(W,H), mode="L", color="white")
+    draw_rect = ImageDraw.Draw(page)
+
+    # coords = coords[0:2]
+    for rect in coords:
+        # draw_rect.rectangle(rect, fill=None, outline="white", width=20)
+        draw_rect.line(rect, fill="black", width=10)
+        # draw_rect.polygon(rect, fill="red", outline="yellow")
+
+    page.show()
 # TODO: Figure out page type distributions
 
 class Panel:
@@ -74,8 +98,8 @@ class Panel:
         if self.non_rect:
 
             # Handle edge case of incorrect input
-            if len(self.dims) < 5:
-                self.dims.append(self.dims[0])
+            # if len(self.dims) < 5:
+                # self.dims.append(self.dims[0])
 
             return tuple(self.dims)
         else:
@@ -944,23 +968,30 @@ def add_transforms(page):
 
     return page 
 
-def add_misalignment(panels):
+def shrink_panels(page):
 
-    # Mis align types - apply to full or half page
-        # Top to bottom left right left right
-        # Left to right up down
-        # bottom left to top right shrink
-            # With above two types
-        # Sin wave across screen
+    panels = []
+    get_leaf_panels(page, panels)
 
-        # Center and wavy
-        # Just panel movement
+    for panel in panels:
+        pco = pyclipper.PyclipperOffset()
+        pco.AddPath(panel.get_polygon(), pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
+        solution = pco.Execute(-25.0)
 
-    return panels
+        changed_dims = []
+        for item in solution[0]:
+            changed_dims.append(tuple(item))
 
-def shrink_panels(panels):
+        changed_dims.append(changed_dims[0])
 
-    return panels
+        panel.dims = changed_dims
+        panel.x1y1 = changed_dims[0]
+        panel.x2y2 = changed_dims[1]
+        panel.x3y3 = changed_dims[2]
+        panel.x4y4 = changed_dims[3]
+
+
+    return page
 
 def create_single_panel_metadata():
     # Coords
@@ -1024,7 +1055,6 @@ def get_base_panels(num_panels=0, layout_type=None):
                 # Vertically or Horizontally
 
             horizontal_vertical = np.random.choice(["h", "v"])
-            horizontal_vertical = "h"
             draw_two_shifted(page, horizontal_vertical)
 
             next_div = invert_for_next(horizontal_vertical)
@@ -1466,7 +1496,8 @@ def create_page_metadata():
     # Select panel boundary widths
     # TODO: Remember some panels can just be left blank
 
-    page = get_base_panels(4, "vh")
-    transformed_page = add_transforms(page)
+    page = get_base_panels(3, "vh")
+    page = add_transforms(page)
+    page = shrink_panels(page)
 
-    return transformed_page
+    return page 

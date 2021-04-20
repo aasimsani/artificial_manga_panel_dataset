@@ -39,6 +39,6 @@ if __name__ == '__main__':
     # print(sum(dt)/len(dt))
     # print("This took: ", (t2-t1))
 
-    for i in range(10):
+    for i in range(1):
         panels = create_page_metadata()
         test_render(panels)
