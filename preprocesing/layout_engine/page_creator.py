@@ -18,8 +18,7 @@ def create_single_page():
 
 def test_render(page):
 
-    leaf_children = []
-    get_leaf_panels(page, leaf_children)
+    leaf_children = page.leaf_children
 
     coords = []
     for panel in leaf_children:

@@ -7,28 +7,27 @@ from PIL import Image, ImageDraw
 import pyclipper
 
 
-def test_render(page):
+# def test_render(page):
 
-    leaf_children = []
-    get_leaf_panels(page, leaf_children)
+    # leaf_children = page.leaf_children
 
-    coords = []
-    for panel in leaf_children:
-        coords.append(panel.get_polygon())
+    # coords = []
+    # for panel in leaf_children:
+    #     coords.append(panel.get_polygon())
 
-    W = 1700
-    H = 2400
+    # W = 1700
+    # H = 2400
 
-    page = Image.new(size=(W,H), mode="L", color="white")
-    draw_rect = ImageDraw.Draw(page)
+    # page = Image.new(size=(W,H), mode="L", color="white")
+    # draw_rect = ImageDraw.Draw(page)
 
-    # coords = coords[0:2]
-    for rect in coords:
-        # draw_rect.rectangle(rect, fill=None, outline="white", width=20)
-        draw_rect.line(rect, fill="black", width=10)
-        # draw_rect.polygon(rect, fill="red", outline="yellow")
+    # # coords = coords[0:2]
+    # for rect in coords:
+    #     # draw_rect.rectangle(rect, fill=None, outline="white", width=20)
+    #     draw_rect.line(rect, fill="black", width=10)
+    #     # draw_rect.polygon(rect, fill="red", outline="yellow")
 
-    page.show()
+    # page.show()
 # TODO: Figure out page type distributions
 
 class Panel:
@@ -70,6 +69,8 @@ class Panel:
         self.sliced = False
 
         self.orientation = orientation 
+
+        self.no_render = False
 
     def get_relative_location(self, panel):
         
@@ -140,6 +141,7 @@ class Page(Panel):
 
         self.num_panels = num_panels
         self.page_type = page_type
+        self.leaf_children = []
 
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
 
@@ -555,9 +557,14 @@ def get_leaf_panels(page, panels=[]):
             panels.append(child)
 
 def find_parent_with_multiple_children(page, n):
-    
-    panels = []
-    get_leaf_panels(page, panels)
+
+    panels =[]    
+    if len(page.leaf_children) < 1:
+        get_leaf_panels(page, panels)
+        page.leaf_children = panels
+    else:
+        panels = page.leaf_children
+
     relevant_panels = []
 
     for panel in panels:
@@ -971,7 +978,12 @@ def add_transforms(page):
 def shrink_panels(page):
 
     panels = []
-    get_leaf_panels(page, panels)
+    if len(page.leaf_children) < 1:
+        get_leaf_panels(page, panels)
+        page.leaf_children = panels
+    else:
+        panels = page.leaf_children
+
 
     for panel in panels:
         pco = pyclipper.PyclipperOffset()
@@ -979,23 +991,38 @@ def shrink_panels(page):
         solution = pco.Execute(-25.0)
 
         changed_dims = []
-        for item in solution[0]:
-            changed_dims.append(tuple(item))
+        if len(solution) > 0:
+            for item in solution[0]:
+                changed_dims.append(tuple(item))
 
-        changed_dims.append(changed_dims[0])
+            changed_dims.append(changed_dims[0])
 
-        panel.dims = changed_dims
-        panel.x1y1 = changed_dims[0]
-        panel.x2y2 = changed_dims[1]
-        panel.x3y3 = changed_dims[2]
-        panel.x4y4 = changed_dims[3]
+            panel.dims = changed_dims
+            panel.x1y1 = changed_dims[0]
+            panel.x2y2 = changed_dims[1]
+            panel.x3y3 = changed_dims[2]
+            panel.x4y4 = changed_dims[3]
+        else:
+            print(panel.dims)
 
 
     return page
 
+def random_remove_panel(page):
+
+    if page.num_panels > 3:
+        remove_number = np.random.choice([1, 2])
+
+        for i in range(remove_number):
+            page.leaf_children.pop()
+
+    return page
+
+
 def create_single_panel_metadata():
-    # Coords
-    # Dims
+    # Image inside used
+    # Part of image cropped
+    # Associated speech bubbles
     pass
 
 def get_base_panels(num_panels=0, layout_type=None):
@@ -1496,8 +1523,9 @@ def create_page_metadata():
     # Select panel boundary widths
     # TODO: Remember some panels can just be left blank
 
-    page = get_base_panels(3, "vh")
+    page = get_base_panels(0, "vh")
     page = add_transforms(page)
     page = shrink_panels(page)
+    page = random_remove_panel(page)
 
     return page 
