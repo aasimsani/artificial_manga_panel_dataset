@@ -3,6 +3,7 @@ import math
 import time
 from copy import deepcopy
 import random
+from PIL import Image, ImageDraw
 
 # TODO: Figure out page type distributions
 
@@ -107,7 +108,7 @@ class Panel:
     def get_child(self, idx):
 
         return self.children[idx]
-
+    
 class Page(Panel):
 
     def __init__(self, dims, page_type, num_panels, children=[]):
@@ -379,14 +380,27 @@ def single_slice_panels(page, type_choice=None):
                     p1.x2y2 = (p1.x2y2[0] - skew_amount, p1.x2y2[1])
                     p1.x3y3 = (p1.x3y3[0] + skew_amount, p1.x3y3[1])
 
+                    p1.dims[1] = p1.x2y2
+                    p1.dims[2] = p1.x3y3
+
                     p2.x1y1 = (p2.x1y1[0] - skew_amount, p2.x1y1[1])
                     p2.x4y4 = (p2.x4y4[0] + skew_amount, p2.x4y4[1])
+
+                    p2.dims[0] = p2.x1y1
+                    p2.dims[3] = p2.x4y4
+
                 else:
                     p1.x2y2 = (p1.x2y2[0] + skew_amount, p1.x2y2[1])
                     p1.x3y3 = (p1.x3y3[0] - skew_amount, p1.x3y3[1])
 
+                    p1.dims[1] = p1.x2y2
+                    p1.dims[2] = p1.x3y3
+
                     p2.x1y1 = (p2.x1y1[0] + skew_amount, p2.x1y1[1])
                     p2.x4y4 = (p2.x4y4[0] - skew_amount, p2.x4y4[1])
+
+                    p2.dims[0] = p2.x1y1
+                    p2.dims[3] = p2.x4y4
             # Horizontal slice
             else:
                 panel_chosen_dim_length = (panel.x3y3[1] - panel.x2y2[1])/2
@@ -410,16 +424,27 @@ def single_slice_panels(page, type_choice=None):
                     p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] + skew_amount)
                     p1.x3y3 = (p1.x3y3[0], p1.x3y3[1] - skew_amount)
 
+                    p1.dims[2] = p1.x3y3
+                    p1.dims[3] = p1.x4y4
+
                     p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] + skew_amount)
                     p2.x2y2 = (p2.x2y2[0], p2.x2y2[1] - skew_amount)
+
+                    p2.dims[0] = p2.x1y1
+                    p2.dims[1] = p2.x2y2
 
                 else:
                     p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] - skew_amount)
                     p1.x3y3 = (p1.x3y3[0], p1.x3y3[1] + skew_amount)
 
+                    p1.dims[2] = p1.x3y3
+                    p1.dims[3] = p1.x4y4
+
                     p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] - skew_amount)
                     p2.x2y2 = (p2.x2y2[0], p2.x2y2[1] + skew_amount)
 
+                    p2.dims[0] = p2.x1y1
+                    p2.dims[1] = p2.x2y2
     # Sides
     # TODO: Add multiple sides by refactoring Panel to be fully polygon
     else:
@@ -827,11 +852,7 @@ def box_transform_panels(page, type_choice=None):
 
     return page
 
-# TODO: Figure out issue with slicing then box manupilation
 def box_transform_page(page, type_choice=None):
-
-    if type_choice == None:
-        type_choice = np.random.choice(["fprho", "fpbf"])
 
     type_choice = "fprho" 
 
@@ -844,13 +865,14 @@ def box_transform_page(page, type_choice=None):
                 p2 = page.get_child(idx+1)
 
 
-                change_proportion = np.random.randint(10, 50)
+                change_proportion = np.random.randint(10, 25)
                 change_proportion /= 100
-                change = 212.5*change_proportion
                 direction = np.random.choice(["rup", "lup"])
 
                 if p1.orientation == "h":
-                    
+
+                    change_max = min([(p1.x4y4[1] - p1.x1y1[1]), (p2.x4y4[1] - p2.x1y1[1])])
+                    change = change_max*change_proportion
                     line_top = p2.x1y1
                     line_bottom = p2.x2y2
 
@@ -871,6 +893,8 @@ def box_transform_page(page, type_choice=None):
                             p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] - change)
                         # if len(panel.children) > 0:
                 else:
+                    change_max = min([(p1.x2y2[0] - p1.x1y1[0]), (p2.x2y2[0] - p2.x1y1[0])])
+                    change = change_max*change_proportion
 
                     line_top = p2.x1y1
                     line_bottom = p2.x4y4
@@ -906,19 +930,17 @@ def add_transforms(page):
     # transform_choice = ["slice"]
     # Slicing panels
     # Works best with large panels
-
     if "slice" in transform_choice:
         page = single_slice_panels(page)
 
         # Makes v cuts happen more often 1/4 chance
-        # if np.random.choice([0, 1, 2, 3]) == 1:
-        #     page = single_slice_panels(page)
-
+        if np.random.choice([0, 1, 2, 3]) == 1:
+            page = single_slice_panels(page)
+    
     if "box" in transform_choice:
 
         # page = box_transform_panels(page)
         page = box_transform_page(page)
-
 
     return page 
 
