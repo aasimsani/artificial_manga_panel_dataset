@@ -17,7 +17,7 @@ class Panel:
         self.name = name
         self.parent = parent
 
-        self.dims = dims
+        self.dims = list(dims)
         self.non_rect = non_rect
 
         self.lines = [
@@ -71,6 +71,11 @@ class Panel:
     
     def get_polygon(self):
         if self.non_rect:
+
+            # Handle edge case of incorrect input
+            if len(self.dims) < 5:
+                self.dims.append(self.dims[0])
+
             return tuple(self.dims)
         else:
 
@@ -329,15 +334,19 @@ def single_slice_panels(page, type_choice=None):
     if type_choice == None:
         type_choice =  np.random.choice(["center", "side"])
 
+    type_choice = "center"
     num_panels_added = 0
     # Center
     # TODO: Remember to add number of panels increase to page 
     if type_choice == "center":
+        if len(relevant_panels) < 1:
+            return page
+
         if len(relevant_panels) > 1:
             number_to_slice = np.random.randint(1, len(relevant_panels))
         else:
             number_to_slice = 1
-
+        
         for idx in range(0, number_to_slice):
             panel = relevant_panels[idx]
             num_panels_added += 1
@@ -414,7 +423,13 @@ def single_slice_panels(page, type_choice=None):
     # Sides
     # TODO: Add multiple sides by refactoring Panel to be fully polygon
     else:
-        number_to_slice = np.random.choice([1, 3])
+        if len(relevant_panels) < 1:
+            return page
+
+        if len(relevant_panels) > 1:
+            number_to_slice = np.random.choice([1, 3])
+        else:
+            number_to_slice = 1
 
         for panel in relevant_panels[0:number_to_slice]:                
             side = np.random.choice(["tr", "tl", "br", "bl"])
@@ -503,22 +518,86 @@ def find_parent_with_multiple_children(page, n):
     
     return relevant_panels
 
+def move_child_to_line(point, change, old_line, orientation):
+
+    if orientation == "h":
+        old_line_length = old_line[1][0] - old_line[0][0]
+
+        movement = (change*(point[0] - old_line[1][0]))/old_line_length
+
+        return movement
+    else:
+
+        old_line_length = (old_line[1][1] - old_line[0][1])
+
+        r1 = change/old_line_length
+
+        movement = (change*(point[1] - old_line[1][1]))/old_line_length
+
+        return movement
+
+def move_children_to_line(parent, line, change, orientation, direction):
+
+    x_value = line[0][0]
+    y_value = line[0][1]
+    if orientation == "h":
+
+        if direction == "rup":
+            for child in parent.children:
+                if len(child.children) > 0:
+                    move_children_to_line(child, line, change, orientation, direction)
+                else:
+                    for idx, dim in enumerate(child.dims):
+                        if dim[1] == y_value:
+                            mvmnt = move_child_to_line(dim, change, line, orientation)
+                            child.dims[idx] = (dim[0], dim[1] - mvmnt)
+                            child.non_rect = True
+        else:
+            for child in parent.children:
+                if len(child.children) > 0:
+                    move_children_to_line(child, line, change, orientation, direction)
+                else:
+                    for idx, dim in enumerate(child.dims):
+                        if dim[1] == y_value:
+                            mvmnt = move_child_to_line(dim, change, line, orientation)
+                            child.dims[idx] = (dim[0], dim[1] + mvmnt)
+                            child.non_rect = True
+
+    else:
+        if direction == "rup":
+            for child in parent.children:
+                if len(child.children) > 0:
+                    move_children_to_line(child, line, change, orientation, direction)
+                else:
+                    for idx, dim in enumerate(child.dims):
+                        if dim[0] == x_value:
+                            mvmnt = move_child_to_line(dim, change, line, orientation)
+                            child.dims[idx] = (dim[0] + mvmnt, dim[1])
+                            child.non_rect = True
+        else:
+            for child in parent.children:
+                if len(child.children) > 0:
+                    move_children_to_line(child, line, change, orientation, direction)
+                else:
+                    for idx, dim in enumerate(child.dims):
+                        if dim[0] == x_value:
+                            mvmnt = move_child_to_line(dim, change, line, orientation)
+                            child.dims[idx] = (dim[0] - mvmnt, dim[1])
+                            child.non_rect = True
+
 def box_transform_panels(page, type_choice=None):
 
     if type_choice == None:
-        type_choice = np.random.choice(["trapezoid", "rhombus", "fprho", "fptrapezoid"])
-    
-    type_choice = "rhombus"
+        type_choice = np.random.choice(["trapezoid", "rhombus"])
 
     if type_choice == "trapezoid":
         if page.num_panels > 2:
             relevant_panels = find_parent_with_multiple_children(page, 3)
             if len(relevant_panels) > 0:
                 if len(relevant_panels) > 1:
-                    num_panels = np.random.choice(1, len(relevant_panels)) 
+                    num_panels = np.random.randint(1, len(relevant_panels)) 
                 else:
                     num_panels = 1
-
                 for idx in range(0, num_panels):
 
                     panel = relevant_panels[idx]
@@ -628,12 +707,13 @@ def box_transform_panels(page, type_choice=None):
                             p3.x2y2 = line_two_top
 
     elif type_choice == "rhombus":
+
         if page.num_panels > 1:
             relevant_panels = find_parent_with_multiple_children(page, 3)
             if len(relevant_panels) > 0:
 
                 if len(relevant_panels) > 1:
-                    num_panels = np.random.choice(1, len(relevant_panels)) 
+                    num_panels = np.random.randint(1, len(relevant_panels)) 
                 else:
                     num_panels = 1
 
@@ -746,33 +826,99 @@ def box_transform_panels(page, type_choice=None):
                             p3.x2y2 = line_two_top
 
     return page
+
+# TODO: Figure out issue with slicing then box manupilation
+def box_transform_page(page, type_choice=None):
+
+    if type_choice == None:
+        type_choice = np.random.choice(["fprho", "fpbf"])
+
+    type_choice = "fprho" 
+
+    if type_choice == "fprho":
+        if len(page.children) > 1:
+
+            for idx in range(0, len(page.children)-1):
+
+                p1 = page.get_child(idx)
+                p2 = page.get_child(idx+1)
+
+
+                change_proportion = np.random.randint(10, 50)
+                change_proportion /= 100
+                change = 212.5*change_proportion
+                direction = np.random.choice(["rup", "lup"])
+
+                if p1.orientation == "h":
+                    
+                    line_top = p2.x1y1
+                    line_bottom = p2.x2y2
+
+                    if len(p1.children) > 0:
+                        move_children_to_line(p1, (line_top, line_bottom), change, "h", direction)
+                    else:
+                        if direction == "rup":
+                            p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] + change)
+                        else:
+                            p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] - change)
+
+                    if len(p2.children) > 0:
+                        move_children_to_line(p2, (line_top, line_bottom), change, "h", direction)
+                    else:
+                        if direction == "rup":
+                            p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] + change)
+                        else:
+                            p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] - change)
+                        # if len(panel.children) > 0:
+                else:
+
+                    line_top = p2.x1y1
+                    line_bottom = p2.x4y4
+
+                    if len(p1.children) > 0:
+                        move_children_to_line(p1, (line_top, line_bottom), change, "v", direction)
+                    else:
+                        if direction == "rup":
+                            p1.x2y2 = (p1.x2y2[0] - change, p1.x2y2[1])
+                        else:
+                            p1.x2y2 = (p1.x2y2[0] + change, p1.x2y2[1])
+                    
+                    if len(p2.children) > 0:
+                        move_children_to_line(p2, (line_top, line_bottom), change, "v", direction)
+                    else:
+                        if direction == "rup":
+                            p2.x1y1 = (p2.x1y1[0] - change, p2.x1y1[1])
+                        else:
+                            p2.x1y1 = (p2.x1y1[0] + change, p2.x1y1[1])
+
+
+            # If panel has children
+                # find all children that fall on line to be changed
+            # Else just change the panel's dims
+
+    return page
     
 def add_transforms(page):
     # Transform types
 
     # Allow choosing multiple
-    # transform_choice = ["slice", "box"]
-    transform_choice = ["box", "slice"]
-
+    transform_choice = ["slice", "box"]
+    # transform_choice = ["slice"]
     # Slicing panels
-
     # Works best with large panels
+
     if "slice" in transform_choice:
         page = single_slice_panels(page)
 
         # Makes v cuts happen more often 1/4 chance
-        if np.random.choice([0, 1, 2, 3]) == 1:
-            page = single_slice_panels(page)
+        # if np.random.choice([0, 1, 2, 3]) == 1:
+        #     page = single_slice_panels(page)
 
     if "box" in transform_choice:
 
-        page = box_transform_panels(page)
-    # Box transforms
-        # Turn into trapezoid
-            # All rows
-        # Turn into rhombus
-            # only 3 panels or greater types
-        # Full page back and forth
+        # page = box_transform_panels(page)
+        page = box_transform_page(page)
+
 
     return page 
 
@@ -798,7 +944,6 @@ def create_single_panel_metadata():
     # Coords
     # Dims
     pass
-
 
 def get_base_panels(num_panels=0, layout_type=None):
 
@@ -839,7 +984,6 @@ def get_base_panels(num_panels=0, layout_type=None):
 
         draw_n_shifted(num_panels, page, "h")
 
-    
     elif layout_type == "vh":
         
         max_num_panels = 8
@@ -858,7 +1002,7 @@ def get_base_panels(num_panels=0, layout_type=None):
                 # Vertically or Horizontally
 
             horizontal_vertical = np.random.choice(["h", "v"])
-            horizontal_vertical = "v"
+            horizontal_vertical = "h"
             draw_two_shifted(page, horizontal_vertical)
 
             next_div = invert_for_next(horizontal_vertical)
@@ -936,7 +1080,6 @@ def get_base_panels(num_panels=0, layout_type=None):
 
                 draw_n_shifted(3, choice, next_div)
 
-        
         if num_panels == 5:
 
             # Draw two rectangles 
@@ -1290,7 +1433,6 @@ def get_base_panels(num_panels=0, layout_type=None):
                     
                     draw_n_shifted(4, other, "v", shifts=normalized_shifts)
 
-
     return page 
      
 def create_page_metadata():
@@ -1302,7 +1444,7 @@ def create_page_metadata():
     # Select panel boundary widths
     # TODO: Remember some panels can just be left blank
 
-    page = get_base_panels(0, "vh")
+    page = get_base_panels(4, "vh")
     transformed_page = add_transforms(page)
 
     return transformed_page

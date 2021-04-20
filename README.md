@@ -69,6 +69,8 @@ archivePrefix = "arXiv",
         5. All of the above on a background - ```vhtb```
         6. All of the above on a background with panel xy mis-alignment (sin/wave/etc) - ```vhtbm```
         7. All of the above with white space insertions - ```vhtbmw```
+        8. Panel randomly overlaying each other (future)
+        9. Figures across panels
     2. Page size
     3. Page type (currently only single)
     4. Panel boundary widths
