@@ -5,6 +5,7 @@ from copy import deepcopy
 import random
 from PIL import Image, ImageDraw
 import pyclipper
+import os
 
 
 # def test_render(page):
@@ -72,6 +73,10 @@ class Panel:
 
         self.no_render = False
 
+        self.image = None
+
+        self.speech_bubbles = []
+
     def get_relative_location(self, panel):
         
         pos = ""
@@ -133,7 +138,7 @@ class Panel:
     def get_child(self, idx):
 
         return self.children[idx]
-    
+
 class Page(Panel):
 
     def __init__(self, dims, page_type, num_panels, children=[]):
@@ -1018,12 +1023,49 @@ def random_remove_panel(page):
 
     return page
 
-
-def create_single_panel_metadata():
-    # Image inside used
-    # Part of image cropped
+def create_single_panel_metadata(panel, image_dir, image_dir_path):
     # Associated speech bubbles
-    pass
+
+    # Part of image cropped
+    
+    # Image inside used
+    select_image = np.random.choice(image_dir)
+    
+    panel.image = image_dir_path+select_image
+
+    # img = Image.open(image_dir_path+select_image)
+
+    # mask = Image.new("L", (1700, 2400), 0)
+
+    # draw = ImageDraw.Draw(mask)
+
+    # w_rev_ratio = 1700/img.size[0]
+    # h_rev_ratio = 2400/img.size[1]
+
+    # img = img.resize(
+    #     (round(img.size[0]*w_rev_ratio),
+    #     round(img.size[1]*h_rev_ratio))
+    # )
+
+    # mask_dims = panel.get_polygon()
+    # draw.polygon(mask_dims, fill=255)
+
+    # bc = Image.new("L", (1700, 2400))
+    # bc.paste(img, (0, 0), mask)
+
+    # bc.show()
+
+
+
+def populate_panels(page):
+
+    image_dir_path = "datasets/image_dataset/db_illustrations_bw/"
+    image_dir = os.listdir(image_dir_path) 
+    for child in page.leaf_children:
+
+        create_single_panel_metadata(child, image_dir, image_dir_path)
+
+    return page
 
 def get_base_panels(num_panels=0, layout_type=None):
 
@@ -1523,9 +1565,10 @@ def create_page_metadata():
     # Select panel boundary widths
     # TODO: Remember some panels can just be left blank
 
-    page = get_base_panels(0, "vh")
+    page = get_base_panels(5, "vh")
     page = add_transforms(page)
     page = shrink_panels(page)
-    page = random_remove_panel(page)
+    # page = random_remove_panel(page)
+    page = populate_panels(page)
 
     return page 

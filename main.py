@@ -29,7 +29,7 @@ if __name__ == '__main__':
     # create_single_page()
 
     # dt = []
-    # for i in tqdm(range(1000)):
+    # for i in tqdm(range(10000)):
     #     t1 = time.perf_counter()
     #     panels = create_page_metadata()
     #     t2 = time.perf_counter()
@@ -38,6 +38,6 @@ if __name__ == '__main__':
     #     # test_render(panels)
     # print("Average time", sum(dt)/len(dt))
 
-    for i in range(5):
+    for i in range(1):
         panels = create_page_metadata()
         test_render(panels)
