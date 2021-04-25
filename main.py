@@ -7,6 +7,7 @@ from preprocesing.layout_engine.page_creator import create_single_page, render
 from preprocesing.layout_engine.page_dataset_creator import create_page_metadata
 from tqdm import tqdm
 import os
+import pandas as pd
 
 import time
 
@@ -27,24 +28,43 @@ if __name__ == '__main__':
     # convert_images_to_bw()
 
     # Page creation
-    # create_single_page()
-
     dt = []
 
     image_dir_path = "datasets/image_dataset/db_illustrations_bw/"
     image_dir = os.listdir(image_dir_path) 
     image_dir_len = len(image_dir)
-    # for i in tqdm(range(10000)):
-    #     t1 = time.perf_counter()
-    #     panels = create_page_metadata(image_dir, image_dir_len, image_dir_path)
-    #     t2 = time.perf_counter()
-    #     delta = t2-t1
-    #     dt.append(delta)
-    #     # test_render(panels)
-    # print("Average time", sum(dt)/len(dt))
+
+    text_dataset = pd.read_parquet("datasets/text_dataset/jesc_dialogues")
+
+    speech_bubbles_path = "datasets/speech_bubbles_dataset/files"
+    speech_bubble_files = os.listdir(speech_bubbles_path)
+
+    font_files_path = "datasets/font_dataset/"
+    viable_font_files = []
+    with open(font_files_path+"viable_fonts.csv") as viable_fonts:
+
+        for line in viable_fonts.readlines():
+            path, viable = line.split(",")
+            viable = bool(viable)
+            if viable:
+                viable_font_files.append(path)
+    # # for i in tqdm(range(10000)):
+    # #     t1 = time.perf_counter()
+    # #     page = create_page_metadata(image_dir, image_dir_len, image_dir_path)
+    # #     page.dump_data("./")
+    # #     t2 = time.perf_counter()
+    # #     delta = t2-t1
+    # #     dt.append(delta)
+    # #     # test_render(panels)
+    # # print("Average time", sum(dt)/len(dt))
 
     for i in range(1):
-        page = create_page_metadata(image_dir, image_dir_len, image_dir_path)
-        page.dump_data("./")
+        page = create_page_metadata(image_dir,
+                                    image_dir_len,
+                                    image_dir_path,
+                                    viable_font_files,
+                                    text_dataset,
+                                    speech_bubble_files
+                                    )
         render(page, show=True)
-        # test_render(panels)
+    #     # test_render(panels)

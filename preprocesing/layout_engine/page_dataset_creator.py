@@ -133,6 +133,12 @@ class Panel:
 
         return data
 
+    def populate_children(self, data):
+        
+        # for panel in data['children']:
+        pass
+
+
 class Page(Panel):
 
     def __init__(self, coords, page_type, num_panels, children=[]):
@@ -145,7 +151,7 @@ class Page(Panel):
         # TODO: Setup naming of pages
         self.name = "Page-"+str(uuid.uuid1())
 
-    def dump_data(self, dataset_path):
+    def dump_data(self, dataset_path, dry=True):
 
         if len(self.children) > 0:
             children_rec = [child.dump_data() for child in self.children]
@@ -155,13 +161,19 @@ class Page(Panel):
         data = dict(
             name = self.name,
             num_panels = self.num_panels,
+            page_type = self.page_type,
             children = children_rec
         )   
 
-        with open(dataset_path+self.name+".json", "w+") as json_file:
-            json.dump(data, json_file, indent=2)
+        if not dry:
+            with open(dataset_path+self.name+".json", "w+") as json_file:
+                json.dump(data, json_file, indent=2)
+        else:
+            return json.dumps(data)
+    
+    def load_data(self, filename):
 
-        # return json.dumps(data)
+        pass
 
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
 
@@ -1041,10 +1053,11 @@ def random_remove_panel(page):
 
     return page
 
-def create_speech_bubble(panel, text, font_files, speech_bubble_files):
+def create_speech_bubble(panel, text, font, speech_bubble_file):
+
     pass
 
-def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path):
+def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
 
     
     # Image inside used
@@ -1054,13 +1067,25 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
     select_image = image_dir[select_image_idx]
     panel.image = image_dir_path+select_image
 
-    # Associated speech bubbles
+    text = ""
+    font = ""
+    speech_bubble_file = ""
 
-def populate_panels(page, image_dir, image_dir_len, image_dir_path):
+    # Associated speech bubbles
+    create_speech_bubble(panel, text, font, speech_bubble_file)
+
+def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
 
     for child in page.leaf_children:
 
-        create_single_panel_metadata(child, image_dir, image_dir_len, image_dir_path)
+        create_single_panel_metadata(child,
+                                     image_dir,
+                                     image_dir_len,
+                                     image_dir_path,
+                                     font_files,
+                                     text_dataset,
+                                     speech_bubble_files
+                                     )
 
     return page
 
@@ -1553,7 +1578,7 @@ def get_base_panels(num_panels=0, layout_type=None):
 
     return page 
      
-def create_page_metadata(images_dir, image_dir_len, image_dir_path):
+def create_page_metadata(images_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
 
     # Select page type
     # Select number of panels on the page
@@ -1564,7 +1589,7 @@ def create_page_metadata(images_dir, image_dir_len, image_dir_path):
     page = get_base_panels(5, "vh")
     page = add_transforms(page)
     page = shrink_panels(page)
-    page = populate_panels(page, images_dir, image_dir_len, image_dir_path)
+    page = populate_panels(page, images_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files)
 
     # TODO: Remember some panels can just be left blank
     # TODO: Pair with adding background
