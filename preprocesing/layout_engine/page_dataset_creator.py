@@ -5,44 +5,24 @@ from copy import deepcopy
 import random
 from PIL import Image, ImageDraw
 import pyclipper
-import os
+import json
+import uuid
 
 
-# def test_render(page):
-
-    # leaf_children = page.leaf_children
-
-    # coords = []
-    # for panel in leaf_children:
-    #     coords.append(panel.get_polygon())
-
-    # W = 1700
-    # H = 2400
-
-    # page = Image.new(size=(W,H), mode="L", color="white")
-    # draw_rect = ImageDraw.Draw(page)
-
-    # # coords = coords[0:2]
-    # for rect in coords:
-    #     # draw_rect.rectangle(rect, fill=None, outline="white", width=20)
-    #     draw_rect.line(rect, fill="black", width=10)
-    #     # draw_rect.polygon(rect, fill="red", outline="yellow")
-
-    # page.show()
 # TODO: Figure out page type distributions
 
 class Panel:
 
-    def __init__(self, dims, name, parent, orientation, children=[], non_rect=False):
+    def __init__(self, coords, name, parent, orientation, children=[], non_rect=False):
 
-        self.x1y1 = dims[0]
-        self.x2y2 = dims[1]
-        self.x3y3 = dims[2]
-        self.x4y4 = dims[3]
+        self.x1y1 = coords[0]
+        self.x2y2 = coords[1]
+        self.x3y3 = coords[2]
+        self.x4y4 = coords[3]
         self.name = name
         self.parent = parent
 
-        self.dims = list(dims)
+        self.coords = list(coords)
         self.non_rect = non_rect
 
         self.lines = [
@@ -57,13 +37,6 @@ class Panel:
 
         self.area = self.width*self.height
         self.area_proportion = round(self.area/(2400*1700), 2)
-
-        adjacency_list = dict(
-            above = [],
-            below = [],
-            left = [],
-            right = []
-        )
 
         self.children = children
 
@@ -104,10 +77,10 @@ class Panel:
         if self.non_rect:
 
             # Handle edge case of incorrect input
-            # if len(self.dims) < 5:
-                # self.dims.append(self.dims[0])
+            # if len(self.coords) < 5:
+                # self.coords.append(self.coords[0])
 
-            return tuple(self.dims)
+            return tuple(self.coords)
         else:
 
             return (
@@ -139,14 +112,56 @@ class Panel:
 
         return self.children[idx]
 
+    def dump_data(self):
+        
+        if len(self.children) > 0:
+            children_rec = [child.dump_data() for child in self.children]
+        else:
+            children_rec = []
+
+        speech_bubbles = [bubble.dump_data() for bubble in self.speech_bubbles]
+        data = dict(
+            name = self.name,
+            coordinates = self.coords,
+            children = children_rec,
+            non_rect = self.non_rect,
+            sliced = self.sliced,
+            no_render = self.no_render,
+            image = self.image,
+            speech_bubbles = speech_bubbles
+        )
+
+        return data
+
 class Page(Panel):
 
-    def __init__(self, dims, page_type, num_panels, children=[]):
-        super().__init__(dims, "page", None, None, [])
+    def __init__(self, coords, page_type, num_panels, children=[]):
+        super().__init__(coords, "page", None, None, [])
 
         self.num_panels = num_panels
         self.page_type = page_type
         self.leaf_children = []
+
+        # TODO: Setup naming of pages
+        self.name = "Page-"+str(uuid.uuid1())
+
+    def dump_data(self, dataset_path):
+
+        if len(self.children) > 0:
+            children_rec = [child.dump_data() for child in self.children]
+        else:
+            children_rec = []
+
+        data = dict(
+            name = self.name,
+            num_panels = self.num_panels,
+            children = children_rec
+        )   
+
+        with open(dataset_path+self.name+".json", "w+") as json_file:
+            json.dump(data, json_file, indent=2)
+
+        # return json.dumps(data)
 
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
 
@@ -193,8 +208,8 @@ def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
                     x3y3 = (bottomright[0], topright[1] + (bottomright[1]- topright[1])*next_shift_level)
                     x4y4 = (bottomleft[0], topleft[1] + (bottomleft[1] - topleft[1])*next_shift_level)
 
-                poly_dims = (x1y1, x2y2, x3y3, x4y4)
-                poly = Panel(poly_dims, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
+                poly_coords = (x1y1, x2y2, x3y3, x4y4)
+                poly = Panel(poly_coords, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
                 parent.add_child(poly)
         
         if horizontal_vertical == "v":
@@ -216,8 +231,8 @@ def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
                     x2y2 = (topleft[0] + (topright[0] - topleft[0])*next_shift_level, topright[1])
                     x3y3 = (bottomleft[0] + (bottomright[0] - bottomleft[0])*next_shift_level, bottomright[1])
 
-                poly_dims = (x1y1, x2y2, x3y3, x4y4)
-                poly = Panel(poly_dims, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
+                poly_coords = (x1y1, x2y2, x3y3, x4y4)
+                poly = Panel(poly_coords, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
                 parent.add_child(poly)
 
 def draw_n(n, parent, horizontal_vertical):
@@ -243,8 +258,8 @@ def draw_n(n, parent, horizontal_vertical):
                     x3y3 = (bottomright[0], topright[1] + (bottomright[1]- topright[1])*((i+1)/n))
                     x4y4 = (bottomleft[0], topleft[1] + (bottomleft[1] - topleft[1])*((i+1)/n))
 
-                poly_dims = (x1y1, x2y2, x3y3, x4y4)
-                poly = Panel(poly_dims, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
+                poly_coords = (x1y1, x2y2, x3y3, x4y4)
+                poly = Panel(poly_coords, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
                 parent.add_child(poly)
         
         if horizontal_vertical == "v":
@@ -264,8 +279,8 @@ def draw_n(n, parent, horizontal_vertical):
                     x2y2 = (topleft[0] + (topright[0] - topleft[0])*((i+1)/n), topright[1])
                     x3y3 = (bottomleft[0] + (bottomright[0] - bottomleft[0])*((i+1)/n), bottomright[1])
 
-                poly_dims = (x1y1, x2y2, x3y3, x4y4)
-                poly = Panel(poly_dims, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
+                poly_coords = (x1y1, x2y2, x3y3, x4y4)
+                poly = Panel(poly_coords, parent.name+"-"+str(i), orientation=horizontal_vertical, parent=parent, children=[])
                 parent.add_child(poly)
 
 def draw_two_shifted(parent, horizontal_vertical, shift=None):
@@ -287,17 +302,17 @@ def draw_two_shifted(parent, horizontal_vertical, shift=None):
         r1x3y3 = (bottomright[0], topright[1] + (bottomright[1] - topright[1])*shift)
         r1x4y4 = (bottomleft[0], topleft[1] + (bottomleft[1] - topleft[1])*shift)
 
-        poly1_dims = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
+        poly1_coords = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
 
         r2x1y1 = (bottomleft[0], topleft[1] + (bottomleft[1] - topleft[1])*shift)
         r2x2y2 = (bottomright[0], topright[1] + (bottomright[1] - topright[1])*shift)
         r2x3y3 = bottomright
         r2x4y4 = bottomleft
 
-        poly2_dims = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
+        poly2_coords = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
 
-        poly1 = Panel(poly1_dims, parent.name + "-0", orientation=horizontal_vertical, parent=parent, children=[])
-        poly2 = Panel(poly2_dims, parent.name + "-1", orientation=horizontal_vertical, parent=parent, children=[])
+        poly1 = Panel(poly1_coords, parent.name + "-0", orientation=horizontal_vertical, parent=parent, children=[])
+        poly2 = Panel(poly2_coords, parent.name + "-1", orientation=horizontal_vertical, parent=parent, children=[])
 
         parent.add_children([poly1, poly2])
     
@@ -308,17 +323,17 @@ def draw_two_shifted(parent, horizontal_vertical, shift=None):
         r1x3y3 = (bottomleft[0] + (bottomright[0] - bottomleft[0])*shift, bottomright[1])
         r1x4y4 = bottomleft
 
-        poly1_dims = (r1x1y1, r1x2y2, r1x3y3, r1x4y4, r1x1y1)
+        poly1_coords = (r1x1y1, r1x2y2, r1x3y3, r1x4y4, r1x1y1)
 
         r2x1y1 = (topleft[0] + (topright[0] - topleft[0])*shift, topright[1])
         r2x2y2 = topright
         r2x3y3 = bottomright
         r2x4y4 = (bottomleft[0] + (bottomright[0] - bottomleft[0])*shift, bottomright[1])
 
-        poly2_dims = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
+        poly2_coords = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
 
-        poly1 = Panel(poly1_dims, parent.name + "-0", orientation=horizontal_vertical, parent=parent, children=[])
-        poly2 = Panel(poly2_dims, parent.name + "-1", orientation=horizontal_vertical, parent=parent, children=[])
+        poly1 = Panel(poly1_coords, parent.name + "-0", orientation=horizontal_vertical, parent=parent, children=[])
+        poly2 = Panel(poly2_coords, parent.name + "-1", orientation=horizontal_vertical, parent=parent, children=[])
 
         parent.add_children([poly1, poly2])
 
@@ -389,7 +404,7 @@ def single_slice_panels(page, type_choice=None):
             # Get center line
             # Vertical slice
             if horizontal_vertical == "v":
-                panel_chosen_dim_length = (panel.x2y2[0] - panel.x1y1[0])/2
+                panel_chosen_coord_length = (panel.x2y2[0] - panel.x1y1[0])/2
 
                 # Slice panel
                 draw_n(2, panel, "v")
@@ -399,7 +414,7 @@ def single_slice_panels(page, type_choice=None):
 
                 # Skew it by a percentage
                 skew_amount = np.random.randint(20, 100)/100
-                skew_amount = skew_amount*panel_chosen_dim_length
+                skew_amount = skew_amount*panel_chosen_coord_length
 
                 # Perform transform
                 p1 = panel.get_child(0)
@@ -411,30 +426,30 @@ def single_slice_panels(page, type_choice=None):
                     p1.x2y2 = (p1.x2y2[0] - skew_amount, p1.x2y2[1])
                     p1.x3y3 = (p1.x3y3[0] + skew_amount, p1.x3y3[1])
 
-                    p1.dims[1] = p1.x2y2
-                    p1.dims[2] = p1.x3y3
+                    p1.coords[1] = p1.x2y2
+                    p1.coords[2] = p1.x3y3
 
                     p2.x1y1 = (p2.x1y1[0] - skew_amount, p2.x1y1[1])
                     p2.x4y4 = (p2.x4y4[0] + skew_amount, p2.x4y4[1])
 
-                    p2.dims[0] = p2.x1y1
-                    p2.dims[3] = p2.x4y4
+                    p2.coords[0] = p2.x1y1
+                    p2.coords[3] = p2.x4y4
 
                 else:
                     p1.x2y2 = (p1.x2y2[0] + skew_amount, p1.x2y2[1])
                     p1.x3y3 = (p1.x3y3[0] - skew_amount, p1.x3y3[1])
 
-                    p1.dims[1] = p1.x2y2
-                    p1.dims[2] = p1.x3y3
+                    p1.coords[1] = p1.x2y2
+                    p1.coords[2] = p1.x3y3
 
                     p2.x1y1 = (p2.x1y1[0] + skew_amount, p2.x1y1[1])
                     p2.x4y4 = (p2.x4y4[0] - skew_amount, p2.x4y4[1])
 
-                    p2.dims[0] = p2.x1y1
-                    p2.dims[3] = p2.x4y4
+                    p2.coords[0] = p2.x1y1
+                    p2.coords[3] = p2.x4y4
             # Horizontal slice
             else:
-                panel_chosen_dim_length = (panel.x3y3[1] - panel.x2y2[1])/2
+                panel_chosen_coord_length = (panel.x3y3[1] - panel.x2y2[1])/2
 
                 # Slice panel
                 draw_n(2, panel, "h")
@@ -444,7 +459,7 @@ def single_slice_panels(page, type_choice=None):
 
                 # Skew it by a percentage
                 skew_amount = np.random.randint(20, 100)/100
-                skew_amount = skew_amount*panel_chosen_dim_length
+                skew_amount = skew_amount*panel_chosen_coord_length
 
                 p1 = panel.get_child(0)
                 p2 = panel.get_child(1)
@@ -455,27 +470,27 @@ def single_slice_panels(page, type_choice=None):
                     p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] + skew_amount)
                     p1.x3y3 = (p1.x3y3[0], p1.x3y3[1] - skew_amount)
 
-                    p1.dims[2] = p1.x3y3
-                    p1.dims[3] = p1.x4y4
+                    p1.coords[2] = p1.x3y3
+                    p1.coords[3] = p1.x4y4
 
                     p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] + skew_amount)
                     p2.x2y2 = (p2.x2y2[0], p2.x2y2[1] - skew_amount)
 
-                    p2.dims[0] = p2.x1y1
-                    p2.dims[1] = p2.x2y2
+                    p2.coords[0] = p2.x1y1
+                    p2.coords[1] = p2.x2y2
 
                 else:
                     p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] - skew_amount)
                     p1.x3y3 = (p1.x3y3[0], p1.x3y3[1] + skew_amount)
 
-                    p1.dims[2] = p1.x3y3
-                    p1.dims[3] = p1.x4y4
+                    p1.coords[2] = p1.x3y3
+                    p1.coords[3] = p1.x4y4
 
                     p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] - skew_amount)
                     p2.x2y2 = (p2.x2y2[0], p2.x2y2[1] + skew_amount)
 
-                    p2.dims[0] = p2.x1y1
-                    p2.dims[1] = p2.x2y2
+                    p2.coords[0] = p2.x1y1
+                    p2.coords[1] = p2.x2y2
     # Sides
     # TODO: Add multiple sides by refactoring Panel to be fully polygon
     else:
@@ -515,9 +530,9 @@ def single_slice_panels(page, type_choice=None):
                 p1_cut_x2y2 = (panel.x4y4[0] + cut_x_length, panel.x4y4[1])
                 p1_cut_x3y3 = (panel.x4y4)
 
-                p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
+                p1.coords = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
 
-                p2.dims = [panel.x1y1, panel.x2y2, panel.x3y3, p1_cut_x2y2, p1_cut_x1y1, panel.x1y1] 
+                p2.coords = [panel.x1y1, panel.x2y2, panel.x3y3, p1_cut_x2y2, p1_cut_x1y1, panel.x1y1] 
             
             # bottom right corner
             elif side == "br":
@@ -526,8 +541,8 @@ def single_slice_panels(page, type_choice=None):
                 p1_cut_x2y2 = (panel.x3y3)
                 p1_cut_x3y3 = (panel.x3y3[0] - cut_x_length, panel.x3y3[1])
 
-                p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
-                p2.dims = [panel.x1y1, panel.x2y2, p1_cut_x1y1, p1_cut_x3y3, panel.x4y4, panel.x1y1] 
+                p1.coords = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
+                p2.coords = [panel.x1y1, panel.x2y2, p1_cut_x1y1, p1_cut_x3y3, panel.x4y4, panel.x1y1] 
 
             # top left corner 
             elif side == "tl":
@@ -536,8 +551,8 @@ def single_slice_panels(page, type_choice=None):
                 p1_cut_x2y2 = (panel.x1y1[0] + cut_x_length, panel.x1y1[1])
                 p1_cut_x3y3 = (panel.x1y1[0], panel.x1y1[1] + cut_y_length)
 
-                p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
-                p2.dims = [p1_cut_x2y2, panel.x2y2, panel.x3y3, panel.x4y4, p1_cut_x3y3, p1_cut_x1y1] 
+                p1.coords = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
+                p2.coords = [p1_cut_x2y2, panel.x2y2, panel.x3y3, panel.x4y4, p1_cut_x3y3, p1_cut_x1y1] 
 
             # top right corner
             else:
@@ -545,8 +560,8 @@ def single_slice_panels(page, type_choice=None):
                 p1_cut_x2y2 = panel.x2y2 
                 p1_cut_x3y3 = (panel.x2y2[0], panel.x2y2[1] + cut_y_length)
 
-                p1.dims = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
-                p2.dims = [panel.x1y1, p1_cut_x1y1, p1_cut_x3y3, panel.x3y3, panel.x4y4, panel.x1y1]
+                p1.coords = [p1_cut_x1y1, p1_cut_x2y2, p1_cut_x3y3, p1_cut_x1y1]
+                p2.coords = [panel.x1y1, p1_cut_x1y1, p1_cut_x3y3, panel.x3y3, panel.x4y4, panel.x1y1]
 
     page.num_panels +=  num_panels_added
 
@@ -608,20 +623,20 @@ def move_children_to_line(parent, line, change, orientation, direction):
                 if len(child.children) > 0:
                     move_children_to_line(child, line, change, orientation, direction)
                 else:
-                    for idx, dim in enumerate(child.dims):
-                        if dim[1] == y_value:
-                            mvmnt = move_child_to_line(dim, change, line, orientation)
-                            child.dims[idx] = (dim[0], dim[1] - mvmnt)
+                    for idx, coord in enumerate(child.coords):
+                        if coord[1] == y_value:
+                            mvmnt = move_child_to_line(coord, change, line, orientation)
+                            child.coords[idx] = (coord[0], coord[1] - mvmnt)
                             child.non_rect = True
         else:
             for child in parent.children:
                 if len(child.children) > 0:
                     move_children_to_line(child, line, change, orientation, direction)
                 else:
-                    for idx, dim in enumerate(child.dims):
-                        if dim[1] == y_value:
-                            mvmnt = move_child_to_line(dim, change, line, orientation)
-                            child.dims[idx] = (dim[0], dim[1] + mvmnt)
+                    for idx, coord in enumerate(child.coords):
+                        if coord[1] == y_value:
+                            mvmnt = move_child_to_line(coord, change, line, orientation)
+                            child.coords[idx] = (coord[0], coord[1] + mvmnt)
                             child.non_rect = True
 
     else:
@@ -630,20 +645,20 @@ def move_children_to_line(parent, line, change, orientation, direction):
                 if len(child.children) > 0:
                     move_children_to_line(child, line, change, orientation, direction)
                 else:
-                    for idx, dim in enumerate(child.dims):
-                        if dim[0] == x_value:
-                            mvmnt = move_child_to_line(dim, change, line, orientation)
-                            child.dims[idx] = (dim[0] + mvmnt, dim[1])
+                    for idx, coord in enumerate(child.coords):
+                        if coord[0] == x_value:
+                            mvmnt = move_child_to_line(coord, change, line, orientation)
+                            child.coords[idx] = (coord[0] + mvmnt, coord[1])
                             child.non_rect = True
         else:
             for child in parent.children:
                 if len(child.children) > 0:
                     move_children_to_line(child, line, change, orientation, direction)
                 else:
-                    for idx, dim in enumerate(child.dims):
-                        if dim[0] == x_value:
-                            mvmnt = move_child_to_line(dim, change, line, orientation)
-                            child.dims[idx] = (dim[0] - mvmnt, dim[1])
+                    for idx, coord in enumerate(child.coords):
+                        if coord[0] == x_value:
+                            mvmnt = move_child_to_line(coord, change, line, orientation)
+                            child.coords[idx] = (coord[0] - mvmnt, coord[1])
                             child.non_rect = True
 
 def box_transform_panels(page, type_choice=None):
@@ -954,12 +969,15 @@ def box_transform_page(page, type_choice=None):
 
             # If panel has children
                 # find all children that fall on line to be changed
-            # Else just change the panel's dims
+            # Else just change the panel's coords
 
     return page
     
 def add_transforms(page):
     # Transform types
+
+    # TODO: Add page zig zag
+    # TODO: Add boundary removal
 
     # Allow choosing multiple
     transform_choice = ["slice", "box"]
@@ -995,20 +1013,20 @@ def shrink_panels(page):
         pco.AddPath(panel.get_polygon(), pyclipper.JT_ROUND, pyclipper.ET_CLOSEDPOLYGON)
         solution = pco.Execute(-25.0)
 
-        changed_dims = []
+        changed_coords = []
         if len(solution) > 0:
             for item in solution[0]:
-                changed_dims.append(tuple(item))
+                changed_coords.append(tuple(item))
 
-            changed_dims.append(changed_dims[0])
+            changed_coords.append(changed_coords[0])
 
-            panel.dims = changed_dims
-            panel.x1y1 = changed_dims[0]
-            panel.x2y2 = changed_dims[1]
-            panel.x3y3 = changed_dims[2]
-            panel.x4y4 = changed_dims[3]
+            panel.coords = changed_coords
+            panel.x1y1 = changed_coords[0]
+            panel.x2y2 = changed_coords[1]
+            panel.x3y3 = changed_coords[2]
+            panel.x4y4 = changed_coords[3]
         else:
-            print(panel.dims)
+            print(panel.coords)
 
 
     return page
@@ -1023,47 +1041,26 @@ def random_remove_panel(page):
 
     return page
 
-def create_single_panel_metadata(panel, image_dir, image_dir_path):
-    # Associated speech bubbles
+def create_speech_bubble(panel, text, font_files, speech_bubble_files):
+    pass
 
-    # Part of image cropped
+def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path):
+
     
     # Image inside used
-    select_image = np.random.choice(image_dir)
-    
+    # Part of image cropped
+        # Currently set to use panel part
+    select_image_idx = np.random.randint(0, image_dir_len)
+    select_image = image_dir[select_image_idx]
     panel.image = image_dir_path+select_image
 
-    # img = Image.open(image_dir_path+select_image)
+    # Associated speech bubbles
 
-    # mask = Image.new("L", (1700, 2400), 0)
+def populate_panels(page, image_dir, image_dir_len, image_dir_path):
 
-    # draw = ImageDraw.Draw(mask)
-
-    # w_rev_ratio = 1700/img.size[0]
-    # h_rev_ratio = 2400/img.size[1]
-
-    # img = img.resize(
-    #     (round(img.size[0]*w_rev_ratio),
-    #     round(img.size[1]*h_rev_ratio))
-    # )
-
-    # mask_dims = panel.get_polygon()
-    # draw.polygon(mask_dims, fill=255)
-
-    # bc = Image.new("L", (1700, 2400))
-    # bc.paste(img, (0, 0), mask)
-
-    # bc.show()
-
-
-
-def populate_panels(page):
-
-    image_dir_path = "datasets/image_dataset/db_illustrations_bw/"
-    image_dir = os.listdir(image_dir_path) 
     for child in page.leaf_children:
 
-        create_single_panel_metadata(child, image_dir, image_dir_path)
+        create_single_panel_metadata(child, image_dir, image_dir_len, image_dir_path)
 
     return page
 
@@ -1075,7 +1072,7 @@ def get_base_panels(num_panels=0, layout_type=None):
     topright = (1700, 0.0)
     bottomleft = (0.0, 2400)
     bottomright = (1700, 2400)
-    dims = [
+    coords = [
         topleft,
         topright,
         bottomright,
@@ -1086,7 +1083,7 @@ def get_base_panels(num_panels=0, layout_type=None):
         layout_type = np.random.choice(["v", "h", "vh"])
 
     # Panels encapsulated and returned within page
-    page = Page(dims, layout_type, num_panels)
+    page = Page(coords, layout_type, num_panels)
 
     # TODO: Fit in getting black pages sperately
 
@@ -1467,7 +1464,7 @@ def get_base_panels(num_panels=0, layout_type=None):
 
             # Draw 4 x 2
             if type_choice == "fourfourxtwoeq" or type_choice =="fourfourxtwouneq":
-                # panels = draw_n_shifted(4, *dims, "h")
+                # panels = draw_n_shifted(4, *coords, "h")
                 draw_n(4, page, "h")
                 # Equal 
                 if type_choice == "fourfourxtwoeq":
@@ -1556,19 +1553,21 @@ def get_base_panels(num_panels=0, layout_type=None):
 
     return page 
      
-def create_page_metadata():
+def create_page_metadata(images_dir, image_dir_len, image_dir_path):
 
     # Select page type
     # Select number of panels on the page
         # between 1 and 8
     # Select panel boundary type
     # Select panel boundary widths
-    # TODO: Remember some panels can just be left blank
 
     page = get_base_panels(5, "vh")
     page = add_transforms(page)
     page = shrink_panels(page)
+    page = populate_panels(page, images_dir, image_dir_len, image_dir_path)
+
+    # TODO: Remember some panels can just be left blank
+    # TODO: Pair with adding background
     # page = random_remove_panel(page)
-    page = populate_panels(page)
 
     return page 

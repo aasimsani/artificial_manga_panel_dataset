@@ -1,4 +1,5 @@
 from PIL import Image, ImageDraw
+import numpy as np
 
 from .page_dataset_creator import get_leaf_panels
 
@@ -14,9 +15,18 @@ def create_single_page():
     page.show()
 
 
+def crop_image_only_outside(img,tol=0):
+    # img is 2D image data
+    # tol  is tolerance
+    mask = img>tol
+    m,n = img.shape
+    mask0,mask1 = mask.any(0),mask.any(1)
+    col_start,col_end = mask0.argmax(),n-mask0[::-1].argmax()
+    row_start,row_end = mask1.argmax(),m-mask1[::-1].argmax()
+    return img[row_start:row_end,col_start:col_end]
 
 
-def test_render(page):
+def render(page, show=False):
 
     leaf_children = []
     if len(page.leaf_children) < 1:
@@ -28,13 +38,19 @@ def test_render(page):
     W = 1700
     H = 2400
 
-    page = Image.new(size=(W,H), mode="L", color="white")
-    draw_rect = ImageDraw.Draw(page)
+    page_img = Image.new(size=(W,H), mode="L", color="white")
+    draw_rect = ImageDraw.Draw(page_img)
 
     coords = []
     for panel in leaf_children:
 
         img = Image.open(panel.image)
+
+        img_array = np.asarray(img)
+        crop_array = crop_image_only_outside(img_array)
+
+        img = Image.fromarray(crop_array)
+
         w_rev_ratio = 1700/img.size[0]
         h_rev_ratio = 2400/img.size[1]
 
@@ -52,34 +68,9 @@ def test_render(page):
         draw_mask.polygon(rect, fill=255)
         draw_rect.line(rect, fill="black", width=10) 
 
-        page.paste(img, (0, 0), mask)
+        page_img.paste(img, (0, 0), mask)
 
-
-
-    # mask = Image.new("L", (1700, 2400), 0)
-
-    # draw = ImageDraw.Draw(mask)
-
-    # w_rev_ratio = 1700/img.size[0]
-    # h_rev_ratio = 2400/img.size[1]
-
-    # img = img.resize(
-    #     (round(img.size[0]*w_rev_ratio),
-    #     round(img.size[1]*h_rev_ratio))
-    # )
-
-    # mask_dims = panel.get_polygon()
-    # draw.polygon(mask_dims, fill=255)
-
-    # bc = Image.new("L", (1700, 2400))
-    # bc.paste(img, (0, 0), mask)
-
-    # bc.show()
-
-    # coords = coords[0:2]
-    # for rect in coords:
-    #     # draw_rect.rectangle(rect, fill=None, outline="white", width=20)
-    #     draw_rect.line(rect, fill="black", width=10)
-    #     # draw_rect.polygon(rect, fill="red", outline="yellow")
-
-    page.show()
+    if show:
+        page_img.show()
+    else:
+        return page_img
