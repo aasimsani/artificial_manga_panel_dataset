@@ -7,3 +7,6 @@ jupyterlab
 fonttools
 Pillow
 dvc
+maxrect
+pyclipper
+label_studio

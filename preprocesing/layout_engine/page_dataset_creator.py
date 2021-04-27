@@ -3,7 +3,7 @@ import math
 import time
 from copy import deepcopy
 import random
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import pyclipper
 import json
 import uuid
@@ -11,7 +11,7 @@ import uuid
 
 # TODO: Figure out page type distributions
 
-class Panel:
+class Panel(object):
 
     def __init__(self, coords, name, parent, orientation, children=[], non_rect=False):
 
@@ -138,7 +138,6 @@ class Panel:
         # for panel in data['children']:
         pass
 
-
 class Page(Panel):
 
     def __init__(self, coords, page_type, num_panels, children=[]):
@@ -174,6 +173,55 @@ class Page(Panel):
     def load_data(self, filename):
 
         pass
+
+class SpeechBubble(object):
+    def __init__(self, text, font, speech_bubble):
+
+        self.text = text['Japanese']
+        self.font = font
+        self.speech_bubble = speech_bubble
+        
+        color_type = speech_bubble.split("/")
+        color_type = color_type[-1].split("~")
+        if color_type == "black":
+            self.write_type = "white"
+        else:
+            self.write_type = "black"
+        
+        self.transform = None
+        self.location = []
+
+        # Can be  
+        self.text_orientation = ""
+    
+    def render(self):
+
+        bubble = Image.open(self.speech_bubble)
+
+        cx, cy = bubble.size[0]/2, bubble.size[1]/2
+
+        x = cx - (cx/2)
+        y = cy - (cy/2)
+
+        write = ImageDraw.Draw(bubble)
+        font = ImageFont.truetype(self.font, 54)
+
+        # Figure out line breakpoints
+            # horizontal
+            # vertical
+        # Figure out where to start writing
+            # From dataframe
+        # Figure out text orientation (95/5 split)
+            # Top to bottom - Right to Left
+            # Left to right - Top to bottom
+
+        write.multiline_text((x, y),
+                    self.text,
+                    font=font,
+                    fill=self.write_type,
+
+                    )
+        bubble.show()
 
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
 
@@ -1054,8 +1102,10 @@ def random_remove_panel(page):
     return page
 
 def create_speech_bubble(panel, text, font, speech_bubble_file):
+    
+    speech_bubble = SpeechBubble(text, font, speech_bubble_file)
+    speech_bubble.render()
 
-    pass
 
 def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
 
@@ -1067,12 +1117,25 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
     select_image = image_dir[select_image_idx]
     panel.image = image_dir_path+select_image
 
-    text = ""
-    font = ""
-    speech_bubble_file = ""
-
+    num_speech_bubbles = np.random.randint(0,3)
+    num_speech_bubbles = 1
+    text_dataset_len = len(text_dataset)
+    font_dataset_len = len(font_files)
+    speech_bubble_dataset_len = len(speech_bubble_files)
     # Associated speech bubbles
-    create_speech_bubble(panel, text, font, speech_bubble_file)
+    for speech_bubble in range(num_speech_bubbles):
+
+        text_idx = np.random.randint(0, text_dataset_len)
+        text = text_dataset.iloc[text_idx]
+
+        font_idx = np.random.randint(0, font_dataset_len)
+        font = font_files[font_idx]
+
+        speech_bubble_file_idx = np.random.randint(0, speech_bubble_dataset_len)
+        speech_bubble_file = speech_bubble_files[speech_bubble_file_idx]
+
+        create_speech_bubble(panel, text, font, speech_bubble_file)
+        break
 
 def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
 
@@ -1086,6 +1149,7 @@ def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, 
                                      text_dataset,
                                      speech_bubble_files
                                      )
+        break
 
     return page
 
