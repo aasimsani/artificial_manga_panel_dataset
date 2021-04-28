@@ -36,28 +36,28 @@ if __name__ == '__main__':
 
     # Page creation
     
-    # print("Loading files")
-    # image_dir_path = "datasets/image_dataset/db_illustrations_bw/"
-    # image_dir = os.listdir(image_dir_path) 
-    # image_dir_len = len(image_dir)
+    print("Loading files")
+    image_dir_path = "datasets/image_dataset/db_illustrations_bw/"
+    image_dir = os.listdir(image_dir_path) 
+    image_dir_len = len(image_dir)
 
-    # text_dataset = pd.read_parquet("datasets/text_dataset/jesc_dialogues")
+    text_dataset = pd.read_parquet("datasets/text_dataset/jesc_dialogues")
 
-    # speech_bubbles_path = "datasets/speech_bubbles_dataset/files/"
-    # speech_bubble_files = os.listdir(speech_bubbles_path)
-    # speech_bubble_files = [speech_bubbles_path+filename for filename in speech_bubble_files]
+    speech_bubbles_path = "datasets/speech_bubbles_dataset/files/"
+    speech_bubble_files = os.listdir(speech_bubbles_path)
+    speech_bubble_files = [speech_bubbles_path+filename for filename in speech_bubble_files]
 
-    # font_files_path = "datasets/font_dataset/"
-    # viable_font_files = []
-    # with open(font_files_path+"viable_fonts.csv") as viable_fonts:
+    font_files_path = "datasets/font_dataset/"
+    viable_font_files = []
+    with open(font_files_path+"viable_fonts.csv") as viable_fonts:
 
-    #     for line in viable_fonts.readlines():
-    #         path, viable = line.split(",")
-    #         viable = bool(viable)
-    #         if viable:
-    #             viable_font_files.append(path)
+        for line in viable_fonts.readlines():
+            path, viable = line.split(",")
+            viable = bool(viable)
+            if viable:
+                viable_font_files.append(path)
                 
-    # print("Running creation of metadata")
+    print("Running creation of metadata")
     # dt = []
     # for i in tqdm(range(10000)):
     #     t1 = time.perf_counter()
@@ -75,13 +75,14 @@ if __name__ == '__main__':
     #     # test_render(panels)
     # print("Average time", sum(dt)/len(dt))
 
-    # for i in range(1):
-    #     page = create_page_metadata(image_dir,
-    #                                 image_dir_len,
-    #                                 image_dir_path,
-    #                                 viable_font_files,
-    #                                 text_dataset,
-    #                                 speech_bubble_files
-    #                                 )
+    for i in range(1):
+        page = create_page_metadata(image_dir,
+                                    image_dir_len,
+                                    image_dir_path,
+                                    viable_font_files,
+                                    text_dataset,
+                                    speech_bubble_files
+                                    )
         # render(page, show=True)
+        page.render(show=True)
     #     # test_render(panels)

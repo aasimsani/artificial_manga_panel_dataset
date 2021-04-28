@@ -8,221 +8,10 @@ import pyclipper
 import json
 import uuid
 
+from .page_object_classes import Panel, Page, SpeechBubble
+from .helpers import invert_for_next, choose, choose_and_return_other, get_min_area_panels, single_slice_panels, get_leaf_panels, find_parent_with_multiple_children, move_children_to_line
 
-# TODO: Figure out page type distributions
-
-class Panel(object):
-
-    def __init__(self, coords, name, parent, orientation, children=[], non_rect=False):
-
-        self.x1y1 = coords[0]
-        self.x2y2 = coords[1]
-        self.x3y3 = coords[2]
-        self.x4y4 = coords[3]
-        self.name = name
-        self.parent = parent
-
-        self.coords = list(coords)
-        self.non_rect = non_rect
-
-        self.lines = [
-            (self.x1y1, self.x2y2),
-            (self.x2y2, self.x3y3),
-            (self.x3y3, self.x4y4),
-            (self.x4y4, self.x1y1)
-        ]
-
-        self.width = (self.x2y2[0] - self.x1y1[0])
-        self.height = (self.x3y3[1] - self.x2y2[1])
-
-        self.area = self.width*self.height
-        self.area_proportion = round(self.area/(2400*1700), 2)
-
-        self.children = children
-
-        self.sliced = False
-
-        self.orientation = orientation 
-
-        self.no_render = False
-
-        self.image = None
-
-        self.speech_bubbles = []
-
-    def get_relative_location(self, panel):
-        
-        pos = ""
-        # Is left of
-        if self.x1y1[0] < panel.x1y1[0]:
-            pos = "left"
-        # Same x-axis
-        elif self.x1y1[0] == panel.x1y1[0]:
-            # Is below of
-            if self.x1y1[1] < panel.x1y1[1]:
-                pos = "below" 
-            # Same y-axis
-            elif self.x1y1[1] == panel.x1y1[1]:
-                pos = "on"
-            # Is above of
-            else:
-                pos = "above"
-        # Is right of
-        else:
-            pos = "right"
-        
-        return pos
-    
-    def get_polygon(self):
-        if self.non_rect:
-
-            # Handle edge case of incorrect input
-            # if len(self.coords) < 5:
-                # self.coords.append(self.coords[0])
-
-            return tuple(self.coords)
-        else:
-
-            return (
-                self.x1y1,
-                self.x2y2,
-                self.x3y3,
-                self.x4y4,
-                self.x1y1
-            )
-
-    def is_adjacent(self, panel):
-
-        for l1 in self.lines:
-            for l2 in panel.lines:
-                if l1 == l2:
-                    return True
-        return False
-    
-    def add_child(self, panel):
-
-        self.children.append(panel)
-    
-    def add_children(self, panels):
-
-        for panel in panels:
-            self.add_child(panel)
-    
-    def get_child(self, idx):
-
-        return self.children[idx]
-
-    def dump_data(self):
-        
-        if len(self.children) > 0:
-            children_rec = [child.dump_data() for child in self.children]
-        else:
-            children_rec = []
-
-        speech_bubbles = [bubble.dump_data() for bubble in self.speech_bubbles]
-        data = dict(
-            name = self.name,
-            coordinates = self.coords,
-            children = children_rec,
-            non_rect = self.non_rect,
-            sliced = self.sliced,
-            no_render = self.no_render,
-            image = self.image,
-            speech_bubbles = speech_bubbles
-        )
-
-        return data
-
-    def populate_children(self, data):
-        
-        # for panel in data['children']:
-        pass
-
-class Page(Panel):
-
-    def __init__(self, coords, page_type, num_panels, children=[]):
-        super().__init__(coords, "page", None, None, [])
-
-        self.num_panels = num_panels
-        self.page_type = page_type
-        self.leaf_children = []
-
-        # TODO: Setup naming of pages
-        self.name = "Page-"+str(uuid.uuid1())
-
-    def dump_data(self, dataset_path, dry=True):
-
-        if len(self.children) > 0:
-            children_rec = [child.dump_data() for child in self.children]
-        else:
-            children_rec = []
-
-        data = dict(
-            name = self.name,
-            num_panels = self.num_panels,
-            page_type = self.page_type,
-            children = children_rec
-        )   
-
-        if not dry:
-            with open(dataset_path+self.name+".json", "w+") as json_file:
-                json.dump(data, json_file, indent=2)
-        else:
-            return json.dumps(data)
-    
-    def load_data(self, filename):
-
-        pass
-
-class SpeechBubble(object):
-    def __init__(self, text, font, speech_bubble):
-
-        self.text = text['Japanese']
-        self.font = font
-        self.speech_bubble = speech_bubble
-        
-        color_type = speech_bubble.split("/")
-        color_type = color_type[-1].split("~")
-        if color_type == "black":
-            self.write_type = "white"
-        else:
-            self.write_type = "black"
-        
-        self.transform = None
-        self.location = []
-
-        # Can be  
-        self.text_orientation = ""
-    
-    def render(self):
-
-        bubble = Image.open(self.speech_bubble)
-
-        cx, cy = bubble.size[0]/2, bubble.size[1]/2
-
-        x = cx - (cx/2)
-        y = cy - (cy/2)
-
-        write = ImageDraw.Draw(bubble)
-        font = ImageFont.truetype(self.font, 54)
-
-        # Figure out line breakpoints
-            # horizontal
-            # vertical
-        # Figure out where to start writing
-            # From dataframe
-        # Figure out text orientation (95/5 split)
-            # Top to bottom - Right to Left
-            # Left to right - Top to bottom
-
-        write.multiline_text((x, y),
-                    self.text,
-                    font=font,
-                    fill=self.write_type,
-
-                    )
-        bubble.show()
-
+# Creation helpers
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
 
         topleft = parent.x1y1
@@ -397,37 +186,7 @@ def draw_two_shifted(parent, horizontal_vertical, shift=None):
 
         parent.add_children([poly1, poly2])
 
-def invert_for_next(current):
-    if current == "h":
-        return "v"
-    else:
-        return "h"
-
-def choose(parent):
-
-    choice_idx = np.random.randint(0, len(parent.children))
-
-    return choice_idx
-
-def choose_and_return_other(parent):
-
-    choices = list(range(0, len(parent.children)))
-    choice_idx = np.random.choice(choices)
-
-    choices.remove(choice_idx)
-
-    return choice_idx, choices
-
-def get_min_area_panels(panel, min_area=0.1, ret_panels=[]):
-
-    for child in panel.children:
-
-        if len(child.children) > 1:
-            get_min_area_panels(child, min_area, ret_panels)
-        else:
-            if child.area_proportion >= min_area and not child.sliced:
-                ret_panels.append(child)
-
+# Page transformations
 def single_slice_panels(page, type_choice=None):
 
     # Remove panels which are too small 
@@ -626,100 +385,6 @@ def single_slice_panels(page, type_choice=None):
     page.num_panels +=  num_panels_added
 
     return page
-
-def get_leaf_panels(page, panels=[]):
-
-    for child in page.children:
-        
-        if len(child.children) > 0:
-            get_leaf_panels(child, panels)
-        else:
-            panels.append(child)
-
-def find_parent_with_multiple_children(page, n):
-
-    panels =[]    
-    if len(page.leaf_children) < 1:
-        get_leaf_panels(page, panels)
-        page.leaf_children = panels
-    else:
-        panels = page.leaf_children
-
-    relevant_panels = []
-
-    for panel in panels:
-        if panel.parent not in relevant_panels:
-            if len(panel.parent.children) == n:
-                relevant_panels.append(panel.parent)
-    
-    return relevant_panels
-
-def move_child_to_line(point, change, old_line, orientation):
-
-    if orientation == "h":
-        old_line_length = old_line[1][0] - old_line[0][0]
-
-        movement = (change*(point[0] - old_line[1][0]))/old_line_length
-
-        return movement
-    else:
-
-        old_line_length = (old_line[1][1] - old_line[0][1])
-
-        r1 = change/old_line_length
-
-        movement = (change*(point[1] - old_line[1][1]))/old_line_length
-
-        return movement
-
-def move_children_to_line(parent, line, change, orientation, direction):
-
-    x_value = line[0][0]
-    y_value = line[0][1]
-    if orientation == "h":
-
-        if direction == "rup":
-            for child in parent.children:
-                if len(child.children) > 0:
-                    move_children_to_line(child, line, change, orientation, direction)
-                else:
-                    for idx, coord in enumerate(child.coords):
-                        if coord[1] == y_value:
-                            mvmnt = move_child_to_line(coord, change, line, orientation)
-                            child.coords[idx] = (coord[0], coord[1] - mvmnt)
-                            child.non_rect = True
-        else:
-            for child in parent.children:
-                if len(child.children) > 0:
-                    move_children_to_line(child, line, change, orientation, direction)
-                else:
-                    for idx, coord in enumerate(child.coords):
-                        if coord[1] == y_value:
-                            mvmnt = move_child_to_line(coord, change, line, orientation)
-                            child.coords[idx] = (coord[0], coord[1] + mvmnt)
-                            child.non_rect = True
-
-    else:
-        if direction == "rup":
-            for child in parent.children:
-                if len(child.children) > 0:
-                    move_children_to_line(child, line, change, orientation, direction)
-                else:
-                    for idx, coord in enumerate(child.coords):
-                        if coord[0] == x_value:
-                            mvmnt = move_child_to_line(coord, change, line, orientation)
-                            child.coords[idx] = (coord[0] + mvmnt, coord[1])
-                            child.non_rect = True
-        else:
-            for child in parent.children:
-                if len(child.children) > 0:
-                    move_children_to_line(child, line, change, orientation, direction)
-                else:
-                    for idx, coord in enumerate(child.coords):
-                        if coord[0] == x_value:
-                            mvmnt = move_child_to_line(coord, change, line, orientation)
-                            child.coords[idx] = (coord[0] - mvmnt, coord[1])
-                            child.non_rect = True
 
 def box_transform_panels(page, type_choice=None):
 
@@ -1101,12 +766,7 @@ def random_remove_panel(page):
 
     return page
 
-def create_speech_bubble(panel, text, font, speech_bubble_file):
-    
-    speech_bubble = SpeechBubble(text, font, speech_bubble_file)
-    speech_bubble.render()
-
-
+# Page creators
 def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
 
     
@@ -1122,6 +782,7 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
     text_dataset_len = len(text_dataset)
     font_dataset_len = len(font_files)
     speech_bubble_dataset_len = len(speech_bubble_files)
+
     # Associated speech bubbles
     for speech_bubble in range(num_speech_bubbles):
 
@@ -1134,7 +795,8 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
         speech_bubble_file_idx = np.random.randint(0, speech_bubble_dataset_len)
         speech_bubble_file = speech_bubble_files[speech_bubble_file_idx]
 
-        create_speech_bubble(panel, text, font, speech_bubble_file)
+        speech_bubble = SpeechBubble(text, font, speech_bubble_file)
+        # speech_bubble.render()
         break
 
 def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
@@ -1149,8 +811,6 @@ def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, 
                                      text_dataset,
                                      speech_bubble_files
                                      )
-        break
-
     return page
 
 def get_base_panels(num_panels=0, layout_type=None):
@@ -1642,6 +1302,7 @@ def get_base_panels(num_panels=0, layout_type=None):
 
     return page 
      
+# TODO: Figure out page type distributions
 def create_page_metadata(images_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
 
     # Select page type

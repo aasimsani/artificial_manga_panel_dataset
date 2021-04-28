@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw
 import numpy as np
 
-from .page_dataset_creator import get_leaf_panels
+# from .page_dataset_creator import get_leaf_panels
 
 
 def create_single_page():
@@ -30,7 +30,8 @@ def render(page, show=False):
 
     leaf_children = []
     if len(page.leaf_children) < 1:
-        get_leaf_panels(page, leaf_children)
+        # get_leaf_panels(page, leaf_children)
+        page.get_lead_panels(leaf_children)
     else:
         leaf_children = page.leaf_children
 
