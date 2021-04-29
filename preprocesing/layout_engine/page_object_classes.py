@@ -1,9 +1,10 @@
 import numpy as np 
 import random
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 import json
 import uuid
 from .helpers import crop_image_only_outside
+import cjkwrap
 
 class Panel(object):
 
@@ -184,6 +185,8 @@ class Page(Panel):
         draw_rect = ImageDraw.Draw(page_img)
 
         coords = []
+
+        # Render panels
         for panel in leaf_children:
 
             img = Image.open(panel.image)
@@ -197,13 +200,14 @@ class Page(Panel):
             h_rev_ratio = 2400/img.size[1]
 
 
+            #TODO Figure out how to do different types of 
+            # image crops for smaller panels
+
             img = img.resize(
                 (round(img.size[0]*w_rev_ratio),
                 round(img.size[1]*h_rev_ratio))
             )
 
-            #TODO Figure out how to do different types of 
-            # image crops for smaller panels
             mask = Image.new("L", (1700, 2400), 0)
             draw_mask = ImageDraw.Draw(mask)
 
@@ -214,56 +218,264 @@ class Page(Panel):
 
             page_img.paste(img, (0, 0), mask)
 
+        # Render bubbles
+        for panel in leaf_children:
+            # For each bubble
+                # Do for bubble
+            states, bubble, mask, location = panel.speech_bubbles[0].render()
+            if "inverted" in states:
+                # Use mask for inverted which is inverted
+                bubble_mask = ImageOps.invert(mask)
+                # bubble_mask =  bubble
+
+                # Slightly shift mask so that you get outline for bubbles
+                bubble_mask = bubble_mask.resize((bubble_mask.size[0]+15, bubble_mask.size[1]+15))
+                w, h = bubble.size
+                crop_dims = (
+                    5,5,
+                    5+w, 5+h,
+                )
+                bubble_mask = bubble_mask.crop(crop_dims)
+                page_img.paste(bubble, location, bubble_mask)
+            else:
+                # Slightly shift mask so that you get outline for bubbles
+                bubble_mask = mask.resize((mask.size[0]+15, mask.size[1]+15))
+                w, h = bubble.size
+                crop_dims = (
+                    5,5,
+                    5+w, 5+h,
+                )
+                bubble_mask = bubble_mask.crop(crop_dims)
+                page_img.paste(bubble, location, bubble_mask)
+
         if show:
             page_img.show()
         else:
             return page_img
-    
-class SpeechBubble(object):
-    def __init__(self, text, font, speech_bubble):
 
-        self.text = text['Japanese']
+class SpeechBubble(object):
+    def __init__(self, texts, font, speech_bubble, writing_areas, new_area, location):
+
+        self.texts = texts
         self.font = font
         self.speech_bubble = speech_bubble
-        
-        color_type = speech_bubble.split("/")
-        color_type = color_type[-1].split("~")
-        if color_type == "black":
-            self.write_type = "white"
-        else:
-            self.write_type = "black"
-        
+        self.writing_areas = writing_areas
         self.transform = None
-        self.location = []
+        self.resize_to = new_area
+        self.location = location
+        
+        
+        # 1 in 100 chance
+        if np.random.random() < 0.01:
+            self.text_orientation = "ltr"
+        else:
+            self.text_orientation = "ttb"
 
-        # Can be  
-        self.text_orientation = ""
-    
     def render(self):
 
-        bubble = Image.open(self.speech_bubble)
-
-        cx, cy = bubble.size[0]/2, bubble.size[1]/2
-
-        x = cx - (cx/2)
-        y = cy - (cy/2)
+        bubble = Image.open(self.speech_bubble).convert("L")
+        mask = bubble.copy()
 
         write = ImageDraw.Draw(bubble)
-        font = ImageFont.truetype(self.font, 54)
 
-        # Figure out line breakpoints
-            # horizontal
-            # vertical
-        # Figure out where to start writing
-            # From dataframe
-        # Figure out text orientation (95/5 split)
-            # Top to bottom - Right to Left
-            # Left to right - Top to bottom
+        # Set variable font size
+        min_font_size = 54
+        max_font_size = 72
+        current_font_size = np.random.randint(min_font_size,
+                                              max_font_size
+                                              )
 
-        write.multiline_text((x, y),
-                    self.text,
-                    font=font,
-                    fill=self.write_type,
+        font = ImageFont.truetype(self.font,current_font_size)
 
-                    )
-        bubble.show()
+        # transforms
+            # invert (1 in 20)
+            # flip horizontal
+            # flip vertical
+            # stretch x or y
+            # shrink x or y
+            # shear
+
+        transforms = [
+            "invert",
+            "flip horizontal",
+            "flip vertical",
+            "rotate",
+            "stretch x",
+            "stretch y",
+            "shrink",
+            "grow"
+        ]
+
+        self.transforms = np.random.choice(transforms, 3)
+
+        w, h = bubble.size
+
+        # 1 in 50 chance of no transformation
+        # if np.random.rand() < 0.98:
+        # for transform in chosen_transforms:
+        states = []
+        transform = ""
+        # transform = "flip vertical"
+        if transform == "invert":
+            states.append("inverted")
+            bubble = ImageOps.invert(bubble)
+        
+        elif transform == "flip vertical": 
+            bubble = ImageOps.flip(bubble)
+            # TODO: vertically flip box coordinates
+            new_writing_areas = []
+
+        
+        elif transform == "flip horizontal":
+            bubble = ImageOps.mirror(bubble)
+            # TODO: horizontally flip box coordinates
+        
+        elif transform == "stretch x":
+            # TODO stretch box
+            pass
+
+        elif transform == "stretch y":
+            # TODO stretch box
+            pass
+
+        elif transform == "shrink":
+            # TODO shrink box
+            pass
+        elif transform == "grow":
+            pass
+
+        elif transform == "rotate":
+            pass
+        
+        # Write text into bubble
+        if "inverted" in states:
+            fill_type = "white"
+        else:
+            fill_type = "black"
+
+        for i, area in enumerate(self.writing_areas):
+            og_width = area['original_width']
+            og_height = area['original_height']
+
+            # Convert from percentage to actual values
+            px_width =  (area['width']/100)*og_width
+            px_height =  (area['height']/100)*og_height
+
+            og_x = ((area['x']/100)*og_width)
+            og_y = ((area['y']/100)*og_height)
+
+            # Padded
+            x = og_x + 20
+            y = og_y + 20
+
+            # More padding
+            max_x = px_width - 20
+            max_y = px_height - 20
+
+            text = self.texts[i]['Japanese']
+            text = text+text+text+text+text
+            text_segments = [text]
+            size = font.getsize(text)
+
+
+            if self.text_orientation == "ttb":
+            
+                # Setup vertical wrapping
+                avg_height = size[0]/len(text)
+                max_chars = int((px_height//avg_height))
+                if size[0] > px_height:
+                    # Using specialized wrapping library
+                    text_segments = cjkwrap.wrap(text, width=max_chars)
+
+                text_max_w = len(text_segments)*size[1]
+                
+                is_fit = False
+
+                # Horizontal wrapping
+                # Reduce font or remove words till text fits
+                while not is_fit:     
+                    if text_max_w > px_width:
+                        if current_font_size > min_font_size: 
+                            current_font_size -= 1
+                            font = ImageFont.truetype(self.font, current_font_size)
+                            size = font.getsize(text)
+                            avg_height = size[0]/len(text)
+                            max_chars = int((max_y//avg_height))
+                            text_segments = cjkwrap.wrap(text, width=max_chars)
+                            text_max_w = len(text_segments)*size[1]
+                        else:
+                            text_segments.pop()
+                            text_max_w = len(text_segments)*size[1]
+                    else:
+                        is_fit = True
+
+            # if text left to right
+            else:
+                pass
+                # Setup horizontal wrapping
+                avg_width = size[0]/len(text)
+                max_chars = int((px_width//avg_width))
+                if size[0] > px_width:
+                    # Using specialized wrapping library
+                    text_segments = cjkwrap.wrap(text, width=max_chars)
+                
+                # Setup vertical wrapping
+                text_max_h = len(text_segments)*size[1]
+                is_fit = False
+                while not is_fit:
+                    if text_max_h > px_height:
+                        if current_font_size > min_font_size:
+                            current_font_size -=1
+                            font = ImageFont.truetype(self.font, current_font_size)
+                            size = font.getsize(text)
+                            avg_width = size[0]/len(text)
+                            max_chars = int((px_width//avg_width))
+                            text_segments = cjkwrap.wrap(text, width=max_chars)
+                            text_max_h = len(text_segments)*size[1]
+                        else:
+                            text_segments.pop()
+                            text_max_h = len(text_segments)*size[1]
+                    else:
+                        is_fit = True
+
+            # Center bubble x axis
+            cbx = og_x + (px_width/2)
+            cby = og_y + (px_height/2)
+
+            # Render text
+            for i, text in enumerate(text_segments):
+                if self.text_orientation == 'ttb':
+                    rx = (cbx + text_max_w/2) - ((len(text_segments) - i)*size[1])
+                    ry = y
+                else:
+                    seg_size = font.getsize(text)
+                    rx = cbx - seg_size[0]/2
+                    ry = (cby + (len(text_segments)*size[1])/2) - ((len(text_segments) - i)*size[1])
+                write.text((rx, ry),
+                            text,
+                            font=font,
+                            language="ja",
+                            fill="black",
+                            direction=self.text_orientation)
+
+        # reisize bubble
+        aspect_ratio = h/w
+        new_height = round(np.sqrt(self.resize_to/aspect_ratio))
+        new_width = round(new_height * aspect_ratio)
+        bubble = bubble.resize((new_height, new_width))
+        mask = mask.resize((new_height, new_width))
+        # bubble.show()
+
+        # Make sure bubble doesn't bleed the page 
+        x1, y1 = self.location
+        x2 = x1 +bubble.size[0]
+        y2 = y1 +bubble.size[1]
+
+        if x2 > 1700:
+            x1 = x1 - (x2-1700)
+        if y2 > 2400:
+            y1 = y1 - (y2-1700)
+        
+        self.location = (x1, y1)
+        return states, bubble, mask, self.location
+

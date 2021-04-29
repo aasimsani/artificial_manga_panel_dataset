@@ -84,3 +84,7 @@ archivePrefix = "arXiv",
       2. It's metadata e.g. Has it been transformed etc.
     2. Each panel also has a list of images that it's comprised of and how they've been inserted and speech bubbles around them
 3. With the Panels each page also has a number of text bubbles on them. Usually the number being within (#panels-2 <= #bubbles <= #panels+2) of each panel on the depending on how large the panel is. Most bubbles are within the vicinity of a panel or within them with a small % of them peaking between panels. 
+
+
+# LIBRAQM requrired for writing
+Follow instructions (here)[https://github.com/HOST-Oman/libraqm]

@@ -9,7 +9,7 @@ import json
 import uuid
 
 from .page_object_classes import Panel, Page, SpeechBubble
-from .helpers import invert_for_next, choose, choose_and_return_other, get_min_area_panels, single_slice_panels, get_leaf_panels, find_parent_with_multiple_children, move_children_to_line
+from .helpers import invert_for_next, choose, choose_and_return_other, get_min_area_panels, get_leaf_panels, find_parent_with_multiple_children, move_children_to_line
 
 # Creation helpers
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
@@ -767,7 +767,7 @@ def random_remove_panel(page):
     return page
 
 # Page creators
-def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
+def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
 
     
     # Image inside used
@@ -786,20 +786,49 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
     # Associated speech bubbles
     for speech_bubble in range(num_speech_bubbles):
 
-        text_idx = np.random.randint(0, text_dataset_len)
-        text = text_dataset.iloc[text_idx]
+
 
         font_idx = np.random.randint(0, font_dataset_len)
         font = font_files[font_idx]
 
         speech_bubble_file_idx = np.random.randint(0, speech_bubble_dataset_len)
         speech_bubble_file = speech_bubble_files[speech_bubble_file_idx]
+        speech_bubble_writing_area = speech_bubble_tags[speech_bubble_tags['imagename'] == speech_bubble_file]['label']
+        speech_bubble_writing_area = json.loads(speech_bubble_writing_area.values[0])
 
-        speech_bubble = SpeechBubble(text, font, speech_bubble_file)
-        # speech_bubble.render()
-        break
+        texts = []
+        for i in range(len(speech_bubble_writing_area)):
+            text_idx = np.random.randint(0, text_dataset_len)
+            text = text_dataset.iloc[text_idx]
+            texts.append(text)
 
-def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
+        # resize bubble to < 40% of panel area
+        max_area = panel.area*0.4
+        new_area = np.random.random()*(max_area - max_area*0.375)
+        new_area = max_area - new_area
+
+        
+        # Put location of bubble in panel
+
+        width_m = np.random.random()
+        height_m = np.random.random()
+
+        xy = np.array(panel.coords)
+        min_coord = np.min(xy[xy[:, 0] == np.min(xy[:, 0])], 0)
+
+        x_choice = round(min_coord[0] + (panel.width//2 - 15)*width_m)
+        y_choice = round(min_coord[1] + (panel.height//2 - 15)*height_m)
+        
+
+        location = [
+            x_choice,
+            y_choice
+        ]
+        # location = tuple(min_coord)
+        speech_bubble = SpeechBubble(texts, font, speech_bubble_file, speech_bubble_writing_area, new_area, location)
+        panel.speech_bubbles.append(speech_bubble)
+
+def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
 
     for child in page.leaf_children:
 
@@ -809,7 +838,8 @@ def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, 
                                      image_dir_path,
                                      font_files,
                                      text_dataset,
-                                     speech_bubble_files
+                                     speech_bubble_files,
+                                     speech_bubble_tags
                                      )
     return page
 
@@ -1303,7 +1333,7 @@ def get_base_panels(num_panels=0, layout_type=None):
     return page 
      
 # TODO: Figure out page type distributions
-def create_page_metadata(images_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files):
+def create_page_metadata(images_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
 
     # Select page type
     # Select number of panels on the page
@@ -1314,7 +1344,15 @@ def create_page_metadata(images_dir, image_dir_len, image_dir_path, font_files, 
     page = get_base_panels(5, "vh")
     page = add_transforms(page)
     page = shrink_panels(page)
-    page = populate_panels(page, images_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files)
+    page = populate_panels(page,
+                           images_dir,
+                           image_dir_len,
+                           image_dir_path,
+                           font_files,
+                           text_dataset,
+                           speech_bubble_files,
+                           speech_bubble_tags
+                           )
 
     # TODO: Remember some panels can just be left blank
     # TODO: Pair with adding background

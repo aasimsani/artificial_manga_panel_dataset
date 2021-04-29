@@ -3,7 +3,7 @@ from scraping.download_fonts import get_font_links
 from preprocesing.text_dataset_format_changer import convert_jesc_to_dataframe
 from preprocesing.extract_and_verify_fonts import extract_fonts, get_font_files, verify_font_files
 from preprocesing.convert_images import convert_images_to_bw
-from preprocesing.layout_engine.page_creator import create_single_page, render 
+from preprocesing.layout_engine.page_creator import create_single_page
 from preprocesing.layout_engine.page_dataset_creator import create_page_metadata
 from tqdm import tqdm
 import os
@@ -43,10 +43,11 @@ if __name__ == '__main__':
 
     text_dataset = pd.read_parquet("datasets/text_dataset/jesc_dialogues")
 
-    speech_bubbles_path = "datasets/speech_bubbles_dataset/files/"
-    speech_bubble_files = os.listdir(speech_bubbles_path)
-    speech_bubble_files = [speech_bubbles_path+filename for filename in speech_bubble_files]
+    speech_bubbles_path = "datasets/speech_bubbles_dataset/"
 
+    speech_bubble_files = os.listdir(speech_bubbles_path+"/files/")
+    speech_bubble_files = [speech_bubbles_path+"files/"+filename for filename in speech_bubble_files]
+    speech_bubble_tags = pd.read_csv(speech_bubbles_path+"writing_area_labels.csv")
     font_files_path = "datasets/font_dataset/"
     viable_font_files = []
     with open(font_files_path+"viable_fonts.csv") as viable_fonts:
@@ -66,7 +67,8 @@ if __name__ == '__main__':
     #                                 image_dir_path,
     #                                 viable_font_files,
     #                                 text_dataset,
-    #                                 speech_bubble_files
+    #                                 speech_bubble_files,
+    #                                 speech_bubble_tags
     #                                 )
     #     # page.dump_data("./")
     #     t2 = time.perf_counter()
@@ -81,8 +83,26 @@ if __name__ == '__main__':
                                     image_dir_path,
                                     viable_font_files,
                                     text_dataset,
-                                    speech_bubble_files
+                                    speech_bubble_files,
+                                    speech_bubble_tags
                                     )
-        # render(page, show=True)
         page.render(show=True)
-    #     # test_render(panels)
+
+    # import json
+
+    # from preprocesing.layout_engine.page_object_classes import SpeechBubble
+    # sb = speech_bubble_files[60]
+    # sb_tag = speech_bubble_tags[speech_bubble_tags['imagename'] == sb]['label']
+    # sb_tag = json.loads(sb_tag.values[0])
+    # test_bubble = SpeechBubble([text_dataset.iloc[1]],
+    #                            viable_font_files[2],
+    #                            sb,
+    #                            sb_tag,
+    #                            new_area = 143514
+    #                            )
+    
+    # test_bubble.render()
+
+
+
+    
