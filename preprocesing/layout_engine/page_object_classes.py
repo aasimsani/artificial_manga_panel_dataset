@@ -5,20 +5,18 @@ import json
 import uuid
 from .helpers import crop_image_only_outside
 import cjkwrap
+from .helpers import get_leaf_panels
 
 class Panel(object):
 
     def __init__(self, coords, name, parent, orientation, children=[], non_rect=False):
 
+        coords = [tuple(c) for c in coords]        
+
         self.x1y1 = coords[0]
         self.x2y2 = coords[1]
         self.x3y3 = coords[2]
         self.x4y4 = coords[3]
-        self.name = name
-        self.parent = parent
-
-        self.coords = list(coords)
-        self.non_rect = non_rect
 
         self.lines = [
             (self.x1y1, self.x2y2),
@@ -27,11 +25,19 @@ class Panel(object):
             (self.x4y4, self.x1y1)
         ]
 
-        self.width = (self.x2y2[0] - self.x1y1[0])
-        self.height = (self.x3y3[1] - self.x2y2[1])
+        self.name = name
+        self.parent = parent
 
-        self.area = self.width*self.height
-        self.area_proportion = round(self.area/(2400*1700), 2)
+        self.coords = coords
+        self.non_rect = non_rect
+
+        
+
+        self.width = float((self.x2y2[0] - self.x1y1[0]))
+        self.height = float((self.x3y3[1] - self.x2y2[1]))
+
+        self.area = float(self.width*self.height)
+        self.area_proportion = int(round(self.area/(2400*1700), 2))
 
         self.children = children
 
@@ -118,6 +124,7 @@ class Panel(object):
         data = dict(
             name = self.name,
             coordinates = self.coords,
+            orientation = self.orientation,
             children = children_rec,
             non_rect = self.non_rect,
             sliced = self.sliced,
@@ -128,22 +135,69 @@ class Panel(object):
 
         return data
 
-    def populate_children(self, data):
-        
-        # for panel in data['children']:
-        pass
+    def load_data(self, data):
+
+        self.sliced = data['sliced']
+        self.no_render = data['no_render']
+        self.image = data['image']
+
+        if len(data['speech_bubbles']) > 0:
+            for speech_bubble in data['speech_bubbles']:
+                bubble = SpeechBubble(
+                            texts=speech_bubble['texts'],
+                            font=speech_bubble['font'],
+                            speech_bubble=speech_bubble['speech_bubble'],
+                            writing_areas=speech_bubble['writing_areas'],
+                            resize_to=speech_bubble['resize_to'],
+                            location=speech_bubble['location'],
+                            transforms=speech_bubble['transforms'],
+                            text_orientation=speech_bubble['text_orientation']
+                            )
+
+                self.speech_bubbles.append(bubble)
+
+        children = []
+        if len(data['children']) > 0:
+            for child in data['children']: 
+                panel = Panel(
+                    coords=child['coordinates'],
+                    name=child['name'],
+                    parent=self,
+                    orientation=child['orientation'],
+                    non_rect=child['non_rect']
+                )
+
+                panel.load_data(child)
+                children.append(panel)
+
+        self.children = children
 
 class Page(Panel):
 
-    def __init__(self, coords, page_type, num_panels, children=[]):
+    def __init__(self, coords=[], page_type="", num_panels=None, children=[]):
+
+        if len(coords) < 1:
+            topleft = (0.0, 0.0)
+            topright = (1700, 0.0)
+            bottomleft = (0.0, 2400)
+            bottomright = (1700, 2400)
+            coords = [
+                topleft,
+                topright,
+                bottomright,
+                bottomleft
+            ]
+
         super().__init__(coords, "page", None, None, [])
 
         self.num_panels = num_panels
         self.page_type = page_type
+
+        self.background = None
         self.leaf_children = []
 
         # TODO: Setup naming of pages
-        self.name = "Page-"+str(uuid.uuid1())
+        self.name = str(uuid.uuid1())
 
     def dump_data(self, dataset_path, dry=True):
 
@@ -154,7 +208,7 @@ class Page(Panel):
 
         data = dict(
             name = self.name,
-            num_panels = self.num_panels,
+            num_panels = int(self.num_panels),
             page_type = self.page_type,
             children = children_rec
         )   
@@ -163,11 +217,27 @@ class Page(Panel):
             with open(dataset_path+self.name+".json", "w+") as json_file:
                 json.dump(data, json_file, indent=2)
         else:
-            return json.dumps(data)
+            return json.dumps(data, indent=2)
     
     def load_data(self, filename):
+        with open(filename, "rb") as json_file:
+            data = json.load(json_file)
+            self.name = data['name']
+            self.num_panels = int(data['num_panels'])
+            self.page_type = data['page_type']
 
-        pass
+            if len(data['children']) > 0:
+                for child in data['children']: 
+                    panel = Panel(
+                        coords=child['coordinates'],
+                        name=child['name'],
+                        parent=self,
+                        orientation=child['orientation'],
+                        non_rect=child['non_rect']
+                    )
+                    panel.load_data(child)
+                    self.children.append(panel)
+
 
     def render(self, show=False):
 
@@ -183,6 +253,14 @@ class Page(Panel):
 
         page_img = Image.new(size=(W,H), mode="L", color="white")
         draw_rect = ImageDraw.Draw(page_img)
+
+        if self.background is not None:
+            bg = Image.open(self.background).convert("L")
+            img_array = np.asarray(bg)
+            crop_array = crop_image_only_outside(img_array)
+            bg = Image.fromarray(crop_array)
+            bg = bg.resize((W,H))
+            page_img.paste(bg, (0, 0))
 
         coords = []
 
@@ -222,24 +300,11 @@ class Page(Panel):
         for panel in leaf_children:
             # For each bubble
                 # Do for bubble
-            states, bubble, mask, location = panel.speech_bubbles[0].render()
-            if "inverted" in states:
-                # Use mask for inverted which is inverted
-                bubble_mask = ImageOps.invert(mask)
-                # bubble_mask =  bubble
-
-                # Slightly shift mask so that you get outline for bubbles
-                bubble_mask = bubble_mask.resize((bubble_mask.size[0]+15, bubble_mask.size[1]+15))
-                w, h = bubble.size
-                crop_dims = (
-                    5,5,
-                    5+w, 5+h,
-                )
-                bubble_mask = bubble_mask.crop(crop_dims)
-                page_img.paste(bubble, location, bubble_mask)
-            else:
+            for sb in panel.speech_bubbles:
+                states, bubble, mask, location = sb.render()
                 # Slightly shift mask so that you get outline for bubbles
                 bubble_mask = mask.resize((mask.size[0]+15, mask.size[1]+15))
+
                 w, h = bubble.size
                 crop_dims = (
                     5,5,
@@ -254,29 +319,64 @@ class Page(Panel):
             return page_img
 
 class SpeechBubble(object):
-    def __init__(self, texts, font, speech_bubble, writing_areas, new_area, location):
+    def __init__(self, texts, font, speech_bubble, writing_areas, resize_to, location, transforms=None, text_orientation=None):
 
         self.texts = texts
         self.font = font
         self.speech_bubble = speech_bubble
         self.writing_areas = writing_areas
-        self.transform = None
-        self.resize_to = new_area
+        self.resize_to = resize_to 
         self.location = location
-        
-        
-        # 1 in 100 chance
-        if np.random.random() < 0.01:
-            self.text_orientation = "ltr"
+
+        if transforms is None:
+            possible_transforms = [
+                "flip horizontal",
+                "flip vertical",
+                "rotate",
+                "stretch_x",
+                "stretch y",
+                ]
+            # 1 in 50 chance of no transformation
+            if np.random.rand() < 0.98:
+                self.transforms = list(np.random.choice(possible_transforms, 2))
+
+                # 1 in 20 chance of inversion
+                if np.random.rand() < 0.05:
+                    self.transforms.append("invert")
+            else:
+                self.transforms = []
         else:
-            self.text_orientation = "ttb"
+            self.transforms = transforms
+        
+        if text_orientation is None:
+            # 1 in 100 chance
+            if np.random.random() < 0.01:
+                self.text_orientation = "ltr"
+            else:
+                self.text_orientation = "ttb"
+        else:
+            self.text_orientation = text_orientation
+
+    def dump_data(self):
+
+        data = dict(
+            texts = self.texts,
+            font = self.font,
+            speech_bubble = self.speech_bubble,
+            writing_areas = self.writing_areas,
+            resize_to = self.resize_to,
+            location = self.location,
+            transforms = self.transforms,
+            text_orientation = self.text_orientation
+        )
+
+        return data
 
     def render(self):
 
         bubble = Image.open(self.speech_bubble).convert("L")
         mask = bubble.copy()
 
-        write = ImageDraw.Draw(bubble)
 
         # Set variable font size
         min_font_size = 54
@@ -284,70 +384,111 @@ class SpeechBubble(object):
         current_font_size = np.random.randint(min_font_size,
                                               max_font_size
                                               )
-
+        # TODO: re-evaluate fonts
         font = ImageFont.truetype(self.font,current_font_size)
 
-        # transforms
-            # invert (1 in 20)
-            # flip horizontal
-            # flip vertical
-            # stretch x or y
-            # shrink x or y
-            # shear
-
-        transforms = [
-            "invert",
-            "flip horizontal",
-            "flip vertical",
-            "rotate",
-            "stretch x",
-            "stretch y",
-            "shrink",
-            "grow"
-        ]
-
-        self.transforms = np.random.choice(transforms, 3)
-
         w, h = bubble.size
+        cx, cy = w/2, h/2
 
-        # 1 in 50 chance of no transformation
-        # if np.random.rand() < 0.98:
-        # for transform in chosen_transforms:
         states = []
-        transform = ""
-        # transform = "flip vertical"
-        if transform == "invert":
-            states.append("inverted")
-            bubble = ImageOps.invert(bubble)
-        
-        elif transform == "flip vertical": 
-            bubble = ImageOps.flip(bubble)
-            # TODO: vertically flip box coordinates
-            new_writing_areas = []
+        # Pre-render transforms
+        for transform in self.transforms:
+            if transform == "invert":
+                states.append("inverted")
+                bubble = ImageOps.invert(bubble)
+            
+            elif transform == "flip vertical": 
+                bubble = ImageOps.flip(bubble)
+                mask = ImageOps.flip(mask)
+                # TODO: vertically flip box coordinates
+                new_writing_areas = []
+                for area in self.writing_areas:
+                    og_height = area['original_height']
 
-        
-        elif transform == "flip horizontal":
-            bubble = ImageOps.mirror(bubble)
-            # TODO: horizontally flip box coordinates
-        
-        elif transform == "stretch x":
-            # TODO stretch box
-            pass
+                    # Convert from percentage to actual values
+                    px_height =  (area['height']/100)*og_height
 
-        elif transform == "stretch y":
-            # TODO stretch box
-            pass
+                    og_y = ((area['y']/100)*og_height)
+                    cydist = abs(cy - og_y)
+                    new_y = (2*cydist + og_y) - px_height
+                    new_y = (new_y/og_height)*100
+                    area['y'] = new_y
+                    new_writing_areas.append(area)
 
-        elif transform == "shrink":
-            # TODO shrink box
-            pass
-        elif transform == "grow":
-            pass
+                self.writing_areas = new_writing_areas
+                states.append("vflip")
 
-        elif transform == "rotate":
-            pass
-        
+            elif transform == "flip horizontal":
+                bubble = ImageOps.mirror(bubble)
+                mask = ImageOps.mirror(mask)
+                # TODO: horizontally flip box coordinates
+                new_writing_areas = []
+                for area in self.writing_areas:
+                    og_width = area['original_width']
+
+                    # Convert from percentage to actual values
+                    px_width =  (area['width']/100)*og_width
+
+                    og_x = ((area['x']/100)*og_width)
+                    # og_y = ((area['y']/100)*og_height)
+                    cxdist = abs(cx - og_x)
+                    new_x = (2*cxdist + og_x) - px_width
+                    new_x = (new_x/og_width)*100
+                    area['x'] = new_x
+                    new_writing_areas.append(area)
+
+                self.writing_areas = new_writing_areas
+                states.append("hflip")
+            
+            elif transform == "stretch x":
+                # Up to 30% stretching
+                stretch_factor = np.random.random()*0.3
+                new_size = (round(w*(1+stretch_factor)),h)
+
+                # Reassign for resizing later
+                w, h = new_size
+                bubble = bubble.resize(new_size)
+                mask = mask.resize(new_size)
+
+                new_writing_areas = []
+                for area in self.writing_areas:
+                    og_width = area['original_width']
+
+                    # Convert from percentage to actual values
+                    px_width =  (area['width']/100)*og_width
+
+                    area['original_width'] = og_width*(1+stretch_factor)
+                
+                    new_writing_areas.append(area)
+
+                self.writing_areas = new_writing_areas
+                states.append("xstretch")
+
+            elif transform == "stretch y":
+                stretch_factor = np.random.random()*0.3
+                new_size = (w,round(h*(1+stretch_factor)))
+
+                # Reassign for resizing later
+                w, h = new_size
+                bubble = bubble.resize(new_size)
+                mask = mask.resize(new_size)
+
+                new_writing_areas = []
+                for area in self.writing_areas:
+                    og_height = area['original_height']
+
+                    # Convert from percentage to actual values
+                    px_height =  (area['height']/100)*og_height
+    
+                    area['original_height'] = og_height*(1+stretch_factor)
+                
+                    new_writing_areas.append(area)
+
+                self.writing_areas = new_writing_areas
+                states.append("ystretch")
+
         # Write text into bubble
+        write = ImageDraw.Draw(bubble)
         if "inverted" in states:
             fill_type = "white"
         else:
@@ -363,6 +504,9 @@ class SpeechBubble(object):
 
             og_x = ((area['x']/100)*og_width)
             og_y = ((area['y']/100)*og_height)
+
+            # at = (og_x, og_y, og_x+px_width, og_y+px_height)
+            # write.rectangle(at, outline="black")
 
             # Padded
             x = og_x + 20
@@ -455,7 +599,7 @@ class SpeechBubble(object):
                             text,
                             font=font,
                             language="ja",
-                            fill="black",
+                            fill=fill_type,
                             direction=self.text_orientation)
 
         # reisize bubble
@@ -464,7 +608,6 @@ class SpeechBubble(object):
         new_width = round(new_height * aspect_ratio)
         bubble = bubble.resize((new_height, new_width))
         mask = mask.resize((new_height, new_width))
-        # bubble.show()
 
         # Make sure bubble doesn't bleed the page 
         x1, y1 = self.location
@@ -477,5 +620,12 @@ class SpeechBubble(object):
             y1 = y1 - (y2-1700)
         
         self.location = (x1, y1)
+
+        # perform rotation if it was in transforms
+        if "rotate" in self.transforms:
+            rotation = np.random.randint(10, 30)
+            bubble = bubble.rotate(rotation)
+            mask = mask.rotate(rotation)
+
         return states, bubble, mask, self.location
 

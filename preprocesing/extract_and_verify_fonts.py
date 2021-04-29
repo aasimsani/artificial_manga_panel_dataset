@@ -127,7 +127,7 @@ def verify_font_files():
     with open(font_dataset_path+"viable_fonts.csv", "w+") as viable_font_file: 
         for font in coverages:
             # Coverge %
-            if font[1] > 0.8:
+            if font[1] > 0.80:
                 viable = True
             else:
                 viable = False

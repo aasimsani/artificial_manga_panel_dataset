@@ -1,15 +1,20 @@
 from PIL import Image, ImageDraw
 import numpy as np
+import os
+import concurrent
+from tqdm import tqdm
 
-# from .page_dataset_creator import get_leaf_panels
-
-
-def create_single_page():
-
-    # Default page size
-    W = 1700
-    H = 2400
+from .page_object_classes import Page
 
 
-    page = Image.new(size=(W,H), mode="L", color="white")
-    page.show()
+def create_single_page(filename):
+    page = Page()
+    page.load_data(filename)
+
+    page.render(show=False)
+
+def render_pages(dataset_dir):
+    
+    filenames = [dataset_dir+filename for filename in os.listdir(dataset_dir) if filename.endswith(".json")]
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = list(tqdm(executor.map(create_single_page, filenames), total=len(filenames)))

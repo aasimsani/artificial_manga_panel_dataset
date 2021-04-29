@@ -45,7 +45,7 @@ def get_min_area_panels(panel, min_area=0.1, ret_panels=[]):
                 ret_panels.append(child)
 
 def get_leaf_panels(page, panels=[]):
-
+    
     for child in page.children:
         
         if len(child.children) > 0:

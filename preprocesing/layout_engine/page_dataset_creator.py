@@ -13,7 +13,6 @@ from .helpers import invert_for_next, choose, choose_and_return_other, get_min_a
 
 # Creation helpers
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
-
         topleft = parent.x1y1
         topright = parent.x2y2
         bottomright = parent.x3y3
@@ -22,7 +21,10 @@ def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
         # Allow each inital panel to grow to up to 75% of 100/n
         choice_max = round((100/n)*1.5)
         choice_min = round((100/n)*0.5)
+
+        normalized_shifts = []
         if len(shifts) < 1:
+            shifts = []
             for i in range(0, n):
                 shift_choice = np.random.randint(choice_min, choice_max)
                 choice_max = choice_max + ((100/n) - shift_choice)
@@ -30,13 +32,11 @@ def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
         
             to_add_or_remove = (100 - sum(shifts))/len(shifts)
 
-            normalized_shifts = []
             for shift in shifts:
                 new_shift = shift + to_add_or_remove
                 normalized_shifts.append(new_shift/100)
         else:
             normalized_shifts = shifts
-
 
         if horizontal_vertical == "h":
             shift_level = 0.0 
@@ -758,11 +758,22 @@ def shrink_panels(page):
 
 def random_remove_panel(page):
 
-    if page.num_panels > 3:
-        remove_number = np.random.choice([1, 2])
+    # 1 in 100 chance
+    if np.random.random() > 0.99:
+        if page.num_panels > 3:
+            remove_number = np.random.choice([1, 2])
 
-        for i in range(remove_number):
-            page.leaf_children.pop()
+            for i in range(remove_number):
+                page.leaf_children.pop()
+
+    return page
+
+def random_add_background(page, image_dir, image_dir_len, image_dir_path):
+
+    # 1 in 100 chance
+    if np.random.random() > 0.99: 
+        idx = np.random.randint(0, image_dir_len)
+        page.background = image_dir_path + image_dir[idx]
 
     return page
 
@@ -799,7 +810,7 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
         texts = []
         for i in range(len(speech_bubble_writing_area)):
             text_idx = np.random.randint(0, text_dataset_len)
-            text = text_dataset.iloc[text_idx]
+            text = text_dataset.iloc[text_idx].to_dict()
             texts.append(text)
 
         # resize bubble to < 40% of panel area
@@ -841,6 +852,7 @@ def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, 
                                      speech_bubble_files,
                                      speech_bubble_tags
                                      )
+    # TODO: Address bubble overlap
     return page
 
 def get_base_panels(num_panels=0, layout_type=None):
@@ -1333,7 +1345,7 @@ def get_base_panels(num_panels=0, layout_type=None):
     return page 
      
 # TODO: Figure out page type distributions
-def create_page_metadata(images_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
+def create_page_metadata(image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
 
     # Select page type
     # Select number of panels on the page
@@ -1341,11 +1353,11 @@ def create_page_metadata(images_dir, image_dir_len, image_dir_path, font_files, 
     # Select panel boundary type
     # Select panel boundary widths
 
-    page = get_base_panels(5, "vh")
+    page = get_base_panels(0, None)
     page = add_transforms(page)
     page = shrink_panels(page)
     page = populate_panels(page,
-                           images_dir,
+                           image_dir,
                            image_dir_len,
                            image_dir_path,
                            font_files,
@@ -1354,8 +1366,7 @@ def create_page_metadata(images_dir, image_dir_len, image_dir_path, font_files, 
                            speech_bubble_tags
                            )
 
-    # TODO: Remember some panels can just be left blank
-    # TODO: Pair with adding background
-    # page = random_remove_panel(page)
+    page = random_remove_panel(page)
+    page = random_add_background(page, image_dir, image_dir_len, image_dir_path)
 
     return page 
