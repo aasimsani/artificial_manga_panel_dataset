@@ -16,7 +16,7 @@ If you'd like to change the way the creator works, make your own files or contri
   ```
 3. In case you want to modify individual scripts for scraping or cleaning this downloaded data you can find them in ```main.py```
 4. Now you can run ```python3 main.py --generate_pages N``` to make pages
-5. You can modify ```preprocessing/layout_engine/config.py``` to change how the generator works
+5. You can modify ```preprocessing/config_file.py``` to change how the generator works
 
 ## Current progress:
 

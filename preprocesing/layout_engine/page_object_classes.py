@@ -6,7 +6,7 @@ import uuid
 from .helpers import crop_image_only_outside
 import cjkwrap
 from .helpers import get_leaf_panels
-from . import config_file as cfg
+from .. import config_file as cfg
 
 class Panel(object):
 
@@ -607,7 +607,7 @@ class SpeechBubble(object):
                 write.text((rx, ry),
                             text,
                             font=font,
-                            language="ja",
+                            # language="ja",
                             fill=fill_type,
                             direction=self.text_orientation)
 

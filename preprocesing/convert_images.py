@@ -4,7 +4,7 @@ from PIL import Image
 import concurrent.futures
 import time
 
-image_dataset_dir = "datasets/image_dataset/db_illustrations/"
+image_dataset_dir = "datasets/image_dataset/tagged-anime-illustrations/danbooru-images/danbooru-images/"
 processed_image_dir  = "datasets/image_dataset/db_illustrations_bw/"
 
 

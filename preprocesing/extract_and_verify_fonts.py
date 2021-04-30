@@ -11,6 +11,7 @@ from fontTools.ttLib import TTFont
 from fontTools.unicode import Unicode
 from fontTools.ttLib import TTLibError
 from tqdm import tqdm
+from . import config_file as cfg
 
 font_dataset_path = "datasets/font_dataset/"
 text_dataset_path = "datasets/text_dataset/"
@@ -106,7 +107,7 @@ def verify_font_files():
     total_chars = len(chars)
 
     coverages = []
-    print("Starting verification")
+    print("Verifying fonts")
     for font_name in tqdm(all_fonts):
         if font_name == ".DS_Store":
             continue
@@ -127,7 +128,7 @@ def verify_font_files():
     with open(font_dataset_path+"viable_fonts.csv", "w+") as viable_font_file: 
         for font in coverages:
             # Coverge %
-            if font[1] > 0.80:
+            if font[1] > cfg.font_character_coverage:
                 viable = True
             else:
                 viable = False

@@ -10,7 +10,7 @@ import uuid
 
 from .page_object_classes import Panel, Page, SpeechBubble
 from .helpers import invert_for_next, choose, choose_and_return_other, get_min_area_panels, get_leaf_panels, find_parent_with_multiple_children, move_children_to_line
-from . import config_file as cfg
+from .. import config_file as cfg
 
 # Creation helpers
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
