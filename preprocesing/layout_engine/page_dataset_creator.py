@@ -10,6 +10,7 @@ import uuid
 
 from .page_object_classes import Panel, Page, SpeechBubble
 from .helpers import invert_for_next, choose, choose_and_return_other, get_min_area_panels, get_leaf_panels, find_parent_with_multiple_children, move_children_to_line
+from . import config_file as cfg
 
 # Creation helpers
 def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
@@ -808,8 +809,10 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
         speech_bubble_writing_area = json.loads(speech_bubble_writing_area.values[0])
 
         texts = []
+        texts_indices = []
         for i in range(len(speech_bubble_writing_area)):
             text_idx = np.random.randint(0, text_dataset_len)
+            texts_indices.append(text_idx)
             text = text_dataset.iloc[text_idx].to_dict()
             texts.append(text)
 
@@ -836,7 +839,7 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
             y_choice
         ]
         # location = tuple(min_coord)
-        speech_bubble = SpeechBubble(texts, font, speech_bubble_file, speech_bubble_writing_area, new_area, location)
+        speech_bubble = SpeechBubble(texts, texts_indices, font, speech_bubble_file, speech_bubble_writing_area, new_area, location)
         panel.speech_bubbles.append(speech_bubble)
 
 def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
@@ -860,9 +863,9 @@ def get_base_panels(num_panels=0, layout_type=None):
     # TODO: Skew panel number distribution
 
     topleft = (0.0, 0.0)
-    topright = (1700, 0.0)
-    bottomleft = (0.0, 2400)
-    bottomright = (1700, 2400)
+    topright = (cfg.page_width, 0.0)
+    bottomleft = (0.0, cfg.page_height)
+    bottomright = cfg.page_size
     coords = [
         topleft,
         topright,

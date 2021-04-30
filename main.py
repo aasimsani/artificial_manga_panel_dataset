@@ -1,5 +1,6 @@
 from scraping.download_texts import download_and_extract_jesc
 from scraping.download_fonts import get_font_links 
+from scraping.download_images import download_db_illustrations
 from preprocesing.text_dataset_format_changer import convert_jesc_to_dataframe
 from preprocesing.extract_and_verify_fonts import extract_fonts, get_font_files, verify_font_files
 from preprocesing.convert_images import convert_images_to_bw
@@ -8,25 +9,43 @@ from preprocesing.layout_engine.page_dataset_creator import create_page_metadata
 from tqdm import tqdm
 import os
 import pandas as pd
+from argparse import ArgumentParser
 
 import time
 
-
 if __name__ == '__main__':
 
+    parser = ArgumentParser()
+
+    parser.add_argument("--download_jesc", "-dj", action="store_true")
+    parser.add_argument("--download_fonts", "-df", action="store_true")
+    parser.add_argument("--download_images", "-di", action="store_true")
+
+    parser.add_argument("--verify_fonts", "-vf", action="store_true")
+
+    args = parser.parse_args()
+
     # Wrangling with the text dataset
-    # download_and_extract_jesc()
-    # convert_jesc_to_dataframe()
+    if args.download_jesc:
+        download_and_extract_jesc()
+        convert_jesc_to_dataframe()
 
     # Font dataset
-    # get_font_links() # Go and manually download files after this
+    if args.download_fonts: 
+        get_font_links() 
+        print("Please run scraping/font_download_manual.ipynb"+ 
+                 " and download fonts manually from the links that were scraped"+
+                 "then place them in datasets/font_dataset/font_file_raw_downloads/")
+        print("NOTE: There's no need to extract them this program takes care of that")
 
     # Font verification
-    # extract_fonts()
-    # get_font_files()
-    # verify_font_files()
+    if args.verify_fonts:
+        extract_fonts()
+        verify_font_files()
 
     # Download image from Kaggle
+    if args.download_images:
+        download_db_illustrations()
 
 
     # Convert images
@@ -77,7 +96,7 @@ if __name__ == '__main__':
     #     # test_render(panels)
     # print("Average time", sum(dt)/len(dt))
 
-    # for i in tqdm(range(100)):
+    # for i in tqdm(range(1)):
     #     page = create_page_metadata(image_dir,
     #                                 image_dir_len,
     #                                 image_dir_path,
@@ -86,13 +105,13 @@ if __name__ == '__main__':
     #                                 speech_bubble_files,
     #                                 speech_bubble_tags
     #                                 )
-    #     # page.render(show=True)
-    #     page.dump_data("./test_dataset/", dry=False)
+    #     page.render(show=True)
+        # page.dump_data("./", dry=False)
 
     
 
-    print("Loading metadata and rendering")
-    render_pages("./test_dataset/")
+    # print("Loading metadata and rendering")
+    # render_pages("./test_dataset/")
 
 
     

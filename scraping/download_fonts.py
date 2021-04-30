@@ -31,24 +31,3 @@ def get_font_links():
         get_browse_page_links()
     else:
         print("Font preview pages txt exists")
-
-    # print("Getting actual links to font")
-    # font_page_links = []
-    # with open(preview_page_file, "r") as links_file:
-
-    #     links = [link.replace("\n","") for link in links_file.readlines()]
-
-    #     for link in tqdm(links):
-    #         resp = requests.get(link)
-
-    #         if resp.status_code == 200:
-    #             soup = BeautifulSoup(resp.content, features="html.parser")
-    #             font_links = [link['href'] for link in soup.find_all("a", "btn")]
-    #             if len(font_links) < 1:
-
-    #             font_page_links += font_links
-
-    # print("Writing links to file")
-    # with open(font_links_file,"w+") as links_file:
-    #     for link in tqdm(font_page_links):
-    #         links_file.write(link+"\n")

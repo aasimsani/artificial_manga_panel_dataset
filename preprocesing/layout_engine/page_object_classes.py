@@ -6,6 +6,7 @@ import uuid
 from .helpers import crop_image_only_outside
 import cjkwrap
 from .helpers import get_leaf_panels
+from . import config_file as cfg
 
 class Panel(object):
 
@@ -37,7 +38,7 @@ class Panel(object):
         self.height = float((self.x3y3[1] - self.x2y2[1]))
 
         self.area = float(self.width*self.height)
-        self.area_proportion = int(round(self.area/(2400*1700), 2))
+        self.area_proportion = int(round(self.area/(cfg.page_height*cfg.page_width), 2))
 
         self.children = children
 
@@ -145,6 +146,7 @@ class Panel(object):
             for speech_bubble in data['speech_bubbles']:
                 bubble = SpeechBubble(
                             texts=speech_bubble['texts'],
+                            texts_indices=speech_bubble['texts_indices'],
                             font=speech_bubble['font'],
                             speech_bubble=speech_bubble['speech_bubble'],
                             writing_areas=speech_bubble['writing_areas'],
@@ -178,9 +180,9 @@ class Page(Panel):
 
         if len(coords) < 1:
             topleft = (0.0, 0.0)
-            topright = (1700, 0.0)
-            bottomleft = (0.0, 2400)
-            bottomright = (1700, 2400)
+            topright = (cfg.page_width, 0.0)
+            bottomleft = (0.0, cfg.page_height)
+            bottomright = cfg.page_size 
             coords = [
                 topleft,
                 topright,
@@ -195,6 +197,7 @@ class Page(Panel):
 
         self.background = None
         self.leaf_children = []
+        self.page_size = cfg.page_size
 
         # TODO: Setup naming of pages
         self.name = str(uuid.uuid1())
@@ -210,6 +213,7 @@ class Page(Panel):
             name = self.name,
             num_panels = int(self.num_panels),
             page_type = self.page_type,
+            page_size = self.page_size,
             children = children_rec
         )   
 
@@ -248,8 +252,8 @@ class Page(Panel):
             leaf_children = self.leaf_children
 
 
-        W = 1700
-        H = 2400
+        W = cfg.page_width
+        H = cfg.page_height
 
         page_img = Image.new(size=(W,H), mode="L", color="white")
         draw_rect = ImageDraw.Draw(page_img)
@@ -274,8 +278,8 @@ class Page(Panel):
 
             img = Image.fromarray(crop_array)
 
-            w_rev_ratio = 1700/img.size[0]
-            h_rev_ratio = 2400/img.size[1]
+            w_rev_ratio = cfg.page_width/img.size[0]
+            h_rev_ratio = cfg.page_height/img.size[1]
 
 
             #TODO Figure out how to do different types of 
@@ -286,7 +290,7 @@ class Page(Panel):
                 round(img.size[1]*h_rev_ratio))
             )
 
-            mask = Image.new("L", (1700, 2400), 0)
+            mask = Image.new("L", cfg.page_size, 0)
             draw_mask = ImageDraw.Draw(mask)
 
             rect = panel.get_polygon()
@@ -319,13 +323,17 @@ class Page(Panel):
             return page_img
 
 class SpeechBubble(object):
-    def __init__(self, texts, font, speech_bubble, writing_areas, resize_to, location, transforms=None, text_orientation=None):
+    def __init__(self, texts, texts_indices, font, speech_bubble, writing_areas, resize_to, location, transforms=None, text_orientation=None):
 
         self.texts = texts
+        # Index of dataframe for the text
+        self.texts_indices = texts_indices
         self.font = font
         self.speech_bubble = speech_bubble
         self.writing_areas = writing_areas
         self.resize_to = resize_to 
+
+        # Location on panel
         self.location = location
 
         if transforms is None:
@@ -361,6 +369,7 @@ class SpeechBubble(object):
 
         data = dict(
             texts = self.texts,
+            texts_indices = self.texts_indices,
             font = self.font,
             speech_bubble = self.speech_bubble,
             writing_areas = self.writing_areas,
@@ -614,10 +623,10 @@ class SpeechBubble(object):
         x2 = x1 +bubble.size[0]
         y2 = y1 +bubble.size[1]
 
-        if x2 > 1700:
-            x1 = x1 - (x2-1700)
-        if y2 > 2400:
-            y1 = y1 - (y2-1700)
+        if x2 > cfg.page_width:
+            x1 = x1 - (x2-cfg.page_width)
+        if y2 > cfg.page_height:
+            y1 = y1 - (y2-cfg.page_height)
         
         self.location = (x1, y1)
 
