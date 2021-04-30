@@ -9,14 +9,15 @@ If you just want to use the dataset and not change anything you can find it at <
 If you'd like to change the way the creator works, make your own files or contribute to the project pleae follow these instructions
 
 1. ```pip3 install -r requirements.txt``
-2. You can get the base materials for the dataset by running:
+2. Libraqm is required for rendering CJK text properly. Follow instructions (here)[https://github.com/HOST-Oman/libraqm]
+3. You can get the base materials for the dataset by running:
   ```
   export GOOGLE_APPLICATION_CREDENTIALS=config/ampd_key.json
   dvc pull
   ```
-3. In case you want to modify individual scripts for scraping or cleaning this downloaded data you can find them in ```main.py```
-4. Now you can run ```python3 main.py --generate_pages N``` to make pages
-5. You can modify ```preprocessing/config_file.py``` to change how the generator works
+4. In case you want to modify individual scripts for scraping or cleaning this downloaded data you can find them in ```main.py```
+5. Now you can run ```python3 main.py --generate_pages N``` to make pages
+6. You can modify ```preprocessing/config_file.py``` to change how the generator works
 
 ## Current progress:
 
@@ -31,7 +32,7 @@ Steps:
 - [x] Replace layout templates with manga panel generator
 - [ ] Upload dataset to Kaggle
 
-## Data variety
+### Data variety
 - 196 fonts with >80% character coverage
 - 728 Speech bubble types (182 untransformed)
 - 2,801,388 sentence pairs in Japanese and English
@@ -77,7 +78,6 @@ archivePrefix = "arXiv",
 
 [**Speech bubble PSD file Licence**](https://friendlystock.com/terms-of-use/)
 
-
 ### How does the layouting engine work?
 1. Each Manga Page Image is represented by a JSON file. The page description contains the following
     1. Layout types and how they're denoted (here for easy search of particular panel types)
@@ -102,7 +102,3 @@ archivePrefix = "arXiv",
       2. It's metadata e.g. Has it been transformed etc.
     2. Each panel also has a list of images that it's comprised of and how they've been inserted and speech bubbles around them
 3. With the Panels each page also has a number of text bubbles on them. Usually the number being within (#panels-2 <= #bubbles <= #panels+2) of each panel on the depending on how large the panel is. Most bubbles are within the vicinity of a panel or within them with a small % of them peaking between panels. 
-
-
-# LIBRAQM requrired for writing text
-Follow instructions (here)[https://github.com/HOST-Oman/libraqm]
