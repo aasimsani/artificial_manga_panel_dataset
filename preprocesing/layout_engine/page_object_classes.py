@@ -538,7 +538,8 @@ class SpeechBubble(object):
                 max_chars = int((px_height//avg_height))
                 if size[0] > px_height:
                     # Using specialized wrapping library
-                    text_segments = cjkwrap.wrap(text, width=max_chars)
+                    if max_chars > 1:
+                        text_segments = cjkwrap.wrap(text, width=max_chars)
 
                 text_max_w = len(text_segments)*size[1]
                 
@@ -554,7 +555,8 @@ class SpeechBubble(object):
                             size = font.getsize(text)
                             avg_height = size[0]/len(text)
                             max_chars = int((max_y//avg_height))
-                            text_segments = cjkwrap.wrap(text, width=max_chars)
+                            if max_chars > 1:
+                                text_segments = cjkwrap.wrap(text, width=max_chars)
                             text_max_w = len(text_segments)*size[1]
                         else:
                             text_segments.pop()
@@ -570,7 +572,8 @@ class SpeechBubble(object):
                 max_chars = int((px_width//avg_width))
                 if size[0] > px_width:
                     # Using specialized wrapping library
-                    text_segments = cjkwrap.wrap(text, width=max_chars)
+                    if max_chars > 1:
+                        text_segments = cjkwrap.wrap(text, width=max_chars)
                 
                 # Setup vertical wrapping
                 text_max_h = len(text_segments)*size[1]
@@ -583,7 +586,8 @@ class SpeechBubble(object):
                             size = font.getsize(text)
                             avg_width = size[0]/len(text)
                             max_chars = int((px_width//avg_width))
-                            text_segments = cjkwrap.wrap(text, width=max_chars)
+                            if max_chars > 1:
+                                text_segments = cjkwrap.wrap(text, width=max_chars)
                             text_max_h = len(text_segments)*size[1]
                         else:
                             text_segments.pop()
