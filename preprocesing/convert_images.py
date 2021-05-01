@@ -30,5 +30,5 @@ def convert_images_to_bw():
 
             # Since image processing is CPU and IO intensive
             with concurrent.futures.ProcessPoolExecutor() as executor:
-                results = executor.map(convert_single_image, image_paths)
+                results = list(tqdm(executor.map(convert_single_image, image_paths), total=len(image_paths)))
 
