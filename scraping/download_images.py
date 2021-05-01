@@ -16,18 +16,19 @@ def download_db_illustrations():
 
     #     KAGGLE_USERNAME = data['username']
     #     KAGGLE_KEY = data['key']
+    zip_file = "datasets/image_dataset/tagged-anime-illustrations.zip"
+    if not os.path.isfile(zip_file):
+        os.environ['KAGGLE_CONFIG_DIR'] = "config/" 
 
-    os.environ['KAGGLE_CONFIG_DIR'] = "config/" 
+        from kaggle.api.kaggle_api_extended import KaggleApi
+        api = KaggleApi()
+        api.authenticate()
 
-    from kaggle.api.kaggle_api_extended import KaggleApi
-    api = KaggleApi()
-    api.authenticate()
-
-    dataset = "mylesoneill/tagged-anime-illustrations"
-    api.dataset_download_files(dataset, path="datasets/image_dataset", quiet=False, unzip=False)
+        dataset = "mylesoneill/tagged-anime-illustrations"
+        api.dataset_download_files(dataset, path="datasets/image_dataset", quiet=False, unzip=False)
 
     print("Finished downloading now unzipping")
-    os.system("unzip datasets/image_dataset/tagged-anime-illustrations.zip")
+    os.system("unzip "+zip_file)
     print("Finished unzipping")
 
 def download_speech_bubbles():
