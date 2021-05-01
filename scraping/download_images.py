@@ -24,9 +24,11 @@ def download_db_illustrations():
     api.authenticate()
 
     dataset = "mylesoneill/tagged-anime-illustrations"
-    api.dataset_download_files(dataset, path="datasets/image_dataset", quiet=False, unzip=True)
+    api.dataset_download_files(dataset, path="datasets/image_dataset", quiet=False, unzip=False)
 
-    print("Finished downloading and unzipping")
+    print("Finished downloading now unzipping")
+    os.system("unzip datasets/image_dataset/tagged-anime-illustrations.zip")
+    print("Finished unzipping")
 
 def download_speech_bubbles():
 
