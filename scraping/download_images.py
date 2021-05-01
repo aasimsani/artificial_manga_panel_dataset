@@ -28,7 +28,7 @@ def download_db_illustrations():
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
-    os.system("unzip -o "+zip_file +" -d "+output_dir + "| awk 'BEGIN {ORS=" "} {if(NR%10==0)print "."}'")
+    os.system("unzip -o "+zip_file +" -d "+output_dir + "| awk 'BEGIN {ORS=" "} {if(NR%10==0)print \".\"}'")
     print("Finished unzipping")
 
 def download_speech_bubbles():
