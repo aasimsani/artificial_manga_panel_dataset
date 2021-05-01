@@ -21,6 +21,7 @@ def convert_images_to_bw():
     if not os.path.isdir(processed_image_dir):
         os.mkdir(processed_image_dir)
 
+    print("Converting images to black and white")
     image_folders = os.listdir(image_dataset_dir)
     for folder in tqdm(image_folders):
         folder_path = image_dataset_dir+folder + "/"

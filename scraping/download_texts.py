@@ -13,7 +13,7 @@ def download_file(url, filepath):
         # total_length = int(total_length)
 
         # Content-Length is returned wrong
-        total_length = int(223948808/1024)
+        total_length = int(99803000/1024)
         with open(filepath, 'wb') as f:
             for data in tqdm(r.iter_content(chunk_size=1024), total=total_length, unit='KB', unit_scale=False, unit_divisor=1024): 
                 # If you have chunk encoded response uncomment if
