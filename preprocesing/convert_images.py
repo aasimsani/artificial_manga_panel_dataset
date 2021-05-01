@@ -10,6 +10,9 @@ processed_image_dir  = "datasets/image_dataset/db_illustrations_bw/"
 
 
 def convert_single_image(image_path):
+    """
+    Opens a anime illustration image and turns it black and white
+    """
     img = Image.open(image_path)
     bw_img = img.convert("L")
     filename = image_path.split("/")[-1]
@@ -18,6 +21,10 @@ def convert_single_image(image_path):
 
 
 def convert_images_to_bw():
+    """
+    Concurrently and in parallel convert images to black and white
+    from image_dataset
+    """
     if not os.path.isdir(processed_image_dir):
         os.mkdir(processed_image_dir)
 
@@ -30,5 +37,5 @@ def convert_images_to_bw():
 
             # Since image processing is CPU and IO intensive
             with concurrent.futures.ProcessPoolExecutor() as executor:
-                results = list(tqdm(executor.map(convert_single_image, image_paths), total=len(image_paths)))
+                results = executor.map(convert_single_image, image_paths)
 
