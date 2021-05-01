@@ -10,7 +10,7 @@ def download_db_illustrations():
     if not os.path.isfile(kaggle_json):
         print("Please create a config folder in this directory and add your kaggle credentials")
         return
-        
+
     zip_file = "datasets/image_dataset/tagged-anime-illustrations.zip"
     if not os.path.isfile(zip_file):
         os.environ['KAGGLE_CONFIG_DIR'] = "config/" 
@@ -28,7 +28,7 @@ def download_db_illustrations():
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
-    os.system("unzip -o "+zip_file +" -d "+output_dir)
+    os.system("unzip -o "+zip_file +" -d "+output_dir + "| awk 'BEGIN {ORS=" "} {if(NR%10==0)print "."}'")
     print("Finished unzipping")
 
 def download_speech_bubbles():
