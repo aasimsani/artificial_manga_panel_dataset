@@ -315,6 +315,7 @@ class Page(Panel):
             num_panels = int(self.num_panels),
             page_type = self.page_type,
             page_size = self.page_size,
+            background = self.background,
             children = children_rec
         )   
 

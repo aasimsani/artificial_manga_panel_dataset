@@ -1050,11 +1050,11 @@ def shrink_panels(page):
 
     return page
 
-def random_remove_panel(page):
+def remove_panel(page):
     """
     This function randomly removes
     a panel from pages which have 
-    more than 3 panels
+    more than n+1 panels
 
     :param page: Page to remove panels from
 
@@ -1065,25 +1065,22 @@ def random_remove_panel(page):
     :rtype: Page
     """    
 
-    # If there is a chance to remove panels
-    if np.random.random() < cfg.panel_removal_chance:
+    # If page has > n+1 children so there's
+    # at least 1 panel left
+    if page.num_panels > cfg.panel_removal_max + 1:
 
-        # If page has > n+1 children so there's
-        # at least 1 panel left
-        if page.num_panels > cfg.panel_removal_max + 1:
+        # Remove 1 to n panels
+        remove_number = np.random.choice([1, cfg.panel_removal_max])
 
-            # Remove 1 to n panels
-            remove_number = np.random.choice([1, cfg.panel_removal_max])
-
-            # Remove panel
-            for i in range(remove_number):
-                page.leaf_children.pop()
+        # Remove panel
+        for i in range(remove_number):
+            page.leaf_children.pop()
 
     return page
 
-def random_add_background(page, image_dir, image_dir_path):
+def add_background(page, image_dir, image_dir_path):
     """
-    Randomly add a background image to the page
+    Add a background image to the page
 
     :param page: Page to add background to 
 
@@ -1104,9 +1101,8 @@ def random_add_background(page, image_dir, image_dir_path):
     """    
 
     image_dir_len = len(image_dir)
-    if np.random.random() < cfg.background_add_chance: 
-        idx = np.random.randint(0, image_dir_len)
-        page.background = image_dir_path + image_dir[idx]
+    idx = np.random.randint(0, image_dir_len)
+    page.background = image_dir_path + image_dir[idx]
 
     return page
 
@@ -1862,10 +1858,20 @@ def create_page_metadata(image_dir, image_dir_path, font_files, text_dataset, sp
     """    
 
     # Select page type
+    page_type = np.random.choice(
+        list(cfg.vertical_horizontal_ratios.keys()),
+        p=list(cfg.vertical_horizontal_ratios.values())
+    )
+
     # Select number of panels on the page
         # between 1 and 8
 
-    page = get_base_panels(0, None)
+    number_of_panels = np.random.choice(
+        list(cfg.num_pages_ratios.keys()),
+        p=list(cfg.num_pages_ratios.values())
+    )
+
+    page = get_base_panels(number_of_panels, page_type)
 
     if np.random.random() < cfg.panel_transform_chance:
         page = add_transforms(page)
@@ -1880,7 +1886,13 @@ def create_page_metadata(image_dir, image_dir_path, font_files, text_dataset, sp
                            speech_bubble_tags
                            )
 
-    page = random_remove_panel(page)
-    page = random_add_background(page, image_dir, image_dir_path)
+    if np.random.random() < cfg.panel_removal_chance:
+        page = remove_panel(page)
+
+    if number_of_panels == 1: 
+        page = add_background(page, image_dir, image_dir_path)
+    else:
+        if np.random.random() < cfg.background_add_chance: 
+            page = add_background(page, image_dir, image_dir_path)
 
     return page 
