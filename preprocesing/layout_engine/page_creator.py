@@ -14,7 +14,8 @@ def create_single_page(paths):
     to a target location.
 
     :param paths:  a tuple of the page metadata and output path
-    :type tuple
+    
+    :type paths: tuple
     """
     metadata = paths[0]
     images_path = paths[1]
@@ -33,8 +34,12 @@ def render_pages(metadata_dir, images_dir):
     Takes metadata json files and renders page images
 
     :param metadata_dir: A directory containing all the metadata json files
-    :type str:
+
+    :type metadata_dir: str
+
     :param images_dir: The output directory for the rendered pages
+
+    :type images_dir: str
     """
     
     filenames = [(metadata_dir+filename, images_dir)for filename in os.listdir(metadata_dir) if filename.endswith(".json")]

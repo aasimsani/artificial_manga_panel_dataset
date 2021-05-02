@@ -423,7 +423,7 @@ class Page(Panel):
             # area so that the illustration can be fit into
             # the page itself
             draw_mask.polygon(rect, fill=255)
-            draw_rect.line(rect, fill="black", width=10) 
+            draw_rect.line(rect, fill="black", width=cfg.boundary_width) 
 
             # Paste illustration onto the page
             page_img.paste(img, (0, 0), mask)
@@ -833,6 +833,7 @@ class SpeechBubble(object):
         self.location = (x1, y1)
 
         # perform rotation if it was in transforms
+        # TODO: Fix issue of bad crops with rotation
         if "rotate" in self.transforms:
             rotation = np.random.randint(10, 30)
             bubble = bubble.rotate(rotation)
