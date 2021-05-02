@@ -1,7 +1,6 @@
 from scraping.download_texts import download_and_extract_jesc
 from scraping.download_fonts import get_font_links 
 from scraping.download_images import download_db_illustrations
-from scraping.download_images import download_speech_bubbles
 
 from preprocesing.text_dataset_format_changer import convert_jesc_to_dataframe
 from preprocesing.extract_and_verify_fonts import extract_fonts, get_font_files, verify_font_files
@@ -39,6 +38,7 @@ if __name__ == '__main__':
 
     parser.add_argument("--create-page-metadata", "-pm", nargs=1, type=int)
     parser.add_argument("--render_pages", "-rp", action="store_true")
+    parser.add_argument("--generate_pages", "-gp", nargs=1, type=int)
 
     args = parser.parse_args()
 
@@ -65,9 +65,6 @@ if __name__ == '__main__':
     if args.download_images:
         download_db_illustrations()
         convert_images_to_bw()
-
-    if args.download_speech_bubbles:
-        download_speech_bubbles()
 
     # Page creation
     if args.create_page_metadata is not None:
@@ -117,12 +114,62 @@ if __name__ == '__main__':
         images_folder = "datasets/page_images/"
         if not os.path.isdir(metadata_folder):
             print("There is no metadata please generate metadata first")
+        else:        
+            if not os.path.isdir(images_folder):
+                os.mkdir(images_folder)
+
+            print("Loading metadata and rendering")
+            render_pages(metadata_folder, images_folder)
+
+
+    if args.generate_pages is not None:
+        # number of pages
+        n = args.generate_pages[0]
+
+        metadata_folder = "datasets/page_metadata/"
+        if not os.path.isdir(metadata_folder):
+            os.mkdir(metadata_folder)
+
+        print("Loading files")
+        image_dir_path = "datasets/image_dataset/db_illustrations_bw/"
+        image_dir = os.listdir(image_dir_path) 
+        image_dir_len = len(image_dir)
+
+        text_dataset = pd.read_parquet("datasets/text_dataset/jesc_dialogues")
+
+        speech_bubbles_path = "datasets/speech_bubbles_dataset/"
+
+        speech_bubble_files = os.listdir(speech_bubbles_path+"/files/")
+        speech_bubble_files = [speech_bubbles_path+"files/"+filename for filename in speech_bubble_files]
+        speech_bubble_tags = pd.read_csv(speech_bubbles_path+"writing_area_labels.csv")
+        font_files_path = "datasets/font_dataset/"
+        viable_font_files = []
+        with open(font_files_path+"viable_fonts.csv") as viable_fonts:
+
+            for line in viable_fonts.readlines():
+                path, viable = line.split(",")
+                viable = viable.replace("\n", "")
+                if viable == "True":
+                    viable_font_files.append(path)
+
+        print("Running creation of metadata")
+        for i in tqdm(range(n)):
+            page = create_page_metadata(image_dir,
+                                        image_dir_len,
+                                        image_dir_path,
+                                        viable_font_files,
+                                        text_dataset,
+                                        speech_bubble_files,
+                                        speech_bubble_tags
+                                        )
+            page.dump_data(metadata_folder, dry=False)
         
-        if not os.path.isdir(images_folder):
-            os.mkdir(images_folder)
+        if not os.path.isdir(metadata_folder):
+            print("There is no metadata please generate metadata first")
+        else: 
+            images_folder = "datasets/page_images/"
+            if not os.path.isdir(images_folder):
+                os.mkdir(images_folder)
 
-        print("Loading metadata and rendering")
-        render_pages(metadata_folder, images_folder)
-
-
-    
+            print("Loading metadata and rendering")
+            render_pages(metadata_folder, images_folder)

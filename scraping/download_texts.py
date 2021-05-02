@@ -6,6 +6,12 @@ from tqdm import tqdm
 import tarfile
 
 def download_file(url, filepath):
+    """
+    :param url: URL of file to download
+    :type str:
+    :param filepath: Location to download file to
+    :type str:
+    """
     # NOTE the stream=True parameter below
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
@@ -22,6 +28,10 @@ def download_file(url, filepath):
                 f.write(data)
 
 def download_and_extract_jesc():
+    """
+    Downloads the Japanese English Subtitle Corpus
+    and places it into datasets/text_dataset/
+    """
     url = "https://nlp.stanford.edu/projects/jesc/data/raw.tar.gz"
     filepath = "datasets/raw.tar.gz"
     if os.path.isfile(filepath):

@@ -22,8 +22,8 @@ def convert_single_image(image_path):
 
 def convert_images_to_bw():
     """
-    Concurrently and in parallel convert images to black and white
-    from image_dataset
+    Concurrently and in parallel convert the anime 
+    illustration images to black and white
     """
     if not os.path.isdir(processed_image_dir):
         os.mkdir(processed_image_dir)

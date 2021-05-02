@@ -6,6 +6,10 @@ import os
 preview_page_file = "datasets/font_dataset/browse_links.txt"
 font_links_file = "datasets/font_dataset/font_links.txt"
 def get_browse_page_links():
+    """
+    Goes through pages of freejapanesefont.com and
+    downloads each individual link to a font file page
+    """
     root_url = "https://www.freejapanesefont.com/"
     total_pages = 23 
 
@@ -26,6 +30,11 @@ def get_browse_page_links():
             links_file.write(link+"\n")
 
 def get_font_links():
+    """
+    Wrapper for get_brower_page_links
+    TODO: Add scraping of individual font
+    file links
+    """
     if not os.path.isfile(preview_page_file):
         print("Getting font preview pages")
         get_browse_page_links()
