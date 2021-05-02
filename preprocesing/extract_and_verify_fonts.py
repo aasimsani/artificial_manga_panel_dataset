@@ -22,11 +22,20 @@ dataframe_file = text_dataset_path+"jesc_dialogues"
 render_text_test_file = font_dataset_path + "render_test_text.txt"
 
 def unzip_file(paths):
+    """
+    Unzip a file
+    :param paths: Path to unzip file from and to
+
+    :type paths: list
+    """
     with zipfile.ZipFile(paths[0], 'r') as zip_ref:
         zip_ref.extractall(paths[1])
 
-
 def extract_fonts():
+    """
+    A function to get the font files which are in zip format and
+    extract them
+    """
     if not os.path.isdir(fonts_zip_output):
         os.mkdir(fonts_zip_output)
 
@@ -38,11 +47,21 @@ def extract_fonts():
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = executor.map(unzip_file, filepaths) 
 
-
 def move_files(paths):
+    """
+    Wrapper to move files used for parallel execution
+
+    :param paths: A set of paths 0 is from 1 is to
+    
+    :type paths: list
+    """
     shutil.move(paths[0], paths[1])
 
 def get_font_files():
+    """
+    A function to find the .otf and .ttf
+    font files from the scraped font files
+    """
     # Get all relevant font files
     print("Finding font files")
     font_files = list(Path(fonts_zip_output).rglob("*.[tT][tT][fF]"))
@@ -63,6 +82,18 @@ def get_font_files():
     shutil.rmtree(fonts_raw_dir)
 
 def make_char_list(row):
+    """
+    Helper functions to make a set of characters
+    from a row in the dataframe of the text corpus
+
+    :param row: A row in the dataframe
+
+    :type param: str
+
+    :return: A set of characters 
+    
+    :rtype: list
+    """
     words = set(row.split())
     all_chars = []
     for word in words:
@@ -71,6 +102,11 @@ def make_char_list(row):
     return all_chars
 
 def create_character_test_string():
+    """
+    Create a string of the unique characters in the
+    japanese text corpus to test whether the fonts being
+    used can render enough of the text
+    """
     df = dd.read_parquet(dataframe_file)
     print("Loaded DF. Now seperating word to characters")
     char_sep = df['Japanese'].apply(make_char_list, meta=("Japanese", "object")).compute()
@@ -86,23 +122,46 @@ def create_character_test_string():
         wf.write(test_string)
 
 def has_glyph(font, glyph):
+    """
+    Check if a font file has the character
+    glyph specified
+
+    :param font: A TTFont object from fontTools
+
+    :type font: TTFont
+
+    :param glyph: A character glyph
+
+    :type glyph: str
+
+    :return: 0 or 1 as a yes or no
+
+    :rtype: int
+    """
     for table in font['cmap'].tables:
         if ord(glyph) in table.cmap.keys():
             return 1
     return 0
 
 def verify_font_files():
+    """
+    A function that tests whether the font files
+    that have been scraped meet the benchmark of
+    rendering at least x% (as specififed in the config)
+    of the unique characters in the text corpus
+    """
     if not os.path.isfile(render_text_test_file):
         print("Character test string does exist. Generating!")
         create_character_test_string()
 
+    # File to create a test string of unique chars in the 
+    # corpus
     test_string = "" 
     with open(render_text_test_file, "r") as test_file:
         test_string = test_file.readlines()[0]
     
     chars = test_string.split(" ")
     all_fonts = os.listdir(font_file_dir) 
-
 
     total_chars = len(chars)
 

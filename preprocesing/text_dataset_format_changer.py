@@ -3,6 +3,10 @@ import os
 
 
 def convert_jesc_to_dataframe():
+    """
+    Convert the CSV file of the text to a
+    Dask Dataframe 
+    """
     dataset_path = "datasets/text_dataset/"
     print("Loading data and converting to Dask Dataframe")
     filename = "raw.txt"

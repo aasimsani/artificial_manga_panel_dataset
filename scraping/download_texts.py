@@ -9,11 +9,11 @@ def download_file(url, filepath):
     """
     :param url: URL of file to download
 
-    :type str:
+    :type url: str
 
     :param filepath: Location to download file to
 
-    :type str:
+    :type filepath: str
     """
     # NOTE the stream=True parameter below
     with requests.get(url, stream=True) as r:

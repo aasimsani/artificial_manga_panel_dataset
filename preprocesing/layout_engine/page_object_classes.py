@@ -17,29 +17,29 @@ class Panel(object):
 
     :param coords: Coordinates of the boundary of the panel 
 
-    :type list:
+    :type coords: list
 
     :param name: Unique name for the panel
 
-    :type str:
+    :type name: str
 
     :param parent: The panel which this panel is a child of
 
-    :type Panel:
+    :type parent: Panel
 
     :param orientation: Whether the panel consists of lines that are vertically
     or horizotnally oriented in reference to the page
 
-    :type str:
+    :type orientation: str
 
     :children: Children panels of this panel
 
-    :type list:
+    :type children: list
 
     :non_rect: Whether the panel was transformed to be non rectangular 
     and thus has less or more than 4 coords
 
-    :type bool optional:
+    :type non_rect: bool, optional
     """
 
     def __init__(self, coords, name, parent, orientation, children=[], non_rect=False):
@@ -95,6 +95,9 @@ class Panel(object):
         """
         Return the coords in a format that can be used to render a polygon
         via Pillow
+
+        :return: A tuple of coordinate tuples of the polygon's vertices
+        :rtype: tuple
         """
         if self.non_rect:
 
@@ -115,7 +118,7 @@ class Panel(object):
 
         :param panel: A child panel to the current panel
 
-        :type Panel:        
+        :type panel: Panel 
         """
         self.children.append(panel)
     
@@ -125,7 +128,7 @@ class Panel(object):
 
         :param panels: A list of Panel objects
 
-        :type list:
+        :type panels: list
         """
 
         for panel in panels:
@@ -137,7 +140,10 @@ class Panel(object):
 
         :param idx: Index of a child panel
 
-        :type int:
+        :type idx: int
+
+        :return: The child at the idx
+        :rtype: Panel
         """
         return self.children[idx]
 
@@ -147,6 +153,9 @@ class Panel(object):
         and create a dictionary out of it so it can be
         exported to JSON via the Page(Panel) class's
         dump_data method
+
+        :return: A dictionary of the Panel's data
+        :rtype: dict
         """
 
         # Recursively dump children  
@@ -178,7 +187,7 @@ class Panel(object):
 
         :param data: A dictionary of this panel's data
 
-        :type dict:
+        :type data: dict
         """
 
         self.sliced = data['sliced']
@@ -224,20 +233,20 @@ class Page(Panel):
 
     :param coords: A list of the boundary coordinates of a page
 
-    :type list:
+    :type coords: list
 
     :param page_type: Signifies whether a page consists of vertical
     or horizontal panels or both
 
-    :type str:
+    :type page_type: str
 
     :param num_panels: Number of panels in this page
 
-    :type int:
+    :type num_panels: int
 
     :param children: List of direct child panels of this page
 
-    :type list optional:
+    :type children: list, optional:
     """
 
     def __init__(self, coords=[], page_type="", num_panels=None, children=[]):
@@ -284,12 +293,16 @@ class Page(Panel):
 
         :param dataset_path: Where to dump the JSON file
 
-        :type str:
+        :type dataset_path: str
 
         :param dry: Whether to just return or write the JSON file
 
-        :type bool optional:
+        :type dry: bool, optional
+
+        :return: Optional return when running dry of a json data dump
+        :rtype: str
         """
+
 
         # Recursively dump children
         if len(self.children) > 0:
@@ -320,7 +333,7 @@ class Page(Panel):
 
         :param filename: JSON filename to load
 
-        :type str:
+        :type filename: str
         """
 
         with open(filename, "rb") as json_file:
@@ -348,7 +361,7 @@ class Page(Panel):
 
         :param show: Whether to return this image or to show it
 
-        :type bool optional:
+        :type show: bool, optional
         """
 
         # Get all the panels to be rendered
@@ -445,45 +458,45 @@ class SpeechBubble(object):
     :param texts: A list of texts from the text corpus to render in this
     bubble
 
-    :type lists:
+    :type texts: lists
 
     :param texts_indices: The indices of the text from the dataframe
     for easy retrival
 
-    :type lists:
+    :type texts_indices: lists
 
     :param font: The path to the font used in the bubble
 
-    :type str:
+    :type font: str
 
     :param speech_bubble: The path to the base speech bubble file
     used for this bubble
 
-    :type str:
+    :type speech_bubble: str
 
     :param writing_areas: The areas within the bubble where it is okay 
     to render text
 
-    :type list:
+    :type writing_areas: list
 
     :param resize_to: The amount of area this text bubble should consist of
     which is a ratio of the panel's area
 
-    :type float:
+    :type resize_to: float
 
     :param location: The location of the top left corner of the speech bubble
     on the page
 
-    :type list:
+    :type location: list
 
     :param transforms: The transformations that this speech bubble
 
-    :type list optional:
+    :type transforms: list, optional
 
     :param text_orientation: Whether the text of this speech bubble
     is written left to right ot top to bottom
 
-    :type str optional:
+    :type text_orientation: str, optional
     """
     def __init__(self, texts, texts_indices, font, speech_bubble, writing_areas, resize_to, location, transforms=None, text_orientation=None):
         """
@@ -536,6 +549,10 @@ class SpeechBubble(object):
         and create a dictionary out of it so it can be
         exported to JSON via the Page(Panel) class's
         dump_data method
+
+        :return: Data to be returned to Page(Panel) class's
+        dump_data method
+        :rtype: dict
         """
         data = dict(
             texts = self.texts,
@@ -554,6 +571,11 @@ class SpeechBubble(object):
     def render(self):
         """
         A function to render this speech bubble
+
+        :return: A list of states of the speech bubble,
+        the speech bubble itself, it's mask and it's location
+        on the page
+        :rtype: tuple
         """
 
         bubble = Image.open(self.speech_bubble).convert("L")
@@ -817,4 +839,3 @@ class SpeechBubble(object):
             mask = mask.rotate(rotation)
 
         return states, bubble, mask, self.location
-
