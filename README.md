@@ -1,4 +1,7 @@
 # Artifical Manga Panel Dataset - AMP-D
+There's no publcily available free to use Manga Dataset, so I decided to make one artifically!
+I love manga, but can't read Japanese. So I decided to build something that'll help me translate the manga into 
+English. Sadly I couldn't find a dataset to train my speech bubble detector on so I made this.
 
 ## What is in this repo?
 This repository contains the associated files and links to create an artificial manga panel dataset
