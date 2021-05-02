@@ -6,7 +6,7 @@ page_size = (page_width, page_height)
 
 output_format = ".png"
 
-boundary_width = 20
+boundary_width = 10
 
 ### Font coverage
 # How many characters of the dataset should the font files support
@@ -15,11 +15,44 @@ font_character_coverage = 0.80
 
 ### Panel Drawing
 
-## Panel srhinking
+## Panel ratios
+
+num_pages_ratios = {
+    1:0.125,
+    2:0.125,
+    3:0.125,
+    4:0.125,
+    5:0.125,
+    6:0.125,
+    7:0.125,
+    8:0.125
+}
+
+vertical_horizontal_ratios = {
+    "v": 0.1,
+    "h": 0.1,
+    "vh": 0.8
+}
+
+## Panel transform chance
+
+panel_transform_chance = 0.90
+
+## Panel shrinking
 
 panel_shrink_amount = -25
 
+## Panel removal
 
+panel_removal_chance = 0.01
+panel_removal_max = 2
+
+## Background adding
+background_add_chance = 0.01
+
+## Speech bubbles
+max_speech_bubbles_per_panel = 3
+bubble_to_panel_area_max_ratio = 0.4
 
 ## Transformations
 

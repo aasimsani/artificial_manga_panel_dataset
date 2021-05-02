@@ -77,7 +77,6 @@ if __name__ == '__main__':
         print("Loading files")
         image_dir_path = "datasets/image_dataset/db_illustrations_bw/"
         image_dir = os.listdir(image_dir_path) 
-        image_dir_len = len(image_dir)
 
         text_dataset = pd.read_parquet("datasets/text_dataset/jesc_dialogues")
 
@@ -99,7 +98,6 @@ if __name__ == '__main__':
         print("Running creation of metadata")
         for i in tqdm(range(n)):
             page = create_page_metadata(image_dir,
-                                        image_dir_len,
                                         image_dir_path,
                                         viable_font_files,
                                         text_dataset,
@@ -133,7 +131,6 @@ if __name__ == '__main__':
         print("Loading files")
         image_dir_path = "datasets/image_dataset/db_illustrations_bw/"
         image_dir = os.listdir(image_dir_path) 
-        image_dir_len = len(image_dir)
 
         text_dataset = pd.read_parquet("datasets/text_dataset/jesc_dialogues")
 
@@ -155,7 +152,6 @@ if __name__ == '__main__':
         print("Running creation of metadata")
         for i in tqdm(range(n)):
             page = create_page_metadata(image_dir,
-                                        image_dir_len,
                                         image_dir_path,
                                         viable_font_files,
                                         text_dataset,

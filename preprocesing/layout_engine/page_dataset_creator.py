@@ -1051,56 +1051,134 @@ def shrink_panels(page):
     return page
 
 def random_remove_panel(page):
+    """
+    This function randomly removes
+    a panel from pages which have 
+    more than 3 panels
 
-    # 1 in 100 chance
-    if np.random.random() > 0.99:
-        if page.num_panels > 3:
-            remove_number = np.random.choice([1, 2])
+    :param page: Page to remove panels from
 
+    :type page: Page
+
+    :return: Page with panels removed
+
+    :rtype: Page
+    """    
+
+    # If there is a chance to remove panels
+    if np.random.random() < cfg.panel_removal_chance:
+
+        # If page has > n+1 children so there's
+        # at least 1 panel left
+        if page.num_panels > cfg.panel_removal_max + 1:
+
+            # Remove 1 to n panels
+            remove_number = np.random.choice([1, cfg.panel_removal_max])
+
+            # Remove panel
             for i in range(remove_number):
                 page.leaf_children.pop()
 
     return page
 
-def random_add_background(page, image_dir, image_dir_len, image_dir_path):
+def random_add_background(page, image_dir, image_dir_path):
+    """
+    Randomly add a background image to the page
 
-    # 1 in 100 chance
-    if np.random.random() > 0.99: 
+    :param page: Page to add background to 
+
+    :type page: Page
+
+    :param image_dir: A list of images
+
+    :type image_dir: list
+
+    :param image_dir_path: path to images used for adding
+    the full path to the page
+
+    :type image_dir_path: str
+
+    :return: Page with background
+
+    :rtype: Page
+    """    
+
+    image_dir_len = len(image_dir)
+    if np.random.random() < cfg.background_add_chance: 
         idx = np.random.randint(0, image_dir_len)
         page.background = image_dir_path + image_dir[idx]
 
     return page
 
 # Page creators
-def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
+def create_single_panel_metadata(panel, image_dir, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
+    """
+    This is a helper function that populates a single panel with 
+    an image, and a set of speech bubbles
+
+    :param panel: Panel to add image and speech bubble to
+
+    :type panel: Panel
+
+    :param image_dir: List of images to pick from
+
+    :type image_dir: list
+
+    :param image_dir_path: Path of images dir to add to
+    panels 
+
+    :type image_dir_path: str
+
+    :param font_files: list of font files for speech bubble
+    text
+
+    :type font_files: list
+
+    :param text_dataset: A dask dataframe of text to
+    pick to render within speech bubble
+
+    :type text_dataset: pandas.dataframe
+
+    :param speech_bubble_files: list of base speech bubble
+    template files
+
+    :type speech_bubble_files: list
+
+    :param speech_bubble_tags: a list of speech bubble 
+    writing area tags by filename
+
+    :type speech_bubble_tags: list
+    """    
 
     
-    # Image inside used
-    # Part of image cropped
-        # Currently set to use panel part
+    # Image to be used inside panel
+    image_dir_len = len(image_dir)
     select_image_idx = np.random.randint(0, image_dir_len)
     select_image = image_dir[select_image_idx]
     panel.image = image_dir_path+select_image
 
-    num_speech_bubbles = np.random.randint(0,3)
-    num_speech_bubbles = 1
+    # Select number of speech bubbles to assign to panel
+    num_speech_bubbles = np.random.randint(0,cfg.max_speech_bubbles_per_panel)
+
+    # Get lengths of datasets
     text_dataset_len = len(text_dataset)
     font_dataset_len = len(font_files)
     speech_bubble_dataset_len = len(speech_bubble_files)
 
     # Associated speech bubbles
     for speech_bubble in range(num_speech_bubbles):
-
-
-
+        
+        # Select a font
         font_idx = np.random.randint(0, font_dataset_len)
         font = font_files[font_idx]
 
+        # Select a speech bubble and get it's writing areas
         speech_bubble_file_idx = np.random.randint(0, speech_bubble_dataset_len)
         speech_bubble_file = speech_bubble_files[speech_bubble_file_idx]
         speech_bubble_writing_area = speech_bubble_tags[speech_bubble_tags['imagename'] == speech_bubble_file]['label']
         speech_bubble_writing_area = json.loads(speech_bubble_writing_area.values[0])
 
+        # Select text for writing areas
         texts = []
         texts_indices = []
         for i in range(len(speech_bubble_writing_area)):
@@ -1110,13 +1188,12 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
             texts.append(text)
 
         # resize bubble to < 40% of panel area
-        max_area = panel.area*0.4
+        max_area = panel.area*cfg.bubble_to_panel_area_max_ratio
         new_area = np.random.random()*(max_area - max_area*0.375)
         new_area = max_area - new_area
 
         
-        # Put location of bubble in panel
-
+        # Select location of bubble in panel
         width_m = np.random.random()
         height_m = np.random.random()
 
@@ -1131,24 +1208,64 @@ def create_single_panel_metadata(panel, image_dir, image_dir_len, image_dir_path
             x_choice,
             y_choice
         ]
-        # location = tuple(min_coord)
+
+        # Create speech bubble
         speech_bubble = SpeechBubble(texts, texts_indices, font, speech_bubble_file, speech_bubble_writing_area, new_area, location)
         panel.speech_bubbles.append(speech_bubble)
 
-def populate_panels(page, image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
+def populate_panels(page, image_dir, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
+    """
+    This function takes all the panels and adds backgorund images
+    and speech bubbles to them
+
+    :param page: Page with panels to populate
+
+    :type page: Page
+
+    :param image_dir: List of images to pick from
+
+    :type image_dir: list
+
+    :param image_dir_path: Path of images dir to add to
+    panels 
+
+    :type image_dir_path: str
+
+    :param font_files: list of font files for speech bubble
+    text
+
+    :type font_files: list
+
+    :param text_dataset: A dask dataframe of text to
+    pick to render within speech bubble
+
+    :type text_dataset: pandas.dataframe
+
+    :param speech_bubble_files: list of base speech bubble
+    template files
+
+    :type speech_bubble_files: list
+
+    :param speech_bubble_tags: a list of speech bubble 
+    writing area tags by filename
+
+    :type speech_bubble_tags: list
+
+    :return: Page with populated panels
+
+    :rtype: Page
+    """    
 
     for child in page.leaf_children:
 
         create_single_panel_metadata(child,
                                      image_dir,
-                                     image_dir_len,
                                      image_dir_path,
                                      font_files,
                                      text_dataset,
                                      speech_bubble_files,
                                      speech_bubble_tags
                                      )
-    # TODO: Address bubble overlap
     return page
 
 def get_base_panels(num_panels=0, layout_type=None):
@@ -1703,20 +1820,59 @@ def get_base_panels(num_panels=0, layout_type=None):
     return page 
      
 # TODO: Figure out page type distributions
-def create_page_metadata(image_dir, image_dir_len, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
+def create_page_metadata(image_dir, image_dir_path, font_files, text_dataset, speech_bubble_files, speech_bubble_tags):
+    """
+    This function creates page metadata for a single page. It includes
+    transforms, background addition, random panel removal,
+    panel shrinking, and the populating of panels with
+    images and speech bubbles.
+
+    :param image_dir: List of images to pick from
+
+    :type image_dir: list
+
+    :param image_dir_path: Path of images dir to add to
+    panels 
+
+    :type image_dir_path: str
+
+    :param font_files: list of font files for speech bubble
+    text
+
+    :type font_files: list
+
+    :param text_dataset: A dask dataframe of text to
+    pick to render within speech bubble
+
+    :type text_dataset: pandas.dataframe
+
+    :param speech_bubble_files: list of base speech bubble
+    template files
+
+    :type speech_bubble_files: list
+
+    :param speech_bubble_tags: a list of speech bubble 
+    writing area tags by filename
+
+    :type speech_bubble_tags: list
+
+    :return: Created Page with all the bells and whistles
+
+    :rtype: Page
+    """    
 
     # Select page type
     # Select number of panels on the page
         # between 1 and 8
-    # Select panel boundary type
-    # Select panel boundary widths
 
     page = get_base_panels(0, None)
-    page = add_transforms(page)
+
+    if np.random.random() < cfg.panel_transform_chance:
+        page = add_transforms(page)
+
     page = shrink_panels(page)
     page = populate_panels(page,
                            image_dir,
-                           image_dir_len,
                            image_dir_path,
                            font_files,
                            text_dataset,
@@ -1725,6 +1881,6 @@ def create_page_metadata(image_dir, image_dir_len, image_dir_path, font_files, t
                            )
 
     page = random_remove_panel(page)
-    page = random_add_background(page, image_dir, image_dir_len, image_dir_path)
+    page = random_add_background(page, image_dir, image_dir_path)
 
     return page 
