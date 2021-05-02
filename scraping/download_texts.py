@@ -8,8 +8,11 @@ import tarfile
 def download_file(url, filepath):
     """
     :param url: URL of file to download
+
     :type str:
+
     :param filepath: Location to download file to
+
     :type str:
     """
     # NOTE the stream=True parameter below

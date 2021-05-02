@@ -121,7 +121,7 @@ if __name__ == '__main__':
             print("Loading metadata and rendering")
             render_pages(metadata_folder, images_folder)
 
-
+    # Combines the above in case of small size
     if args.generate_pages is not None:
         # number of pages
         n = args.generate_pages[0]

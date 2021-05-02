@@ -9,8 +9,43 @@ from .helpers import get_leaf_panels
 from .. import config_file as cfg
 
 class Panel(object):
+    """
+    A class to encapsulate a panel of the manga page.
+    Since the script works in a parent-child relationship
+    where each panel child is an area subset of some parent panel,
+    some panels aren't leaf nodes and thus not rendered.
+
+    :param coords: Coordinates of the boundary of the panel 
+
+    :type list:
+
+    :param name: Unique name for the panel
+
+    :type str:
+
+    :param parent: The panel which this panel is a child of
+
+    :type Panel:
+
+    :param orientation: Whether the panel consists of lines that are vertically
+    or horizotnally oriented in reference to the page
+
+    :type str:
+
+    :children: Children panels of this panel
+
+    :type list:
+
+    :non_rect: Whether the panel was transformed to be non rectangular 
+    and thus has less or more than 4 coords
+
+    :type bool:
+    """
 
     def __init__(self, coords, name, parent, orientation, children=[], non_rect=False):
+        """
+        Constructor methods
+        """
 
         coords = [tuple(c) for c in coords]        
 
@@ -42,45 +77,26 @@ class Panel(object):
 
         self.children = children
 
-        self.sliced = False
-
         self.orientation = orientation 
 
+        # Whether or not this panel has been transformed by slicing into two
+        self.sliced = False
+
+        # Whether or not to render this panel
         self.no_render = False
 
+        # Image from the illustration dataset which is the background of this panel
         self.image = None
 
+        # A list of speech bubble objects to render around this panel
         self.speech_bubbles = []
 
-    def get_relative_location(self, panel):
-        
-        pos = ""
-        # Is left of
-        if self.x1y1[0] < panel.x1y1[0]:
-            pos = "left"
-        # Same x-axis
-        elif self.x1y1[0] == panel.x1y1[0]:
-            # Is below of
-            if self.x1y1[1] < panel.x1y1[1]:
-                pos = "below" 
-            # Same y-axis
-            elif self.x1y1[1] == panel.x1y1[1]:
-                pos = "on"
-            # Is above of
-            else:
-                pos = "above"
-        # Is right of
-        else:
-            pos = "right"
-        
-        return pos
-    
     def get_polygon(self):
+        """
+        Return the coords in a format that can be used to render a polygon
+        via Pillow
+        """
         if self.non_rect:
-
-            # Handle edge case of incorrect input
-            # if len(self.coords) < 5:
-                # self.coords.append(self.coords[0])
 
             return tuple(self.coords)
         else:
@@ -93,29 +109,47 @@ class Panel(object):
                 self.x1y1
             )
 
-    def is_adjacent(self, panel):
-
-        for l1 in self.lines:
-            for l2 in panel.lines:
-                if l1 == l2:
-                    return True
-        return False
-    
     def add_child(self, panel):
+        """
+        Add child panels
 
+        :param panel: A child panel to the current panel
+
+        :type Panel:        
+        """
         self.children.append(panel)
     
     def add_children(self, panels):
+        """
+        Method to add multiple children at once
+
+        :param panels: A list of Panel objects
+
+        :type list:
+        """
 
         for panel in panels:
             self.add_child(panel)
     
     def get_child(self, idx):
+        """
+        Get a child panel by index
 
+        :param idx: Index of a child panel
+
+        :type int:
+        """
         return self.children[idx]
 
     def dump_data(self):
-        
+        """
+        A method to take all the Panel's relevant data
+        and create a dictionary out of it so it can be
+        exported to JSON via the Page(Panel) class's
+        dump_data method
+        """
+
+        # Recursively dump children  
         if len(self.children) > 0:
             children_rec = [child.dump_data() for child in self.children]
         else:
@@ -137,6 +171,15 @@ class Panel(object):
         return data
 
     def load_data(self, data):
+        """
+        This method reverses the dump_data function and
+        load's the metadata of the panel from the subsection
+        of the JSON file that has been loaded
+
+        :param data: A dictionary of this panel's data
+
+        :type dict:
+        """
 
         self.sliced = data['sliced']
         self.no_render = data['no_render']
@@ -158,6 +201,7 @@ class Panel(object):
 
                 self.speech_bubbles.append(bubble)
 
+        # Recursively load children
         children = []
         if len(data['children']) > 0:
             for child in data['children']: 
@@ -366,7 +410,12 @@ class SpeechBubble(object):
             self.text_orientation = text_orientation
 
     def dump_data(self):
-
+        """
+        A method to take all the SpeechBubble's relevant data
+        and create a dictionary out of it so it can be
+        exported to JSON via the Page(Panel) class's
+        dump_data method
+        """
         data = dict(
             texts = self.texts,
             texts_indices = self.texts_indices,
