@@ -9,8 +9,8 @@ If you just want to use the dataset and not change anything you can find it at <
 If you'd like to change the way the creator works, make your own files or contribute to the project pleae follow these instructions
 
 1. ```pip3 install -r requirements.txt``
-2. Libraqm is required for rendering CJK text properly. Follow instructions (here)[https://github.com/HOST-Oman/libraqm]
-3. You can get the base materials for the dataset by running:
+2. Libraqm is required for rendering CJK text properly. Follow instructions [here](https://github.com/HOST-Oman/libraqm)
+3. You can get the base materials for the dataset by [emailing me](mailto:aasimsani05@gmail.com) for the key and then running:
   ```
   export GOOGLE_APPLICATION_CREDENTIALS=config/ampd_key.json
   dvc pull
@@ -34,8 +34,9 @@ Steps:
 
 ### Data variety
 - 196 fonts with >80% character coverage
-- 728 Speech bubble types (182 untransformed)
+- 91 unique speech bubble types
 - 2,801,388 sentence pairs in Japanese and English
+- 187335 illustration
 
 ### How this dataset was made?
 1. Downloaded JESC dataset to get sentence pairs of English and Japanese
@@ -51,7 +52,7 @@ Steps:
 9. Bounce page and it's panel's metadata to json in parallel.
 9. Used renderer to create dataset from the generated json in parallel.
 
-### Resources used:
+### Resources used for creating dataset:
 
 1. [JESC dataset](https://nlp.stanford.edu/projects/jesc/)
 2. [Tagged anime illustrations Kaggle dataset](https://www.kaggle.com/mylesoneill/tagged-anime-illustrations)
@@ -61,7 +62,7 @@ Steps:
 6. [Speech bubbles PSD file](https://www.deviantart.com/zombiesmile/art/300-Free-Speech-Bubbles-Download-419223430)
 7. [Label studio](https://labelstud.io/)
 
-### Licences and Legal
+### Licences and Citations
 **JESC dataset**
 ```
 @ARTICLE{pryzant_jesc_2017,
