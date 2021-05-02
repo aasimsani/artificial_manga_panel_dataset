@@ -39,7 +39,7 @@ class Panel(object):
     :non_rect: Whether the panel was transformed to be non rectangular 
     and thus has less or more than 4 coords
 
-    :type bool:
+    :type bool optional:
     """
 
     def __init__(self, coords, name, parent, orientation, children=[], non_rect=False):
@@ -219,8 +219,31 @@ class Panel(object):
         self.children = children
 
 class Page(Panel):
+    """
+    A class that represents a full page consiting of multiple child panels
+
+    :param coords: A list of the boundary coordinates of a page
+
+    :type list:
+
+    :param page_type: Signifies whether a page consists of vertical
+    or horizontal panels or both
+
+    :type str:
+
+    :param num_panels: Number of panels in this page
+
+    :type int:
+
+    :param children: List of direct child panels of this page
+
+    :type list optional:
+    """
 
     def __init__(self, coords=[], page_type="", num_panels=None, children=[]):
+        """
+        Constructor method
+        """
 
         if len(coords) < 1:
             topleft = (0.0, 0.0)
@@ -234,20 +257,41 @@ class Page(Panel):
                 bottomleft
             ]
 
+        # Initalize the panel super class
         super().__init__(coords, "page", None, None, [])
 
         self.num_panels = num_panels
         self.page_type = page_type
 
+        # Whether this page needs to be rendered with a background
         self.background = None
+
+        # The leaf children of tree of panels
+        # These are the panels that are actually rendered
         self.leaf_children = []
+
+        # Size of the page
         self.page_size = cfg.page_size
 
-        # TODO: Setup naming of pages
         self.name = str(uuid.uuid1())
 
     def dump_data(self, dataset_path, dry=True):
+        """
+        A method to take all the Page's relevant data
+        and create a dictionary out of it so it can be
+        exported to JSON so that it can then be loaded
+        and rendered to images in parallel
 
+        :param dataset_path: Where to dump the JSON file
+
+        :type str:
+
+        :param dry: Whether to just return or write the JSON file
+
+        :type bool optional:
+        """
+
+        # Recursively dump children
         if len(self.children) > 0:
             children_rec = [child.dump_data() for child in self.children]
         else:
@@ -268,12 +312,24 @@ class Page(Panel):
             return json.dumps(data, indent=2)
     
     def load_data(self, filename):
+
+        """
+        This method reverses the dump_data function and
+        load's the metadata of the page from the JSON 
+        file that has been loaded.
+
+        :param filename: JSON filename to load
+
+        :type str:
+        """
+
         with open(filename, "rb") as json_file:
             data = json.load(json_file)
             self.name = data['name']
             self.num_panels = int(data['num_panels'])
             self.page_type = data['page_type']
 
+            # Recursively load children
             if len(data['children']) > 0:
                 for child in data['children']: 
                     panel = Panel(
@@ -286,9 +342,16 @@ class Page(Panel):
                     panel.load_data(child)
                     self.children.append(panel)
 
-
     def render(self, show=False):
+        """
+        A function to render this page to an image
 
+        :param show: Whether to return this image or to show it
+
+        :type bool optional:
+        """
+
+        # Get all the panels to be rendered
         leaf_children = []
         if len(self.leaf_children) < 1:
             get_leaf_panels(self, leaf_children)
@@ -299,9 +362,11 @@ class Page(Panel):
         W = cfg.page_width
         H = cfg.page_height
 
+        # Create a new blank image 
         page_img = Image.new(size=(W,H), mode="L", color="white")
         draw_rect = ImageDraw.Draw(page_img)
 
+        # Set background if needed
         if self.background is not None:
             bg = Image.open(self.background).convert("L")
             img_array = np.asarray(bg)
@@ -310,38 +375,44 @@ class Page(Panel):
             bg = bg.resize((W,H))
             page_img.paste(bg, (0, 0))
 
-        coords = []
-
         # Render panels
         for panel in leaf_children:
-
+            
+            # Open the illustration to put within panel
             img = Image.open(panel.image)
 
+            # Clean it up by cropping the black areas
             img_array = np.asarray(img)
             crop_array = crop_image_only_outside(img_array)
 
             img = Image.fromarray(crop_array)
 
+            # Resize it to the page's size as a simple
+            # way to crop differnt parts of it
+
+            # TODO: Figure out how to do different types of 
+            # image crops for smaller panels
             w_rev_ratio = cfg.page_width/img.size[0]
             h_rev_ratio = cfg.page_height/img.size[1]
-
-
-            #TODO Figure out how to do different types of 
-            # image crops for smaller panels
 
             img = img.resize(
                 (round(img.size[0]*w_rev_ratio),
                 round(img.size[1]*h_rev_ratio))
             )
 
+            # Create a mask for the panel illustration
             mask = Image.new("L", cfg.page_size, 0)
             draw_mask = ImageDraw.Draw(mask)
 
             rect = panel.get_polygon()
 
+            # On the mask draw and therefore cut out the panel's 
+            # area so that the illustration can be fit into
+            # the page itself
             draw_mask.polygon(rect, fill=255)
             draw_rect.line(rect, fill="black", width=10) 
 
+            # Paste illustration onto the page
             page_img.paste(img, (0, 0), mask)
 
         # Render bubbles
@@ -358,6 +429,7 @@ class Page(Panel):
                     5,5,
                     5+w, 5+h,
                 )
+                # Uses a mask so that the "L" type bubble is cropped
                 bubble_mask = bubble_mask.crop(crop_dims)
                 page_img.paste(bubble, location, bubble_mask)
 
@@ -367,7 +439,56 @@ class Page(Panel):
             return page_img
 
 class SpeechBubble(object):
+    """
+    A class to represent the metadata to render a speech bubble
+
+    :param texts: A list of texts from the text corpus to render in this
+    bubble
+
+    :type lists:
+
+    :param texts_indices: The indices of the text from the dataframe
+    for easy retrival
+
+    :type lists:
+
+    :param font: The path to the font used in the bubble
+
+    :type str:
+
+    :param speech_bubble: The path to the base speech bubble file
+    used for this bubble
+
+    :type str:
+
+    :param writing_areas: The areas within the bubble where it is okay 
+    to render text
+
+    :type list:
+
+    :param resize_to: The amount of area this text bubble should consist of
+    which is a ratio of the panel's area
+
+    :type float:
+
+    :param location: The location of the top left corner of the speech bubble
+    on the page
+
+    :type list:
+
+    :param transforms: The transformations that this speech bubble
+
+    :type list optional:
+
+    :param text_orientation: Whether the text of this speech bubble
+    is written left to right ot top to bottom
+
+    :type str optional:
+    """
     def __init__(self, texts, texts_indices, font, speech_bubble, writing_areas, resize_to, location, transforms=None, text_orientation=None):
+        """
+        Constructor method
+        """
 
         self.texts = texts
         # Index of dataframe for the text
@@ -431,10 +552,12 @@ class SpeechBubble(object):
         return data
 
     def render(self):
+        """
+        A function to render this speech bubble
+        """
 
         bubble = Image.open(self.speech_bubble).convert("L")
         mask = bubble.copy()
-
 
         # Set variable font size
         min_font_size = 54
@@ -442,14 +565,17 @@ class SpeechBubble(object):
         current_font_size = np.random.randint(min_font_size,
                                               max_font_size
                                               )
-        # TODO: re-evaluate fonts
         font = ImageFont.truetype(self.font,current_font_size)
 
+        # Center of bubble
         w, h = bubble.size
         cx, cy = w/2, h/2
 
+        # States is used to indicate whether this bubble is
+        # inverted or not to the page render function
         states = []
-        # Pre-render transforms
+
+        # Pre-rendering transforms
         for transform in self.transforms:
             if transform == "invert":
                 states.append("inverted")
@@ -479,7 +605,6 @@ class SpeechBubble(object):
             elif transform == "flip horizontal":
                 bubble = ImageOps.mirror(bubble)
                 mask = ImageOps.mirror(mask)
-                # TODO: horizontally flip box coordinates
                 new_writing_areas = []
                 for area in self.writing_areas:
                     og_width = area['original_width']
@@ -584,6 +709,8 @@ class SpeechBubble(object):
             
                 # Setup vertical wrapping
                 avg_height = size[0]/len(text)
+
+                # Maximum chars in line
                 max_chars = int((px_height//avg_height))
                 if size[0] > px_height:
                     # Using specialized wrapping library
