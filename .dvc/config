@@ -2,3 +2,4 @@
     remote = gcloud
 ['remote "gcloud"']
     url = gs://as_public_datasets/ampd
+    jobs = 64
