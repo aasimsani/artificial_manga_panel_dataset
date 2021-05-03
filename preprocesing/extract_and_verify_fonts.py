@@ -2,7 +2,6 @@ import os
 import concurrent.futures
 import zipfile
 import time
-from pathlib import Path
 import shutil
 from PIL import Image, ImageFont, ImageDraw
 import dask.dataframe as dd
@@ -12,14 +11,6 @@ from fontTools.unicode import Unicode
 from fontTools.ttLib import TTLibError
 from tqdm import tqdm
 from . import config_file as cfg
-
-font_dataset_path = "datasets/font_dataset/"
-text_dataset_path = "datasets/text_dataset/"
-fonts_raw_dir = font_dataset_path+"font_file_raw_downloads/"
-fonts_zip_output = font_dataset_path+"fonts_zip_output/"
-font_file_dir = font_dataset_path+"font_files/"
-dataframe_file = text_dataset_path+"jesc_dialogues"
-render_text_test_file = font_dataset_path + "render_test_text.txt"
 
 
 def unzip_file(paths):
@@ -62,10 +53,24 @@ def move_files(paths):
     shutil.move(paths[0], paths[1])
 
 
-def get_font_files():
+def get_font_files(fonts_zip_output, fonts_raw_dir, font_file_dir):
     """
     A function to find the .otf and .ttf
     font files from the scraped font files
+
+    :param fonts_zip_output: Path for zip files
+    of font files
+
+    :type fonts_zip_output: str
+
+    :param fonts_raw_dir: Place where all the
+    raw font files exist whether zipped or not
+
+    :type fonts_raw_dir: str
+
+    :param font_file_dir: Out directory for font files
+
+    :type font_file_dir: str
     """
     # Get all relevant font files
     print("Finding font files")
@@ -109,11 +114,12 @@ def make_char_list(row):
     return all_chars
 
 
-def create_character_test_string():
+def create_character_test_string(dataframe_file, render_text_test_file):
     """
     Create a string of the unique characters in the
     japanese text corpus to test whether the fonts being
     used can render enough of the text
+
     """
     df = dd.read_parquet(dataframe_file)
     print("Loaded DF. Now seperating word to characters")
@@ -157,7 +163,11 @@ def has_glyph(font, glyph):
     return 0
 
 
-def verify_font_files():
+def verify_font_files(dataframe_file,
+                      render_text_test_file,
+                      font_file_dir,
+                      font_dataset_path
+                      ):
     """
     A function that tests whether the font files
     that have been scraped meet the benchmark of
@@ -166,7 +176,7 @@ def verify_font_files():
     """
     if not os.path.isfile(render_text_test_file):
         print("Character test string does exist. Generating!")
-        create_character_test_string()
+        create_character_test_string(dataframe_file, render_text_test_file)
 
     # File to create a test string of unique chars in the
     # corpus

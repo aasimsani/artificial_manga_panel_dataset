@@ -13,11 +13,11 @@ from preprocesing.layout_engine.page_creator import render_pages
 from preprocesing.layout_engine.page_dataset_creator import (
                                                         create_page_metadata
                                                         )
-
 from tqdm import tqdm
 import os
 import pandas as pd
 from argparse import ArgumentParser
+import pytest
 
 import time
 
@@ -55,6 +55,7 @@ if __name__ == '__main__':
     parser.add_argument("--render_pages", "-rp", action="store_true")
     parser.add_argument("--generate_pages", "-gp", nargs=1, type=int)
     parser.add_argument("--dry", action="store_true", default=False)
+    parser.add_argument("--run_tests", action="store_true")
 
     args = parser.parse_args()
 
@@ -76,8 +77,22 @@ if __name__ == '__main__':
 
     # Font verification
     if args.verify_fonts:
+
+        font_dataset_path = "datasets/font_dataset/"
+        text_dataset_path = "datasets/text_dataset/"
+        fonts_raw_dir = font_dataset_path+"font_file_raw_downloads/"
+        fonts_zip_output = font_dataset_path+"fonts_zip_output/"
+        font_file_dir = font_dataset_path+"font_files/"
+        dataframe_file = text_dataset_path+"jesc_dialogues"
+        render_text_test_file = font_dataset_path + "render_test_text.txt"
+
         # extract_fonts()
-        verify_font_files()
+        verify_font_files(
+            dataframe_file,
+            render_text_test_file,
+            font_file_dir,
+            font_dataset_path
+        )
 
     # Download and convert image from Kaggle
     if args.download_images:
@@ -198,3 +213,9 @@ if __name__ == '__main__':
 
             print("Loading metadata and rendering")
             render_pages(metadata_folder, images_folder, dry=args.dry)
+
+    if args.run_tests:
+        pytest.main([
+                "tests/unit_tests/test_dataset_creator.py",
+                "-s"
+                ])

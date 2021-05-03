@@ -10,8 +10,8 @@ If you just want to use the dataset and not change anything you can find it at <
 
 If you'd like to change the way the creator works, make your own files or contribute to the project pleae follow these instructions
 
-1. ```pip3 install -r requirements.txt``
-2. Libraqm is required for rendering CJK text properly. Follow instructions [here](https://github.com/HOST-Oman/libraqm)
+1. Libraqm is required for rendering CJK text properly. Follow instructions [here](https://github.com/HOST-Oman/libraqm)
+2. ```pip3 install -r requirements.txt``
 3. You can get the base materials for the dataset by [emailing me](mailto:aasimsani05@gmail.com) for the key and then running:
   ```
   export GOOGLE_APPLICATION_CREDENTIALS=config/ampd_key.json
@@ -38,7 +38,7 @@ Steps:
 - 196 fonts with >80% character coverage
 - 91 unique speech bubble types
 - 2,801,388 sentence pairs in Japanese and English
-- 337039 illustration
+- 337,039 illustration
 
 ### How this dataset was made?
 1. Downloaded JESC dataset to get sentence pairs of English and Japanese

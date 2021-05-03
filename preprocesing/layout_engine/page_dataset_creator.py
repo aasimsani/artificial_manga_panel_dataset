@@ -1502,7 +1502,7 @@ def populate_panels(page,
     return page
 
 
-def get_base_panels(num_panels=0, layout_type=None):
+def get_base_panels(num_panels=0, layout_type=None, type_choice=None):
     """
     This function creates the base panels for one page
     it specifies how a page should be layed out and
@@ -1596,8 +1596,9 @@ def get_base_panels(num_panels=0, layout_type=None):
             horizontal_vertical = np.random.choice(["h", "v"])
 
             # Possible layouts with 4 panels
-            type_choice = np.random.choice(["eq", "uneq", "div",
-                                            "trip", "twoonethree"])
+            if type_choice is None:
+                type_choice = np.random.choice(["eq", "uneq", "div",
+                                                "trip", "twoonethree"])
 
             # Draw two rectangles
             if type_choice == "eq":
@@ -1670,8 +1671,10 @@ def get_base_panels(num_panels=0, layout_type=None):
             horizontal_vertical = np.random.choice(["h", "v"])
 
             # Possible layouts with 5 panels
-            type_choice = np.random.choice(["eq", "uneq", "div", "twotwothree",
-                                            "threetwotwo", "fourtwoone"])
+            if type_choice is None:
+                type_choice = np.random.choice(["eq", "uneq", "div",
+                                                "twotwothree", "threetwotwo",
+                                                "fourtwoone"])
 
             if type_choice == "eq" or type_choice == "uneq":
 
@@ -1773,8 +1776,10 @@ def get_base_panels(num_panels=0, layout_type=None):
         if num_panels == 6:
 
             # Possible layouts with 6 panels
-            type_choice = np.random.choice(["tripeq", "tripuneq", "twofourtwo",
-                                            "twothreethree", "fourtwotwo"])
+            if type_choice is None:
+                type_choice = np.random.choice(["tripeq", "tripuneq",
+                                                "twofourtwo", "twothreethree",
+                                                "fourtwotwo"])
 
             horizontal_vertical = np.random.choice(["v", "h"])
 
@@ -1855,7 +1860,8 @@ def get_base_panels(num_panels=0, layout_type=None):
             types = ["twothreefour", "threethreetwotwo", "threefourtwoone",
                      "threethreextwoone", "fourthreextwo"]
 
-            type_choice = np.random.choice(types)
+            if type_choice is None:
+                type_choice = np.random.choice(types)
 
             # Draw two split 3-4 - HV
             # Draw two rectangles
@@ -1978,11 +1984,12 @@ def get_base_panels(num_panels=0, layout_type=None):
                      "threethreethreetwo", "threefourtwotwo",
                      "threethreefourone"]
 
-            type_choice = np.random.choice(types)
+            if type_choice is None:
+                type_choice = np.random.choice(types)
 
             # Draw 4 rectangles
             # equal or uneqal 4-4x2
-            if type_choice == type_choice[0] or type_choice == type_choice[1]:
+            if type_choice == types[0] or type_choice == types[1]:
                 # panels = draw_n_shifted(4, *coords, "h")
                 draw_n(4, page, "h")
                 # Equal
