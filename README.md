@@ -38,7 +38,7 @@ Steps:
 - 196 fonts with >80% character coverage
 - 91 unique speech bubble types
 - 2,801,388 sentence pairs in Japanese and English
-- 187335 illustration
+- 337039 illustration
 
 ### How this dataset was made?
 1. Downloaded JESC dataset to get sentence pairs of English and Japanese

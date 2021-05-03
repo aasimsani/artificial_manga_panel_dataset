@@ -47,6 +47,10 @@ if __name__ == '__main__':
                         action="store_true",
                         help="Verify fonts for minimum coverage from")
 
+    parser.add_argument("--convert_images", "-ci",
+                        action="store_true",
+                        help="Convert downloaded images to black and white")
+
     parser.add_argument("--create-page-metadata", "-pm", nargs=1, type=int)
     parser.add_argument("--render_pages", "-rp", action="store_true")
     parser.add_argument("--generate_pages", "-gp", nargs=1, type=int)
@@ -78,6 +82,9 @@ if __name__ == '__main__':
     # Download and convert image from Kaggle
     if args.download_images:
         download_db_illustrations()
+        convert_images_to_bw()
+
+    if args.convert_images:
         convert_images_to_bw()
 
     # Page creation
