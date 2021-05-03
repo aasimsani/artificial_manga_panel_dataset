@@ -4,9 +4,10 @@ from PIL import Image
 import concurrent.futures
 import time
 
-image_dataset_dir = "datasets/image_dataset/tagged-anime-illustrations/danbooru-images/danbooru-images/"
-processed_image_dir  = "datasets/image_dataset/db_illustrations_bw/"
+image_dataset_dir = "datasets/image_dataset/tagged-anime-illustrations/"\
+                    "danbooru-images/danbooru-images/"
 
+processed_image_dir = "datasets/image_dataset/db_illustrations_bw/"
 
 
 def convert_single_image(image_path):
@@ -19,10 +20,9 @@ def convert_single_image(image_path):
     bw_img.save(processed_image_dir+filename, "JPEG")
 
 
-
 def convert_images_to_bw():
     """
-    Concurrently and in parallel convert the anime 
+    Concurrently and in parallel convert the anime
     illustration images to black and white
     """
     if not os.path.isdir(processed_image_dir):
@@ -33,9 +33,10 @@ def convert_images_to_bw():
     for folder in tqdm(image_folders):
         folder_path = image_dataset_dir+folder + "/"
         if os.path.isdir(folder_path):
-            image_paths = [folder_path + image for image in os.listdir(folder_path) if image.endswith(".jpg")]
+            image_paths = [folder_path + image
+                           for image in os.listdir(folder_path)
+                           if image.endswith(".jpg")]
 
             # Since image processing is CPU and IO intensive
             with concurrent.futures.ProcessPoolExecutor() as executor:
                 results = executor.map(convert_single_image, image_paths)
-

@@ -5,7 +5,7 @@ import os
 def convert_jesc_to_dataframe():
     """
     Convert the CSV file of the text to a
-    Dask Dataframe 
+    Dask Dataframe
     """
     dataset_path = "datasets/text_dataset/"
     print("Loading data and converting to Dask Dataframe")
@@ -17,5 +17,3 @@ def convert_jesc_to_dataframe():
     df.to_parquet(dataset_path+"jesc_dialogues")
     os.remove(dataset_path+filename)
     os.remove("datasets/raw.tar.gz")
-
-

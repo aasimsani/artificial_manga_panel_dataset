@@ -1,4 +1,4 @@
-import numpy as np 
+import numpy as np
 import random
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import json
@@ -8,6 +8,7 @@ import cjkwrap
 from .helpers import get_leaf_panels
 from .. import config_file as cfg
 
+
 class Panel(object):
     """
     A class to encapsulate a panel of the manga page.
@@ -15,7 +16,7 @@ class Panel(object):
     where each panel child is an area subset of some parent panel,
     some panels aren't leaf nodes and thus not rendered.
 
-    :param coords: Coordinates of the boundary of the panel 
+    :param coords: Coordinates of the boundary of the panel
 
     :type coords: list
 
@@ -36,18 +37,24 @@ class Panel(object):
 
     :type children: list
 
-    :non_rect: Whether the panel was transformed to be non rectangular 
+    :non_rect: Whether the panel was transformed to be non rectangular
     and thus has less or more than 4 coords
 
     :type non_rect: bool, optional
     """
 
-    def __init__(self, coords, name, parent, orientation, children=[], non_rect=False):
+    def __init__(self,
+                 coords,
+                 name,
+                 parent,
+                 orientation,
+                 children=[],
+                 non_rect=False):
         """
         Constructor methods
         """
 
-        coords = [tuple(c) for c in coords]        
+        coords = [tuple(c) for c in coords]
 
         self.x1y1 = coords[0]
         self.x2y2 = coords[1]
@@ -67,17 +74,17 @@ class Panel(object):
         self.coords = coords
         self.non_rect = non_rect
 
-        
-
         self.width = float((self.x2y2[0] - self.x1y1[0]))
         self.height = float((self.x3y3[1] - self.x2y2[1]))
 
         self.area = float(self.width*self.height)
-        self.area_proportion = int(round(self.area/(cfg.page_height*cfg.page_width), 2))
+
+        area_proportion = round(self.area/(cfg.page_height*cfg.page_width), 2)
+        self.area_proportion = area_proportion
 
         self.children = children
 
-        self.orientation = orientation 
+        self.orientation = orientation
 
         # Whether or not this panel has been transformed by slicing into two
         self.sliced = False
@@ -85,7 +92,8 @@ class Panel(object):
         # Whether or not to render this panel
         self.no_render = False
 
-        # Image from the illustration dataset which is the background of this panel
+        # Image from the illustration dataset which is
+        # the background of this panel
         self.image = None
 
         # A list of speech bubble objects to render around this panel
@@ -118,10 +126,10 @@ class Panel(object):
 
         :param panel: A child panel to the current panel
 
-        :type panel: Panel 
+        :type panel: Panel
         """
         self.children.append(panel)
-    
+
     def add_children(self, panels):
         """
         Method to add multiple children at once
@@ -133,7 +141,7 @@ class Panel(object):
 
         for panel in panels:
             self.add_child(panel)
-    
+
     def get_child(self, idx):
         """
         Get a child panel by index
@@ -158,7 +166,7 @@ class Panel(object):
         :rtype: dict
         """
 
-        # Recursively dump children  
+        # Recursively dump children
         if len(self.children) > 0:
             children_rec = [child.dump_data() for child in self.children]
         else:
@@ -166,15 +174,15 @@ class Panel(object):
 
         speech_bubbles = [bubble.dump_data() for bubble in self.speech_bubbles]
         data = dict(
-            name = self.name,
-            coordinates = self.coords,
-            orientation = self.orientation,
-            children = children_rec,
-            non_rect = self.non_rect,
-            sliced = self.sliced,
-            no_render = self.no_render,
-            image = self.image,
-            speech_bubbles = speech_bubbles
+                name=self.name,
+                coordinates=self.coords,
+                orientation=self.orientation,
+                children=children_rec,
+                non_rect=self.non_rect,
+                sliced=self.sliced,
+                no_render=self.no_render,
+                image=self.image,
+                speech_bubbles=speech_bubbles
         )
 
         return data
@@ -213,7 +221,7 @@ class Panel(object):
         # Recursively load children
         children = []
         if len(data['children']) > 0:
-            for child in data['children']: 
+            for child in data['children']:
                 panel = Panel(
                     coords=child['coordinates'],
                     name=child['name'],
@@ -226,6 +234,7 @@ class Panel(object):
                 children.append(panel)
 
         self.children = children
+
 
 class Page(Panel):
     """
@@ -258,7 +267,7 @@ class Page(Panel):
             topleft = (0.0, 0.0)
             topright = (cfg.page_width, 0.0)
             bottomleft = (0.0, cfg.page_height)
-            bottomright = cfg.page_size 
+            bottomright = cfg.page_size
             coords = [
                 topleft,
                 topright,
@@ -303,7 +312,6 @@ class Page(Panel):
         :rtype: str
         """
 
-
         # Recursively dump children
         if len(self.children) > 0:
             children_rec = [child.dump_data() for child in self.children]
@@ -311,25 +319,25 @@ class Page(Panel):
             children_rec = []
 
         data = dict(
-            name = self.name,
-            num_panels = int(self.num_panels),
-            page_type = self.page_type,
-            page_size = self.page_size,
-            background = self.background,
-            children = children_rec
-        )   
+            name=self.name,
+            num_panels=int(self.num_panels),
+            page_type=self.page_type,
+            page_size=self.page_size,
+            background=self.background,
+            children=children_rec
+        )
 
         if not dry:
             with open(dataset_path+self.name+".json", "w+") as json_file:
                 json.dump(data, json_file, indent=2)
         else:
             return json.dumps(data, indent=2)
-    
+
     def load_data(self, filename):
 
         """
         This method reverses the dump_data function and
-        load's the metadata of the page from the JSON 
+        load's the metadata of the page from the JSON
         file that has been loaded.
 
         :param filename: JSON filename to load
@@ -345,7 +353,7 @@ class Page(Panel):
 
             # Recursively load children
             if len(data['children']) > 0:
-                for child in data['children']: 
+                for child in data['children']:
                     panel = Panel(
                         coords=child['coordinates'],
                         name=child['name'],
@@ -372,12 +380,11 @@ class Page(Panel):
         else:
             leaf_children = self.leaf_children
 
-
         W = cfg.page_width
         H = cfg.page_height
 
-        # Create a new blank image 
-        page_img = Image.new(size=(W,H), mode="L", color="white")
+        # Create a new blank image
+        page_img = Image.new(size=(W, H), mode="L", color="white")
         draw_rect = ImageDraw.Draw(page_img)
 
         # Set background if needed
@@ -386,12 +393,12 @@ class Page(Panel):
             img_array = np.asarray(bg)
             crop_array = crop_image_only_outside(img_array)
             bg = Image.fromarray(crop_array)
-            bg = bg.resize((W,H))
+            bg = bg.resize((W, H))
             page_img.paste(bg, (0, 0))
 
         # Render panels
         for panel in leaf_children:
-            
+
             # Open the illustration to put within panel
             img = Image.open(panel.image)
 
@@ -404,14 +411,14 @@ class Page(Panel):
             # Resize it to the page's size as a simple
             # way to crop differnt parts of it
 
-            # TODO: Figure out how to do different types of 
+            # TODO: Figure out how to do different types of
             # image crops for smaller panels
             w_rev_ratio = cfg.page_width/img.size[0]
             h_rev_ratio = cfg.page_height/img.size[1]
 
             img = img.resize(
                 (round(img.size[0]*w_rev_ratio),
-                round(img.size[1]*h_rev_ratio))
+                 round(img.size[1]*h_rev_ratio))
             )
 
             # Create a mask for the panel illustration
@@ -420,11 +427,11 @@ class Page(Panel):
 
             rect = panel.get_polygon()
 
-            # On the mask draw and therefore cut out the panel's 
+            # On the mask draw and therefore cut out the panel's
             # area so that the illustration can be fit into
             # the page itself
             draw_mask.polygon(rect, fill=255)
-            draw_rect.line(rect, fill="black", width=cfg.boundary_width) 
+            draw_rect.line(rect, fill="black", width=cfg.boundary_width)
 
             # Paste illustration onto the page
             page_img.paste(img, (0, 0), mask)
@@ -432,15 +439,16 @@ class Page(Panel):
         # Render bubbles
         for panel in leaf_children:
             # For each bubble
-                # Do for bubble
             for sb in panel.speech_bubbles:
                 states, bubble, mask, location = sb.render()
                 # Slightly shift mask so that you get outline for bubbles
-                bubble_mask = mask.resize((mask.size[0]+15, mask.size[1]+15))
+                new_mask_width = mask.size[0]+cfg.bubble_mask_x_increase
+                new_mask_height = mask.size[1]+cfg.bubble_mask_y_increase
+                bubble_mask = mask.resize((new_mask_width, new_mask_height))
 
                 w, h = bubble.size
                 crop_dims = (
-                    5,5,
+                    5, 5,
                     5+w, 5+h,
                 )
                 # Uses a mask so that the "L" type bubble is cropped
@@ -451,6 +459,7 @@ class Page(Panel):
             page_img.show()
         else:
             return page_img
+
 
 class SpeechBubble(object):
     """
@@ -475,7 +484,7 @@ class SpeechBubble(object):
 
     :type speech_bubble: str
 
-    :param writing_areas: The areas within the bubble where it is okay 
+    :param writing_areas: The areas within the bubble where it is okay
     to render text
 
     :type writing_areas: list
@@ -499,7 +508,16 @@ class SpeechBubble(object):
 
     :type text_orientation: str, optional
     """
-    def __init__(self, texts, texts_indices, font, speech_bubble, writing_areas, resize_to, location, transforms=None, text_orientation=None):
+    def __init__(self,
+                 texts,
+                 texts_indices,
+                 font,
+                 speech_bubble,
+                 writing_areas,
+                 resize_to,
+                 location,
+                 transforms=None,
+                 text_orientation=None):
         """
         Constructor method
         """
@@ -510,7 +528,7 @@ class SpeechBubble(object):
         self.font = font
         self.speech_bubble = speech_bubble
         self.writing_areas = writing_areas
-        self.resize_to = resize_to 
+        self.resize_to = resize_to
 
         # Location on panel
         self.location = location
@@ -525,7 +543,11 @@ class SpeechBubble(object):
                 ]
             # 1 in 50 chance of no transformation
             if np.random.rand() < 0.98:
-                self.transforms = list(np.random.choice(possible_transforms, 2))
+                self.transforms = list(np.random.choice(
+                                            possible_transforms,
+                                            2
+                                            )
+                                       )
 
                 # 1 in 20 chance of inversion
                 if np.random.rand() < 0.05:
@@ -534,7 +556,7 @@ class SpeechBubble(object):
                 self.transforms = []
         else:
             self.transforms = transforms
-        
+
         if text_orientation is None:
             # 1 in 100 chance
             if np.random.random() < 0.01:
@@ -556,15 +578,15 @@ class SpeechBubble(object):
         :rtype: dict
         """
         data = dict(
-            texts = self.texts,
-            texts_indices = self.texts_indices,
-            font = self.font,
-            speech_bubble = self.speech_bubble,
-            writing_areas = self.writing_areas,
-            resize_to = self.resize_to,
-            location = self.location,
-            transforms = self.transforms,
-            text_orientation = self.text_orientation
+            texts=self.texts,
+            texts_indices=self.texts_indices,
+            font=self.font,
+            speech_bubble=self.speech_bubble,
+            writing_areas=self.writing_areas,
+            resize_to=self.resize_to,
+            location=self.location,
+            transforms=self.transforms,
+            text_orientation=self.text_orientation
         )
 
         return data
@@ -588,7 +610,7 @@ class SpeechBubble(object):
         current_font_size = np.random.randint(min_font_size,
                                               max_font_size
                                               )
-        font = ImageFont.truetype(self.font,current_font_size)
+        font = ImageFont.truetype(self.font, current_font_size)
 
         # Center of bubble
         w, h = bubble.size
@@ -603,8 +625,8 @@ class SpeechBubble(object):
             if transform == "invert":
                 states.append("inverted")
                 bubble = ImageOps.invert(bubble)
-            
-            elif transform == "flip vertical": 
+
+            elif transform == "flip vertical":
                 bubble = ImageOps.flip(bubble)
                 mask = ImageOps.flip(mask)
                 # TODO: vertically flip box coordinates
@@ -613,7 +635,7 @@ class SpeechBubble(object):
                     og_height = area['original_height']
 
                     # Convert from percentage to actual values
-                    px_height =  (area['height']/100)*og_height
+                    px_height = (area['height']/100)*og_height
 
                     og_y = ((area['y']/100)*og_height)
                     cydist = abs(cy - og_y)
@@ -633,7 +655,7 @@ class SpeechBubble(object):
                     og_width = area['original_width']
 
                     # Convert from percentage to actual values
-                    px_width =  (area['width']/100)*og_width
+                    px_width = (area['width']/100)*og_width
 
                     og_x = ((area['x']/100)*og_width)
                     # og_y = ((area['y']/100)*og_height)
@@ -645,11 +667,11 @@ class SpeechBubble(object):
 
                 self.writing_areas = new_writing_areas
                 states.append("hflip")
-            
+
             elif transform == "stretch x":
                 # Up to 30% stretching
                 stretch_factor = np.random.random()*0.3
-                new_size = (round(w*(1+stretch_factor)),h)
+                new_size = (round(w*(1+stretch_factor)), h)
 
                 # Reassign for resizing later
                 w, h = new_size
@@ -661,10 +683,10 @@ class SpeechBubble(object):
                     og_width = area['original_width']
 
                     # Convert from percentage to actual values
-                    px_width =  (area['width']/100)*og_width
+                    px_width = (area['width']/100)*og_width
 
                     area['original_width'] = og_width*(1+stretch_factor)
-                
+
                     new_writing_areas.append(area)
 
                 self.writing_areas = new_writing_areas
@@ -672,7 +694,7 @@ class SpeechBubble(object):
 
             elif transform == "stretch y":
                 stretch_factor = np.random.random()*0.3
-                new_size = (w,round(h*(1+stretch_factor)))
+                new_size = (w, round(h*(1+stretch_factor)))
 
                 # Reassign for resizing later
                 w, h = new_size
@@ -684,10 +706,10 @@ class SpeechBubble(object):
                     og_height = area['original_height']
 
                     # Convert from percentage to actual values
-                    px_height =  (area['height']/100)*og_height
-    
+                    px_height = (area['height']/100)*og_height
+
                     area['original_height'] = og_height*(1+stretch_factor)
-                
+
                     new_writing_areas.append(area)
 
                 self.writing_areas = new_writing_areas
@@ -705,8 +727,8 @@ class SpeechBubble(object):
             og_height = area['original_height']
 
             # Convert from percentage to actual values
-            px_width =  (area['width']/100)*og_width
-            px_height =  (area['height']/100)*og_height
+            px_width = (area['width']/100)*og_width
+            px_height = (area['height']/100)*og_height
 
             og_x = ((area['x']/100)*og_width)
             og_y = ((area['y']/100)*og_height)
@@ -727,9 +749,8 @@ class SpeechBubble(object):
             text_segments = [text]
             size = font.getsize(text)
 
-
             if self.text_orientation == "ttb":
-            
+
                 # Setup vertical wrapping
                 avg_height = size[0]/len(text)
 
@@ -741,21 +762,24 @@ class SpeechBubble(object):
                         text_segments = cjkwrap.wrap(text, width=max_chars)
 
                 text_max_w = len(text_segments)*size[1]
-                
+
                 is_fit = False
 
                 # Horizontal wrapping
                 # Reduce font or remove words till text fits
-                while not is_fit:     
+                while not is_fit:
                     if text_max_w > px_width:
-                        if current_font_size > min_font_size: 
+                        if current_font_size > min_font_size:
                             current_font_size -= 1
-                            font = ImageFont.truetype(self.font, current_font_size)
+                            font = ImageFont.truetype(self.font,
+                                                      current_font_size)
                             size = font.getsize(text)
                             avg_height = size[0]/len(text)
                             max_chars = int((max_y//avg_height))
                             if max_chars > 1:
-                                text_segments = cjkwrap.wrap(text, width=max_chars)
+                                text_segments = cjkwrap.wrap(text,
+                                                             width=max_chars)
+
                             text_max_w = len(text_segments)*size[1]
                         else:
                             text_segments.pop()
@@ -773,20 +797,22 @@ class SpeechBubble(object):
                     # Using specialized wrapping library
                     if max_chars > 1:
                         text_segments = cjkwrap.wrap(text, width=max_chars)
-                
+
                 # Setup vertical wrapping
                 text_max_h = len(text_segments)*size[1]
                 is_fit = False
                 while not is_fit:
                     if text_max_h > px_height:
                         if current_font_size > min_font_size:
-                            current_font_size -=1
-                            font = ImageFont.truetype(self.font, current_font_size)
+                            current_font_size -= 1
+                            font = ImageFont.truetype(self.font,
+                                                      current_font_size)
                             size = font.getsize(text)
                             avg_width = size[0]/len(text)
                             max_chars = int((px_width//avg_width))
                             if max_chars > 1:
-                                text_segments = cjkwrap.wrap(text, width=max_chars)
+                                text_segments = cjkwrap.wrap(text,
+                                                             width=max_chars)
                             text_max_h = len(text_segments)*size[1]
                         else:
                             text_segments.pop()
@@ -801,18 +827,21 @@ class SpeechBubble(object):
             # Render text
             for i, text in enumerate(text_segments):
                 if self.text_orientation == 'ttb':
-                    rx = (cbx + text_max_w/2) - ((len(text_segments) - i)*size[1])
+                    rx = ((cbx + text_max_w/2) -
+                          ((len(text_segments) - i)*size[1]))
+
                     ry = y
                 else:
                     seg_size = font.getsize(text)
                     rx = cbx - seg_size[0]/2
-                    ry = (cby + (len(text_segments)*size[1])/2) - ((len(text_segments) - i)*size[1])
+                    ry = ((cby + (len(text_segments)*size[1])/2) -
+                          ((len(text_segments) - i)*size[1]))
+
                 write.text((rx, ry),
-                            text,
-                            font=font,
-                            # language="ja",
-                            fill=fill_type,
-                            direction=self.text_orientation)
+                           text,
+                           font=font,
+                           fill=fill_type,
+                           direction=self.text_orientation)
 
         # reisize bubble
         aspect_ratio = h/w
@@ -821,16 +850,16 @@ class SpeechBubble(object):
         bubble = bubble.resize((new_height, new_width))
         mask = mask.resize((new_height, new_width))
 
-        # Make sure bubble doesn't bleed the page 
+        # Make sure bubble doesn't bleed the page
         x1, y1 = self.location
-        x2 = x1 +bubble.size[0]
-        y2 = y1 +bubble.size[1]
+        x2 = x1 + bubble.size[0]
+        y2 = y1 + bubble.size[1]
 
         if x2 > cfg.page_width:
             x1 = x1 - (x2-cfg.page_width)
         if y2 > cfg.page_height:
             y1 = y1 - (y2-cfg.page_height)
-        
+
         self.location = (x1, y1)
 
         # perform rotation if it was in transforms

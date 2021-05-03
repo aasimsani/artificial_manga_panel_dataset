@@ -3,7 +3,8 @@ import math
 import random
 from PIL import Image, ImageDraw, ImageFont
 
-def crop_image_only_outside(img,tol=0):
+
+def crop_image_only_outside(img, tol=0):
     """
     Crop the outside of the image where
     the pixels are black
@@ -19,25 +20,26 @@ def crop_image_only_outside(img,tol=0):
     :return: Cropped image
 
     :rtype: PIL.Image
-    """    
+    """
     # img is 2D image data
     # tol  is tolerance
-    mask = img>tol
-    m,n = img.shape
+    mask = img > tol
+    m, n = img.shape
 
-    mask0,mask1 = mask.any(0),mask.any(1)
+    mask0, mask1 = mask.any(0), mask.any(1)
 
-    col_start,col_end = mask0.argmax(),n-mask0[::-1].argmax()
-    row_start,row_end = mask1.argmax(),m-mask1[::-1].argmax()
+    col_start, col_end = mask0.argmax(), n-mask0[::-1].argmax()
+    row_start, row_end = mask1.argmax(), m-mask1[::-1].argmax()
 
-    return img[row_start:row_end,col_start:col_end]
+    return img[row_start:row_end, col_start:col_end]
+
 
 def invert_for_next(current):
     """
 
     A helper function used to invert
     the orientation indicator of the
-    next panel based on the current panel 
+    next panel based on the current panel
     i.e. if a parent is horizontal a
     child panel must be vertical
 
@@ -49,11 +51,12 @@ def invert_for_next(current):
     :return: child panel orientation
 
     :rtype: str
-    """    
+    """
     if current == "h":
         return "v"
     else:
         return "h"
+
 
 def choose(parent):
     """
@@ -68,11 +71,12 @@ def choose(parent):
     :return: Index of chosen child panel
 
     :rtype: int
-    """    
+    """
 
     choice_idx = np.random.randint(0, len(parent.children))
 
     return choice_idx
+
 
 def choose_and_return_other(parent):
     """
@@ -84,12 +88,12 @@ def choose_and_return_other(parent):
     children are picked from
 
     :type parent: Panel
-    
+
     :return: A tuple of a chosen child panel index
     and a list the indices of those that weren't
 
     :rtype: tuple
-    """    
+    """
 
     choices = list(range(0, len(parent.children)))
     choice_idx = np.random.choice(choices)
@@ -98,9 +102,10 @@ def choose_and_return_other(parent):
 
     return choice_idx, choices
 
+
 def get_min_area_panels(panel, min_area=0.1, ret_panels=[]):
     """
-    Recursively get a set of panels which have a 
+    Recursively get a set of panels which have a
     particular minimum area
 
     :param panel: parent panel
@@ -115,7 +120,7 @@ def get_min_area_panels(panel, min_area=0.1, ret_panels=[]):
     :param ret_panels: Panels to return, defaults to []
 
     :type ret_panels: list, optional
-    """    
+    """
 
     for child in panel.children:
 
@@ -125,27 +130,28 @@ def get_min_area_panels(panel, min_area=0.1, ret_panels=[]):
             if child.area_proportion >= min_area and not child.sliced:
                 ret_panels.append(child)
 
+
 def get_leaf_panels(page, panels):
     """
     Get panels which are to actually
-    be rendered recursively i.e. they 
-    are the leaves of the Page-Panel 
+    be rendered recursively i.e. they
+    are the leaves of the Page-Panel
     tree
 
     :param page: Page to be searched
 
     :type page: Page
 
-    :param panels: A list of panels to be 
+    :param panels: A list of panels to be
     returned by refernce
 
     :type panels: list
-    """    
+    """
 
-    # For each child 
+    # For each child
     for child in page.children:
 
-        # See if panel has no children 
+        # See if panel has no children
         # Therefore is a leaf
         if len(child.children) > 0:
             # If has children keep going
@@ -153,6 +159,7 @@ def get_leaf_panels(page, panels):
         else:
             # Otherwise put in list to return
             panels.append(child)
+
 
 def find_parent_with_multiple_children(page, n):
     """
@@ -171,9 +178,9 @@ def find_parent_with_multiple_children(page, n):
 
     :rtype: list
 
-    """    
+    """
 
-    panels =[]    
+    panels = []
 
     # Get the leaf panels of a page
     if len(page.leaf_children) < 1:
@@ -185,19 +192,20 @@ def find_parent_with_multiple_children(page, n):
         panels = page.leaf_children
 
     relevant_panels = []
-    
+
     # Find panels with n children
     for panel in panels:
         if panel.parent not in relevant_panels:
             if len(panel.parent.children) == n:
                 relevant_panels.append(panel.parent)
-    
+
     return relevant_panels
+
 
 def move_child_to_line(point, change, old_line, orientation):
     """
     A helper function that uses the triangle similarity
-    theorem which specifies that if one triangle 
+    theorem which specifies that if one triangle
     is just a sub triangle of another i.e. is just
     one line drawn from any two sides it's sides
     share a ratio.
@@ -206,7 +214,7 @@ def move_child_to_line(point, change, old_line, orientation):
 
     :type point: tuple
 
-    :param change: amount the original line was moved 
+    :param change: amount the original line was moved
     as a length
 
     :type change: float
@@ -223,7 +231,7 @@ def move_child_to_line(point, change, old_line, orientation):
     :return: Amount the point needs to be adjusted
 
     :rtype: float
-    """    
+    """
 
     # If the line was moved vertically
     if orientation == "h":
@@ -240,7 +248,7 @@ def move_child_to_line(point, change, old_line, orientation):
         movement = (change*(point[0] - old_line[1][0]))/old_line_length
 
         return movement
-    
+
     # Same as above but if the lien was moved horizontally
     else:
 
@@ -249,6 +257,7 @@ def move_child_to_line(point, change, old_line, orientation):
         movement = (change*(point[1] - old_line[1][1]))/old_line_length
 
         return movement
+
 
 def move_children_to_line(parent, line, change, orientation, direction):
     """
@@ -259,9 +268,9 @@ def move_children_to_line(parent, line, change, orientation, direction):
 
     :param parent: Parent panel which is being transformed
 
-    :type parent: Panel 
+    :type parent: Panel
 
-    :param line: A set of xy coordinates to move the 
+    :param line: A set of xy coordinates to move the
     child panels to
 
     :type line: tuple
@@ -278,7 +287,7 @@ def move_children_to_line(parent, line, change, orientation, direction):
     :param direction: which of the line's sides went up
 
     :type direction: str
-    """    
+    """
 
     # Points which signify the old line's x and y coords
     x_value = line[0][0]
@@ -291,16 +300,27 @@ def move_children_to_line(parent, line, change, orientation, direction):
             for child in parent.children:
                 # If not leaf keep going
                 if len(child.children) > 0:
-                    move_children_to_line(child, line, change, orientation, direction)
+                    move_children_to_line(child,
+                                          line,
+                                          change,
+                                          orientation,
+                                          direction
+                                          )
 
                 else:
                     # Move each coordinate to the new line
                     for idx, coord in enumerate(child.coords):
-                        # Since we are horizontal the movement is on the y axis
-                        # Therefore if any children lie on the old line's y coord
-                        # They need to be moved to the new coord
+                        # Since we are horizontal the movement is
+                        # on the y axis. Therefore if any children
+                        # lie on the old line's y coord. They need
+                        # to be moved to the new coord
                         if coord[1] == y_value:
-                            mvmnt = move_child_to_line(coord, change, line, orientation)
+                            mvmnt = move_child_to_line(coord,
+                                                       change,
+                                                       line,
+                                                       orientation
+                                                       )
+
                             child.coords[idx] = (coord[0], coord[1] - mvmnt)
                             child.non_rect = True
 
@@ -309,14 +329,23 @@ def move_children_to_line(parent, line, change, orientation, direction):
             for child in parent.children:
                 # If not leaf keep going
                 if len(child.children) > 0:
-                    move_children_to_line(child, line, change, orientation, direction)
+                    move_children_to_line(child,
+                                          line,
+                                          change,
+                                          orientation,
+                                          direction
+                                          )
                 else:
                     for idx, coord in enumerate(child.coords):
-                        # Since we are horizontal the movement is on the y axis
-                        # Therefore if any children lie on the old line's y coord
-                        # They need to be moved to the new coord
+                        # Since we are horizontal the movement is
+                        # on the y axis. Therefore if any children
+                        # lie on the old line's y coord. They need
+                        # to be moved to the new coord
                         if coord[1] == y_value:
-                            mvmnt = move_child_to_line(coord, change, line, orientation)
+                            mvmnt = move_child_to_line(coord,
+                                                       change,
+                                                       line,
+                                                       orientation)
                             child.coords[idx] = (coord[0], coord[1] + mvmnt)
                             child.non_rect = True
     # If vertical
@@ -326,14 +355,24 @@ def move_children_to_line(parent, line, change, orientation, direction):
             for child in parent.children:
                 # If not leaf keep going
                 if len(child.children) > 0:
-                    move_children_to_line(child, line, change, orientation, direction)
+                    move_children_to_line(child,
+                                          line,
+                                          change,
+                                          orientation,
+                                          direction
+                                          )
                 else:
                     for idx, coord in enumerate(child.coords):
-                        # Since we are vertical the movement is on the x axis
-                        # Therefore if any children lie on the old line's x coord
-                        # They need to be moved to the new coord
+                        # Since we are vertical the movement is
+                        # on the x axis. Therefore if any children
+                        # lie on the old line's x coord. They need
+                        # to be moved to the new coord
                         if coord[0] == x_value:
-                            mvmnt = move_child_to_line(coord, change, line, orientation)
+                            mvmnt = move_child_to_line(coord,
+                                                       change,
+                                                       line,
+                                                       orientation
+                                                       )
                             child.coords[idx] = (coord[0] + mvmnt, coord[1])
                             child.non_rect = True
         # If the bottom side of the line went up
@@ -341,13 +380,24 @@ def move_children_to_line(parent, line, change, orientation, direction):
             for child in parent.children:
                 # If not leaf keep going
                 if len(child.children) > 0:
-                    move_children_to_line(child, line, change, orientation, direction)
+                    move_children_to_line(child,
+                                          line,
+                                          change,
+                                          orientation,
+                                          direction
+                                          )
                 else:
                     for idx, coord in enumerate(child.coords):
-                        # Since we are vertical the movement is on the x axis
-                        # Therefore if any children lie on the old line's x coord
-                        # They need to be moved to the new coord
+                        # Since we are vertical the movement is
+                        # on the x axis. Therefore if any children
+                        # lie on the old line's x coord. They need
+                        # to be moved to the new coord
                         if coord[0] == x_value:
-                            mvmnt = move_child_to_line(coord, change, line, orientation)
+                            mvmnt = move_child_to_line(coord,
+                                                       change,
+                                                       line,
+                                                       orientation
+                                                       )
+
                             child.coords[idx] = (coord[0] - mvmnt, coord[1])
                             child.non_rect = True
