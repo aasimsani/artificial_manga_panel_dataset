@@ -1114,7 +1114,7 @@ def box_transform_page(page, type_choice=None):
                     else:
                         p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] - change)
 
-            # If the first panel is vertical therefore the second 
+            # If the first panel is vertical therefore the second
             # is too since they are siblings
             else:
                 # Get the maximum amount the line can move
@@ -1479,9 +1479,19 @@ def populate_panels(page,
     :rtype: Page
     """
 
-    for child in page.leaf_children:
+    if page.num_panels > 1:
+        for child in page.leaf_children:
 
-        create_single_panel_metadata(child,
+            create_single_panel_metadata(child,
+                                         image_dir,
+                                         image_dir_path,
+                                         font_files,
+                                         text_dataset,
+                                         speech_bubble_files,
+                                         speech_bubble_tags
+                                         )
+    else:
+        create_single_panel_metadata(page,
                                      image_dir,
                                      image_dir_path,
                                      font_files,

@@ -318,13 +318,15 @@ class Page(Panel):
         else:
             children_rec = []
 
+        speech_bubbles = [bubble.dump_data() for bubble in self.speech_bubbles]
         data = dict(
             name=self.name,
             num_panels=int(self.num_panels),
             page_type=self.page_type,
             page_size=self.page_size,
             background=self.background,
-            children=children_rec
+            children=children_rec,
+            speech_bubbles=speech_bubbles
         )
 
         if not dry:
@@ -344,12 +346,32 @@ class Page(Panel):
 
         :type filename: str
         """
-
         with open(filename, "rb") as json_file:
+
             data = json.load(json_file)
+
             self.name = data['name']
             self.num_panels = int(data['num_panels'])
             self.page_type = data['page_type']
+            self.background = data['background']
+
+            if len(data['speech_bubbles']) > 0:
+                for speech_bubble in data['speech_bubbles']:
+                    # Line constraints
+                    text_orientation = speech_bubble['text_orientation']
+                    bubble = SpeechBubble(
+                                texts=speech_bubble['texts'],
+                                texts_indices=speech_bubble['texts_indices'],
+                                font=speech_bubble['font'],
+                                speech_bubble=speech_bubble['speech_bubble'],
+                                writing_areas=speech_bubble['writing_areas'],
+                                resize_to=speech_bubble['resize_to'],
+                                location=speech_bubble['location'],
+                                transforms=speech_bubble['transforms'],
+                                text_orientation=text_orientation
+                                )
+
+                    self.speech_bubbles.append(bubble)
 
             # Recursively load children
             if len(data['children']) > 0:
@@ -373,12 +395,13 @@ class Page(Panel):
         :type show: bool, optional
         """
 
-        # Get all the panels to be rendered
         leaf_children = []
-        if len(self.leaf_children) < 1:
-            get_leaf_panels(self, leaf_children)
-        else:
-            leaf_children = self.leaf_children
+        if self.num_panels > 1:
+            # Get all the panels to be rendered
+            if len(self.leaf_children) < 1:
+                get_leaf_panels(self, leaf_children)
+            else:
+                leaf_children = self.leaf_children
 
         W = cfg.page_width
         H = cfg.page_height
@@ -435,6 +458,10 @@ class Page(Panel):
 
             # Paste illustration onto the page
             page_img.paste(img, (0, 0), mask)
+
+        # If it's a single panel page
+        if self.num_panels < 2:
+            leaf_children.append(self)
 
         # Render bubbles
         for panel in leaf_children:
