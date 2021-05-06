@@ -85,7 +85,7 @@ def test_speech_bubble_dumping(data_files):
     """
 
     page = get_base_panels(num_panels=1)
-    page = populate_panels(page, *data_files)
+    page = populate_panels(page, *data_files, minimum_speech_bubbles=1)
 
     bubble = page.speech_bubbles[0]
     data = bubble.dump_data()

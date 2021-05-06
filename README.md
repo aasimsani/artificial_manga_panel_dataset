@@ -18,8 +18,10 @@ If you'd like to change the way the creator works, make your own files or contri
   dvc pull
   ```
 4. In case you want to modify individual scripts for scraping or cleaning this downloaded data you can find them in ```main.py```
-5. Now you can run ```python3 main.py --generate_pages N``` to make pages
-6. You can modify ```preprocessing/config_file.py``` to change how the generator works
+5. Before you start just run ```python3 main.py --run_tests``` to make sure
+you have all the libraries installed and things are working fine
+6. Now you can run ```python3 main.py --generate_pages N``` to make pages
+7. You can modify ```preprocessing/config_file.py``` to change how the generator works
 
 ## Current progress:
 

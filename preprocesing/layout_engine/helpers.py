@@ -323,6 +323,8 @@ def move_children_to_line(parent, line, change, orientation, direction):
                             child.coords[idx] = (coord[0], coord[1] - mvmnt)
                             child.non_rect = True
 
+                    child.refresh_vars()
+
         # If the left side of the line went up
         else:
             for child in parent.children:
@@ -347,6 +349,9 @@ def move_children_to_line(parent, line, change, orientation, direction):
                                                        orientation)
                             child.coords[idx] = (coord[0], coord[1] + mvmnt)
                             child.non_rect = True
+
+                    child.refresh_vars()
+
     # If vertical
     else:
         # If the top side of the line went up
@@ -374,6 +379,8 @@ def move_children_to_line(parent, line, change, orientation, direction):
                                                        )
                             child.coords[idx] = (coord[0] + mvmnt, coord[1])
                             child.non_rect = True
+
+                    child.refresh_vars()
         # If the bottom side of the line went up
         else:
             for child in parent.children:
@@ -400,3 +407,5 @@ def move_children_to_line(parent, line, change, orientation, direction):
 
                             child.coords[idx] = (coord[0] - mvmnt, coord[1])
                             child.non_rect = True
+
+                    child.refresh_vars()

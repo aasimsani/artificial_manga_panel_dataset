@@ -553,14 +553,12 @@ def single_slice_panels(page,
                     p1.x2y2 = (p1.x2y2[0] - skew_amount, p1.x2y2[1])
                     p1.x3y3 = (p1.x3y3[0] + skew_amount, p1.x3y3[1])
 
-                    p1.coords[1] = p1.x2y2
-                    p1.coords[2] = p1.x3y3
+                    p1.refresh_coords()
 
                     p2.x1y1 = (p2.x1y1[0] - skew_amount, p2.x1y1[1])
                     p2.x4y4 = (p2.x4y4[0] + skew_amount, p2.x4y4[1])
 
-                    p2.coords[0] = p2.x1y1
-                    p2.coords[3] = p2.x4y4
+                    p2.refresh_coords()
 
                 elif skew_side == "right":
                     p1.x2y2 = (p1.x2y2[0] + skew_amount, p1.x2y2[1])
@@ -1349,7 +1347,8 @@ def shrink_panels(page):
             panel.x3y3 = changed_coords[2]
             panel.x4y4 = changed_coords[3]
         else:
-            print(panel.coords)
+            # Assign them as is if there are no solutions
+            pass
 
     return page
 

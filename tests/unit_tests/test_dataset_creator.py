@@ -10,7 +10,7 @@ from preprocesing.layout_engine.page_dataset_creator import (
     box_transform_page,
     get_base_panels
 )
-from preprocesing.layout_engine.helpers import invert_for_next
+from preprocesing.layout_engine.helpers import invert_for_next, get_leaf_panels
 from preprocesing.layout_engine.page_object_classes import Panel, Page
 # from preprocesing import config_file as cfg
 
@@ -967,10 +967,8 @@ def assess_hiearchy(parent, hiearchy):
     """
 
     if len(parent.children) > 0:
+        hiearchy[parent.name] = {}
         for child in parent.children:
-            # Return panel numbers
-            hiearchy.setdefault(parent.name, 0)
-            hiearchy[parent.name] += 1
 
             # Check orientation'
             if parent.orientation == "h":
@@ -983,7 +981,10 @@ def assess_hiearchy(parent, hiearchy):
 
             assess_hiearchy(child, hiearchy)
     else:
-        hiearchy.setdefault(parent.name, 0)
+        if parent.parent is None:
+            pass
+        else:
+            hiearchy[parent.parent.name][parent.name] = None
 
 
 @pytest.mark.parametrize(
@@ -1003,12 +1004,34 @@ def assess_hiearchy(parent, hiearchy):
         (4, "vh", "div"),
         (4, "vh", "trip"),
         (4, "vh", "twoonethree"),
+        (5, "h", None),
+        (5, "vh", "eq"),
+        (5, "vh", "uneq"),
+        (5, "vh", "div"),
+        (5, "vh", "twotwothree"),
+        (5, "vh", "threetwotwo"),
+        (5, "vh", "fourtwoone"),
+        (6, "vh", "tripeq"),
+        (6, "vh", "tripuneq"),
+        (6, "vh", "twofourtwo"),
+        (6, "vh", "twothreethree"),
+        (6, "vh", "fourtwotwo"),
+        (7, "vh", "twothreefour"),
+        (7, "vh", "threethreetwotwo"),
+        (7, "vh", "threefourtwoone",),
+        (7, "vh", "threethreextwoone"),
+        (7, "vh", "fourthreextwo"),
+        (8, "vh", "fourfourxtwoeq"),
+        (8, "vh", "fourfourxtwouneq"),
+        (8, "vh", "threethreethreetwo"),
+        (8, "vh", "threefourtwotwo"),
+        (8, "vh", "threethreefourone"),
     ]
 )
 def test_get_base_panels(num_panels, layout_type, layout_choice):
     """
     This function evalutes the get_base_panels function for:
-    - Producing the correct hiearchy of panels
+    - Producing the correct hiearchy of panels - TODO
     - Testing them for the correct orientation
     - Testing the edge case of 1 panel that is just
     a page being blank
@@ -1029,65 +1052,12 @@ def test_get_base_panels(num_panels, layout_type, layout_choice):
     """
 
     page = get_base_panels(num_panels, layout_type, layout_choice, "test")
+    leaf_children = []
+    get_leaf_panels(page, leaf_children)
+
+    if num_panels > 1:
+        assert len(leaf_children) == num_panels
+
+    # Currently only sees if the orientations are correct
     hiearchy = {}
     assess_hiearchy(page, hiearchy)
-    h_keys = list(hiearchy.keys())
-
-    # 1 panel
-    if num_panels < 2:
-        assert len(hiearchy) == 1
-    else:
-        # v and h are flat
-        if layout_type == "v" or layout_type == "h":
-            # All panels + Page
-            assert len(hiearchy) == num_panels + 1
-        # v-h panels aren't always flat
-        else:
-            if num_panels == 2:
-
-                # Draw two panels on page
-                assert hiearchy['test'] == 2
-
-                # No children
-                assert hiearchy['test-0'] == 0
-                assert hiearchy['test-1'] == 0
-
-            elif num_panels == 3:
-                # Split panels once into two
-                assert hiearchy['test'] == 2
-                # Split one into two
-                if hiearchy['test-0'] == 2:
-                    assert hiearchy['test-1'] == 0
-                else:
-                    assert hiearchy['test-0'] == 0
-
-            elif num_panels == 4:
-                if layout_choice == "eq" or layout_choice == "uneq":
-                    # Split panels once into two
-                    # Split each into two
-                    assert hiearchy['test'] == 2
-                    assert hiearchy['test-0'] == 2
-                    assert hiearchy['test-1'] == 2
-
-                elif layout_choice == "div":
-
-                    # Split panels once into two
-                    assert hiearchy['test'] == 2
-
-                    # Split one of them into two
-                    if hiearchy['test-0'] == 2:
-                        assert hiearchy['test-1'] == 2
-
-                        # Split one them into two again
-                        if hiearchy['test-1-0'] == 2:
-                            assert hiearchy['test-1-1'] == 2
-                        else:
-                            assert hiearchy['test-1-0'] == 2
-                    else:
-                        assert hiearchy['test-0'] == 2
-
-                        # Split one them into two again
-                        if hiearchy['test-0-0'] == 2:
-                            assert hiearchy['test-0-1'] == 0
-                        else:
-                            assert hiearchy['test-0-0'] == 0

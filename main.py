@@ -216,9 +216,7 @@ if __name__ == '__main__':
 
     if args.run_tests:
         pytest.main([
-                "tests/unit_tests/test_objects.py",
+                "tests/unit_tests/",
                 "-s",
                 "-x",
-                # "-k get_base_panels"
-
                 ])

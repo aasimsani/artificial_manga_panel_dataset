@@ -125,9 +125,9 @@ class Panel(object):
 
     def refresh_coords(self):
         """
-            When chances are made to the xy coordinates variables directly
-            this function allows you to refresh the coords variable with
-            the changes
+        When chances are made to the xy coordinates variables directly
+        this function allows you to refresh the coords variable with
+        the changes
         """
 
         self.coords = [
@@ -137,6 +137,18 @@ class Panel(object):
             self.x4y4,
             self.x1y1
         ]
+
+    def refresh_vars(self):
+        """
+        When chances are made to the xy coordinates directly
+        this function allows you to refresh the x1y1... variable with
+        the changes
+        """
+
+        self.x1y1 = self.coords[0]
+        self.x2y2 = self.coords[1]
+        self.x3y3 = self.coords[2]
+        self.x4y4 = self.coords[3]
 
     def add_child(self, panel):
         """
@@ -305,7 +317,12 @@ class Page(Panel):
             self.name = name
 
         # Initalize the panel super class
-        super().__init__(coords, self.name, None, None, [])
+        super().__init__(coords=coords,
+                         name=self.name,
+                         parent=None,
+                         orientation=None,
+                         children=[]
+                         )
 
         self.num_panels = num_panels
         self.page_type = page_type
@@ -449,6 +466,9 @@ class Page(Panel):
         # Render panels
         for panel in leaf_children:
 
+            # Panel coords
+            rect = panel.get_polygon()
+
             # Open the illustration to put within panel
             if panel.image is not None:
                 img = Image.open(panel.image)
@@ -482,7 +502,6 @@ class Page(Panel):
                 draw_mask.polygon(rect, fill=255)
 
             # Draw outline
-            rect = panel.get_polygon()
             draw_rect.line(rect, fill="black", width=cfg.boundary_width)
 
             # Paste illustration onto the page
