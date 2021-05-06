@@ -121,10 +121,9 @@ def get_min_area_panels(panel, min_area=0.1, ret_panels=[]):
 
     :type ret_panels: list, optional
     """
-
     for child in panel.children:
 
-        if len(child.children) > 1:
+        if len(child.children) > 0:
             get_min_area_panels(child, min_area, ret_panels)
         else:
             if child.area_proportion >= min_area and not child.sliced:

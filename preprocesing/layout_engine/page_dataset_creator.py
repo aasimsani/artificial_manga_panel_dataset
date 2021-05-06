@@ -45,6 +45,10 @@ def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
     :type shifts: list
     """
 
+    # if input out of bounds i.e. 1:
+    if n == 1:
+        return parent
+
     # Specify parent panel dimensions
     topleft = parent.x1y1
     topright = parent.x2y2
@@ -130,7 +134,7 @@ def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
                         (bottomleft[1] - topleft[1])*next_shift_level)
 
             # Create a Panel
-            poly_coords = (x1y1, x2y2, x3y3, x4y4)
+            poly_coords = (x1y1, x2y2, x3y3, x4y4, x1y1)
             poly = Panel(poly_coords,
                          parent.name+"-"+str(i),
                          orientation=horizontal_vertical,
@@ -190,7 +194,7 @@ def draw_n_shifted(n, parent, horizontal_vertical, shifts=[]):
                         bottomright[1])
 
             # Create a panel
-            poly_coords = (x1y1, x2y2, x3y3, x4y4)
+            poly_coords = (x1y1, x2y2, x3y3, x4y4, x1y1)
             poly = Panel(poly_coords,
                          parent.name+"-"+str(i),
                          orientation=horizontal_vertical,
@@ -223,6 +227,10 @@ def draw_n(n, parent, horizontal_vertical):
 
     :type horizontal_vertical: str
     """
+    # if input out of bounds i.e. 1:
+    if n == 1:
+        return parent
+
     # Specify parent panel dimensions
     topleft = parent.x1y1
     topright = parent.x2y2
@@ -269,7 +277,7 @@ def draw_n(n, parent, horizontal_vertical):
                         topleft[1] + (bottomleft[1] - topleft[1])*((i+1)/n))
 
             # Create a Panel
-            poly_coords = (x1y1, x2y2, x3y3, x4y4)
+            poly_coords = (x1y1, x2y2, x3y3, x4y4, x1y1)
             poly = Panel(poly_coords,
                          parent.name+"-"+str(i),
                          orientation=horizontal_vertical,
@@ -322,7 +330,7 @@ def draw_n(n, parent, horizontal_vertical):
                         (bottomright[0] - bottomleft[0])*((i+1)/n),
                         bottomright[1])
 
-            poly_coords = (x1y1, x2y2, x3y3, x4y4)
+            poly_coords = (x1y1, x2y2, x3y3, x4y4, x1y1)
             poly = Panel(poly_coords,
                          parent.name+"-"+str(i),
                          orientation=horizontal_vertical,
@@ -375,7 +383,7 @@ def draw_two_shifted(parent, horizontal_vertical, shift=None):
         r1x4y4 = (bottomleft[0],
                   topleft[1] + (bottomleft[1] - topleft[1])*shift)
 
-        poly1_coords = (r1x1y1, r1x2y2, r1x3y3, r1x4y4)
+        poly1_coords = (r1x1y1, r1x2y2, r1x3y3, r1x4y4, r1x1y1)
 
         # Specify the second panel's coords
         r2x1y1 = (bottomleft[0],
@@ -386,7 +394,7 @@ def draw_two_shifted(parent, horizontal_vertical, shift=None):
         r2x3y3 = bottomright
         r2x4y4 = bottomleft
 
-        poly2_coords = (r2x1y1, r2x2y2, r2x3y3, r2x4y4)
+        poly2_coords = (r2x1y1, r2x2y2, r2x3y3, r2x4y4, r2x1y1)
 
         # Create panels
         poly1 = Panel(poly1_coords,
@@ -441,17 +449,36 @@ def draw_two_shifted(parent, horizontal_vertical, shift=None):
 
 
 # Page transformations
-def single_slice_panels(page, type_choice=None):
+def single_slice_panels(page,
+                        horizontal_vertical=None,
+                        type_choice=None,
+                        skew_side=None,
+                        number_to_slice=0
+                        ):
     """Slices a panel once at an angle into two new panels
 
     :param page: Page to have panels sliced
 
     :type page: Page
 
-    :param type_choice: Specify which type of slicing
-     should happen, defaults to None
+    :param horizontal_vertical:  Whether the slice should be horizontal
+    or vertical
+
+    :type horizontal_vertical: str
+
+    :param type_choice: Specify whether the panel should be
+    sliced down the "center" or on a "side", defaults to None
 
     :type type_choice: str, optional
+
+    :param skew_side: Based on the type of slicing which direction should
+    it be sliced
+
+    :type skew_side: str
+
+    :param number_to_slice: Number of panels to slice
+
+    :type number_to_slice: int
 
     :return: page with sliced panels
 
@@ -460,10 +487,13 @@ def single_slice_panels(page, type_choice=None):
 
     # Remove panels which are too small
     relevant_panels = []
-    get_min_area_panels(page,
-                        cfg.slice_minimum_panel_area,
-                        ret_panels=relevant_panels
-                        )
+    if len(page.children) > 0:
+        get_min_area_panels(page,
+                            cfg.slice_minimum_panel_area,
+                            ret_panels=relevant_panels
+                            )
+    else:
+        relevant_panels = [page]
 
     # Shuffle panels for randomness
     random.shuffle(relevant_panels)
@@ -483,17 +513,19 @@ def single_slice_panels(page, type_choice=None):
         if len(relevant_panels) < 1:
             return page
 
-        if len(relevant_panels) > 1:
-            number_to_slice = np.random.randint(1, len(relevant_panels))
-        else:
-            number_to_slice = 1
+        if number_to_slice == 0:
+            if len(relevant_panels) > 1:
+                number_to_slice = np.random.randint(1, len(relevant_panels))
+            else:
+                number_to_slice = 1
 
         for idx in range(0, number_to_slice):
             panel = relevant_panels[idx]
             num_panels_added += 1
 
             # Decide which direction to cut in
-            horizontal_vertical = np.random.choice(["h", "v"])
+            if horizontal_vertical is None:
+                horizontal_vertical = np.random.choice(["h", "v"])
 
             # Get center line
             # Vertical slice
@@ -504,7 +536,8 @@ def single_slice_panels(page, type_choice=None):
                 draw_n(2, panel, "v")
 
                 # Skew it left or right
-                skew_side = np.random.choice(["left", "right"])
+                if skew_side is None:
+                    skew_side = np.random.choice(["left", "right"])
 
                 # Skew it by a percentage
                 skew_amount = np.random.randint(20, 100)/100
@@ -529,18 +562,20 @@ def single_slice_panels(page, type_choice=None):
                     p2.coords[0] = p2.x1y1
                     p2.coords[3] = p2.x4y4
 
-                else:
+                elif skew_side == "right":
                     p1.x2y2 = (p1.x2y2[0] + skew_amount, p1.x2y2[1])
                     p1.x3y3 = (p1.x3y3[0] - skew_amount, p1.x3y3[1])
 
-                    p1.coords[1] = p1.x2y2
-                    p1.coords[2] = p1.x3y3
+                    p1.refresh_coords()
 
                     p2.x1y1 = (p2.x1y1[0] + skew_amount, p2.x1y1[1])
                     p2.x4y4 = (p2.x4y4[0] - skew_amount, p2.x4y4[1])
 
-                    p2.coords[0] = p2.x1y1
-                    p2.coords[3] = p2.x4y4
+                    p2.refresh_coords()
+
+                else:
+                    print("Chosen incorrect skew side")
+                    return None
 
             # Horizontal slice
             else:
@@ -550,7 +585,8 @@ def single_slice_panels(page, type_choice=None):
                 draw_n(2, panel, "h")
 
                 # Skew it left or right
-                skew_side = np.random.choice(["down", "up"])
+                if skew_side is None:
+                    skew_side = np.random.choice(["down", "up"])
 
                 # Skew it by a percentage
                 skew_amount = np.random.randint(20, 100)/100
@@ -565,40 +601,41 @@ def single_slice_panels(page, type_choice=None):
                     p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] + skew_amount)
                     p1.x3y3 = (p1.x3y3[0], p1.x3y3[1] - skew_amount)
 
-                    p1.coords[2] = p1.x3y3
-                    p1.coords[3] = p1.x4y4
+                    p1.refresh_coords()
 
                     p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] + skew_amount)
                     p2.x2y2 = (p2.x2y2[0], p2.x2y2[1] - skew_amount)
 
-                    p2.coords[0] = p2.x1y1
-                    p2.coords[1] = p2.x2y2
+                    p2.refresh_coords()
 
-                else:
+                elif skew_side == "up":
                     p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] - skew_amount)
                     p1.x3y3 = (p1.x3y3[0], p1.x3y3[1] + skew_amount)
 
-                    p1.coords[2] = p1.x3y3
-                    p1.coords[3] = p1.x4y4
+                    p1.refresh_coords()
 
                     p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] - skew_amount)
                     p2.x2y2 = (p2.x2y2[0], p2.x2y2[1] + skew_amount)
 
-                    p2.coords[0] = p2.x1y1
-                    p2.coords[1] = p2.x2y2
+                    p2.refresh_coords()
+                else:
+                    print("Chose incorrect skew_side")
 
     # Slice panel sides
     else:
         if len(relevant_panels) < 1:
             return page
 
-        if len(relevant_panels) > 1:
-            number_to_slice = np.random.choice([1, 3])
-        else:
-            number_to_slice = 1
+        if number_to_slice == 0:
+            if len(relevant_panels) > 1:
+                number_to_slice = np.random.choice([1, 3])
+            else:
+                number_to_slice = 1
 
         for panel in relevant_panels[0:number_to_slice]:
-            side = np.random.choice(["tr", "tl", "br", "bl"])
+
+            if skew_side is None:
+                skew_side = np.random.choice(["tr", "tl", "br", "bl"])
 
             draw_n(2, panel, "h")
             num_panels_added += 1
@@ -613,13 +650,14 @@ def single_slice_panels(page, type_choice=None):
             p1.sliced = True
             p2.sliced = True
 
-            cut_y_proportion = np.random.randint(30, 75)/100
-            cut_x_proportion = np.random.randint(30, 75)/100
+            cut_y_proportion = np.random.randint(25, 75)/100
+            cut_x_proportion = np.random.randint(25, 75)/100
+
             cut_y_length = (panel.x4y4[1] - panel.x1y1[1])*cut_y_proportion
             cut_x_length = (panel.x3y3[0] - panel.x4y4[0])*cut_x_proportion
 
             # bottom left corner
-            if side == "bl":
+            if skew_side == "bl":
 
                 p1_cut_x1y1 = (panel.x4y4[0], panel.x4y4[1] - cut_y_length)
                 p1_cut_x2y2 = (panel.x4y4[0] + cut_x_length, panel.x4y4[1])
@@ -632,7 +670,7 @@ def single_slice_panels(page, type_choice=None):
                              p1_cut_x2y2, p1_cut_x1y1, panel.x1y1]
 
             # bottom right corner
-            elif side == "br":
+            elif skew_side == "br":
 
                 p1_cut_x1y1 = (panel.x3y3[0], panel.x3y3[1] - cut_y_length)
                 p1_cut_x2y2 = (panel.x3y3)
@@ -645,7 +683,7 @@ def single_slice_panels(page, type_choice=None):
                              p1_cut_x3y3, panel.x4y4, panel.x1y1]
 
             # top left corner
-            elif side == "tl":
+            elif skew_side == "tl":
 
                 p1_cut_x1y1 = panel.x1y1
                 p1_cut_x2y2 = (panel.x1y1[0] + cut_x_length, panel.x1y1[1])
@@ -657,7 +695,7 @@ def single_slice_panels(page, type_choice=None):
                              panel.x4y4, p1_cut_x3y3, p1_cut_x1y1]
 
             # top right corner
-            else:
+            elif skew_side == "tr":
                 p1_cut_x1y1 = (panel.x2y2[0] - cut_x_length, panel.x2y2[1])
                 p1_cut_x2y2 = panel.x2y2
                 p1_cut_x3y3 = (panel.x2y2[0], panel.x2y2[1] + cut_y_length)
@@ -667,13 +705,16 @@ def single_slice_panels(page, type_choice=None):
 
                 p2.coords = [panel.x1y1, p1_cut_x1y1, p1_cut_x3y3,
                              panel.x3y3, panel.x4y4, panel.x1y1]
+            else:
+                print("Chose incorrect skew side")
+                return None
 
     page.num_panels += num_panels_added
 
     return page
 
 
-def box_transform_panels(page, type_choice=None):
+def box_transform_panels(page, type_choice=None, pattern=None):
     """
     This function move panel boundaries to transform them
     into trapezoids and rhombuses
@@ -683,11 +724,18 @@ def box_transform_panels(page, type_choice=None):
     :type page: Page
 
     :param type_choice: If you want to specify
-    a particular transform type, defaults to None
+    a particular transform type: rhombus or trapezoid, defaults to None
 
     :type type_choice: str, optional
 
+    :param pattern: Based on the type choice choose a pattern.
+    For rhombus it's left or right, for trapezoid it's A or V
+    defaults to None
+
+    :type pattern: str, optional
+
     :return: Transformed Page
+
     :rtype: Page
     """
 
@@ -712,7 +760,6 @@ def box_transform_panels(page, type_choice=None):
 
                 # For each panel
                 for idx in range(0, num_panels):
-
                     panel = relevant_panels[idx]
 
                     # Get the three child panels
@@ -734,7 +781,10 @@ def box_transform_panels(page, type_choice=None):
                             min_height = child.height
 
                     # Choose trapezoid pattern
-                    trapezoid_pattern = np.random.choice(["A", "V"])
+                    if pattern is None:
+                        trapezoid_pattern = np.random.choice(["A", "V"])
+                    else:
+                        trapezoid_pattern = pattern
 
                     movement_proportion = np.random.randint(
                                             10,
@@ -761,6 +811,8 @@ def box_transform_panels(page, type_choice=None):
                             p1.x2y2 = line_one_top
                             p1.x3y3 = line_one_bottom
 
+                            p1.refresh_coords()
+
                             p2.x1y1 = line_one_top
                             p2.x4y4 = line_one_bottom
 
@@ -774,8 +826,13 @@ def box_transform_panels(page, type_choice=None):
                             p2.x2y2 = line_two_top
                             p2.x3y3 = line_two_bottom
 
+                            p2.refresh_coords()
+
                             p3.x1y1 = line_two_top
                             p3.x4y4 = line_two_bottom
+
+                            p3.refresh_coords()
+
                         # Make a V pattern horizontally
                         else:
 
@@ -789,6 +846,8 @@ def box_transform_panels(page, type_choice=None):
                             # Move line between child 1 and 2
                             p1.x2y2 = line_one_top
                             p1.x3y3 = line_one_bottom
+
+                            p1.refresh_coords()
 
                             p2.x1y1 = line_one_top
                             p2.x4y4 = line_one_bottom
@@ -804,8 +863,12 @@ def box_transform_panels(page, type_choice=None):
                             p2.x2y2 = line_two_top
                             p2.x3y3 = line_two_bottom
 
+                            p2.refresh_coords()
+
                             p3.x1y1 = line_two_top
                             p3.x4y4 = line_two_bottom
+
+                            p3.refresh_coords()
 
                     # If panel is vertical children are horizontal
                     # so the A and the V are at 90 degrees to the page
@@ -831,6 +894,8 @@ def box_transform_panels(page, type_choice=None):
                             p1.x3y3 = line_one_top
                             p1.x4y4 = line_one_bottom
 
+                            p1.refresh_coords()
+
                             # Get the coords of the second line to be moved
                             line_two_top = (p2.x3y3[0],
                                             p2.x3y3[1] - y_movement)
@@ -842,9 +907,12 @@ def box_transform_panels(page, type_choice=None):
                             p2.x3y3 = line_two_top
                             p2.x4y4 = line_two_bottom
 
+                            p2.refresh_coords()
+
                             p3.x1y1 = line_two_bottom
                             p3.x2y2 = line_two_top
 
+                            p3.refresh_coords()
                         # Make a V pattern vertically
                         else:
 
@@ -862,6 +930,7 @@ def box_transform_panels(page, type_choice=None):
                             p1.x3y3 = line_one_top
                             p1.x4y4 = line_one_bottom
 
+                            p1.refresh_coords()
                             # Get the coords of the second line to be moved
                             line_two_top = (p2.x3y3[0],
                                             p2.x3y3[1] + y_movement)
@@ -873,8 +942,11 @@ def box_transform_panels(page, type_choice=None):
                             p2.x3y3 = line_two_top
                             p2.x4y4 = line_two_bottom
 
+                            p2.refresh_coords()
                             p3.x1y1 = line_two_bottom
                             p3.x2y2 = line_two_top
+
+                            p3.refresh_coords()
 
     elif type_choice == "rhombus":
 
@@ -882,6 +954,7 @@ def box_transform_panels(page, type_choice=None):
 
             # Get parent panel which satisfies the criteria for the transform
             relevant_panels = find_parent_with_multiple_children(page, 3)
+
             if len(relevant_panels) > 0:
 
                 if len(relevant_panels) > 1:
@@ -910,7 +983,10 @@ def box_transform_panels(page, type_choice=None):
                         if child.height < min_height:
                             min_height = child.height
 
-                    rhombus_pattern = np.random.choice(["left", "right"])
+                    if pattern is None:
+                        rhombus_pattern = np.random.choice(["left", "right"])
+                    else:
+                        rhombus_pattern = pattern
 
                     movement_proportion = np.random.randint(
                                             10,
@@ -936,6 +1012,8 @@ def box_transform_panels(page, type_choice=None):
                             p1.x2y2 = line_one_top
                             p1.x3y3 = line_one_bottom
 
+                            p1.refresh_coords()
+
                             p2.x1y1 = line_one_top
                             p2.x4y4 = line_one_bottom
 
@@ -948,8 +1026,12 @@ def box_transform_panels(page, type_choice=None):
                             p2.x2y2 = line_two_top
                             p2.x3y3 = line_two_bottom
 
+                            p2.refresh_coords()
+
                             p3.x1y1 = line_two_top
                             p3.x4y4 = line_two_bottom
+
+                            p3.refresh_coords()
 
                         else:
 
@@ -961,6 +1043,8 @@ def box_transform_panels(page, type_choice=None):
 
                             p1.x2y2 = line_one_top
                             p1.x3y3 = line_one_bottom
+
+                            p1.refresh_coords()
 
                             p2.x1y1 = line_one_top
                             p2.x4y4 = line_one_bottom
@@ -974,8 +1058,12 @@ def box_transform_panels(page, type_choice=None):
                             p2.x2y2 = line_two_top
                             p2.x3y3 = line_two_bottom
 
+                            p2.refresh_coords()
+
                             p3.x1y1 = line_two_top
                             p3.x4y4 = line_two_bottom
+
+                            p3.refresh_coords()
                     else:
                         y_movement = min_height*(movement_proportion/100)
 
@@ -993,6 +1081,8 @@ def box_transform_panels(page, type_choice=None):
                             p1.x3y3 = line_one_top
                             p1.x4y4 = line_one_bottom
 
+                            p1.refresh_coords()
+
                             line_two_top = (p2.x3y3[0],
                                             p2.x3y3[1] + y_movement)
 
@@ -1002,8 +1092,12 @@ def box_transform_panels(page, type_choice=None):
                             p2.x3y3 = line_two_top
                             p2.x4y4 = line_two_bottom
 
+                            p2.refresh_coords()
+
                             p3.x1y1 = line_two_bottom
                             p3.x2y2 = line_two_top
+
+                            p3.refresh_coords()
                         else:
 
                             line_one_top = (p2.x2y2[0],
@@ -1018,6 +1112,8 @@ def box_transform_panels(page, type_choice=None):
                             p1.x3y3 = line_one_top
                             p1.x4y4 = line_one_bottom
 
+                            p1.refresh_coords()
+
                             line_two_top = (p2.x3y3[0],
                                             p2.x3y3[1] - y_movement)
 
@@ -1027,13 +1123,17 @@ def box_transform_panels(page, type_choice=None):
                             p2.x3y3 = line_two_top
                             p2.x4y4 = line_two_bottom
 
+                            p2.refresh_coords()
+
                             p3.x1y1 = line_two_bottom
                             p3.x2y2 = line_two_top
+
+                            p3.refresh_coords()
 
     return page
 
 
-def box_transform_page(page, type_choice=None):
+def box_transform_page(page, direction_list=[]):
     """
     This function takes all the first child panels of a page
     and moves them to form a zigzag or a rhombus pattern
@@ -1042,10 +1142,8 @@ def box_transform_page(page, type_choice=None):
 
     :type page: Page
 
-    :param type_choice: If you want to explcitly specify
-    a type of transform, defaults to None
-
-    :type type_choice: str, optional
+    :param direction_list: A list of directions the page
+    should move it's child panel's corner's to
 
     :return: Transformed page
 
@@ -1069,7 +1167,10 @@ def box_transform_page(page, type_choice=None):
             change_proportion /= 100
 
             # Randomly move the line between them up or down one side
-            direction = np.random.choice(["rup", "lup"])
+            if len(direction_list) < 1:
+                direction = np.random.choice(["rup", "lup"])
+            else:
+                direction = direction_list[idx]
 
             # If the first panel is horizontal therefore the second is too
             if p1.orientation == "h":
@@ -1098,8 +1199,10 @@ def box_transform_page(page, type_choice=None):
                 else:
                     if direction == "rup":
                         p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] + change)
+                        p1.refresh_coords()
                     else:
                         p1.x4y4 = (p1.x4y4[0], p1.x4y4[1] - change)
+                        p1.refresh_coords()
 
                 if len(p2.children) > 0:
                     move_children_to_line(p2,
@@ -1111,8 +1214,10 @@ def box_transform_page(page, type_choice=None):
                 else:
                     if direction == "rup":
                         p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] + change)
+                        p2.refresh_coords()
                     else:
                         p2.x1y1 = (p2.x1y1[0], p2.x1y1[1] - change)
+                        p2.refresh_coords()
 
             # If the first panel is vertical therefore the second
             # is too since they are siblings
@@ -1481,7 +1586,6 @@ def populate_panels(page,
 
     if page.num_panels > 1:
         for child in page.leaf_children:
-
             create_single_panel_metadata(child,
                                          image_dir,
                                          image_dir_path,
@@ -1502,7 +1606,10 @@ def populate_panels(page,
     return page
 
 
-def get_base_panels(num_panels=0, layout_type=None, type_choice=None):
+def get_base_panels(num_panels=0,
+                    layout_type=None,
+                    type_choice=None,
+                    page_name=None):
     """
     This function creates the base panels for one page
     it specifies how a page should be layed out and
@@ -1517,6 +1624,15 @@ def get_base_panels(num_panels=0, layout_type=None, type_choice=None):
     vertical, horizontal or both types of panels, defaults to None
 
     :type layout_type: str, optional
+
+    :param type_choice: If having selected vh panels select a type
+    of layout specifically, defaults to None
+
+    :type type_choice: str, optional
+
+    :param page_name: A specific name for the page
+
+    :type page_name: str, optional
 
     :return: A Page object with the panels initalized
 
@@ -1541,15 +1657,18 @@ def get_base_panels(num_panels=0, layout_type=None, type_choice=None):
         layout_type = np.random.choice(["v", "h", "vh"])
 
     # Panels encapsulated and returned within page
-    page = Page(coords, layout_type, num_panels)
-
-    # TODO: Fit in getting blank pages sperately
+    if page_name is None:
+        page = Page(coords, layout_type, num_panels)
+    else:
+        page = Page(coords, layout_type, num_panels, name=page_name)
 
     # If you want only vertical panels
     if layout_type == "v":
         max_num_panels = 4
         if num_panels < 1:
             num_panels = np.random.choice([3, 4])
+            page.num_panels = num_panels
+        else:
             page.num_panels = num_panels
 
         draw_n_shifted(num_panels, page, "v")
@@ -1560,6 +1679,8 @@ def get_base_panels(num_panels=0, layout_type=None, type_choice=None):
         if num_panels < 1:
             num_panels = np.random.randint(3, max_num_panels+1)
             page.num_panels = num_panels
+        else:
+            page.num_panels = num_panels
 
         draw_n_shifted(num_panels, page, "h")
 
@@ -1569,6 +1690,8 @@ def get_base_panels(num_panels=0, layout_type=None, type_choice=None):
         max_num_panels = 8
         if num_panels < 1:
             num_panels = np.random.randint(2, max_num_panels+1)
+            page.num_panels = num_panels
+        else:
             page.num_panels = num_panels
 
         if num_panels == 2:

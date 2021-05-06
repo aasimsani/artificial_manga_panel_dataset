@@ -82,7 +82,10 @@ class Panel(object):
         area_proportion = round(self.area/(cfg.page_height*cfg.page_width), 2)
         self.area_proportion = area_proportion
 
-        self.children = children
+        if len(children) > 0:
+            self.children = children
+        else:
+            self.children = []
 
         self.orientation = orientation
 
@@ -119,6 +122,21 @@ class Panel(object):
                 self.x4y4,
                 self.x1y1
             )
+
+    def refresh_coords(self):
+        """
+            When chances are made to the xy coordinates variables directly
+            this function allows you to refresh the coords variable with
+            the changes
+        """
+
+        self.coords = [
+            self.x1y1,
+            self.x2y2,
+            self.x3y3,
+            self.x4y4,
+            self.x1y1
+        ]
 
     def add_child(self, panel):
         """
@@ -258,7 +276,13 @@ class Page(Panel):
     :type children: list, optional:
     """
 
-    def __init__(self, coords=[], page_type="", num_panels=None, children=[]):
+    def __init__(self,
+                 coords=[],
+                 page_type="",
+                 num_panels=1,
+                 children=[],
+                 name=None
+                 ):
         """
         Constructor method
         """
@@ -275,8 +299,13 @@ class Page(Panel):
                 bottomleft
             ]
 
+        if name is None:
+            self.name = str(uuid.uuid1())
+        else:
+            self.name = name
+
         # Initalize the panel super class
-        super().__init__(coords, "page", None, None, [])
+        super().__init__(coords, self.name, None, None, [])
 
         self.num_panels = num_panels
         self.page_type = page_type
@@ -290,8 +319,6 @@ class Page(Panel):
 
         # Size of the page
         self.page_size = cfg.page_size
-
-        self.name = str(uuid.uuid1())
 
     def dump_data(self, dataset_path, dry=True):
         """
@@ -423,41 +450,44 @@ class Page(Panel):
         for panel in leaf_children:
 
             # Open the illustration to put within panel
-            img = Image.open(panel.image)
+            if panel.image is not None:
+                img = Image.open(panel.image)
 
-            # Clean it up by cropping the black areas
-            img_array = np.asarray(img)
-            crop_array = crop_image_only_outside(img_array)
+                # Clean it up by cropping the black areas
+                img_array = np.asarray(img)
+                crop_array = crop_image_only_outside(img_array)
 
-            img = Image.fromarray(crop_array)
+                img = Image.fromarray(crop_array)
 
-            # Resize it to the page's size as a simple
-            # way to crop differnt parts of it
+                # Resize it to the page's size as a simple
+                # way to crop differnt parts of it
 
-            # TODO: Figure out how to do different types of
-            # image crops for smaller panels
-            w_rev_ratio = cfg.page_width/img.size[0]
-            h_rev_ratio = cfg.page_height/img.size[1]
+                # TODO: Figure out how to do different types of
+                # image crops for smaller panels
+                w_rev_ratio = cfg.page_width/img.size[0]
+                h_rev_ratio = cfg.page_height/img.size[1]
 
-            img = img.resize(
-                (round(img.size[0]*w_rev_ratio),
-                 round(img.size[1]*h_rev_ratio))
-            )
+                img = img.resize(
+                    (round(img.size[0]*w_rev_ratio),
+                     round(img.size[1]*h_rev_ratio))
+                )
 
-            # Create a mask for the panel illustration
-            mask = Image.new("L", cfg.page_size, 0)
-            draw_mask = ImageDraw.Draw(mask)
+                # Create a mask for the panel illustration
+                mask = Image.new("L", cfg.page_size, 0)
+                draw_mask = ImageDraw.Draw(mask)
 
+                # On the mask draw and therefore cut out the panel's
+                # area so that the illustration can be fit into
+                # the page itself
+                draw_mask.polygon(rect, fill=255)
+
+            # Draw outline
             rect = panel.get_polygon()
-
-            # On the mask draw and therefore cut out the panel's
-            # area so that the illustration can be fit into
-            # the page itself
-            draw_mask.polygon(rect, fill=255)
             draw_rect.line(rect, fill="black", width=cfg.boundary_width)
 
             # Paste illustration onto the page
-            page_img.paste(img, (0, 0), mask)
+            if panel.image is not None:
+                page_img.paste(img, (0, 0), mask)
 
         # If it's a single panel page
         if self.num_panels < 2:
@@ -465,6 +495,8 @@ class Page(Panel):
 
         # Render bubbles
         for panel in leaf_children:
+            if len(panel.speech_bubbles) < 1:
+                continue
             # For each bubble
             for sb in panel.speech_bubbles:
                 states, bubble, mask, location = sb.render()

@@ -1,0 +1,487 @@
+{
+  "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05",
+  "num_panels": 6,
+  "page_type": "vh",
+  "page_size": [
+    1700,
+    2400
+  ],
+  "background": null,
+  "children": [
+    {
+      "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-0",
+      "coordinates": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          1700,
+          0.0
+        ],
+        [
+          1700,
+          696.0
+        ],
+        [
+          0.0,
+          696.0
+        ],
+        [
+          0.0,
+          0.0
+        ]
+      ],
+      "orientation": "h",
+      "children": [
+        {
+          "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-0-0",
+          "coordinates": [
+            [
+              1675,
+              305
+            ],
+            [
+              964,
+              25
+            ],
+            [
+              1675,
+              25
+            ],
+            [
+              1675,
+              305
+            ]
+          ],
+          "orientation": "h",
+          "children": [],
+          "non_rect": true,
+          "sliced": true,
+          "no_render": false,
+          "image": "datasets/image_dataset/db_illustrations_bw/770043.jpg",
+          "speech_bubbles": []
+        },
+        {
+          "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-0-1",
+          "coordinates": [
+            [
+              1675,
+              358
+            ],
+            [
+              1675,
+              673
+            ],
+            [
+              25,
+              828
+            ],
+            [
+              25,
+              25
+            ],
+            [
+              829,
+              25
+            ],
+            [
+              1675,
+              358
+            ]
+          ],
+          "orientation": "h",
+          "children": [],
+          "non_rect": true,
+          "sliced": true,
+          "no_render": false,
+          "image": "datasets/image_dataset/db_illustrations_bw/1509077.jpg",
+          "speech_bubbles": []
+        }
+      ],
+      "non_rect": false,
+      "sliced": false,
+      "no_render": false,
+      "image": null,
+      "speech_bubbles": []
+    },
+    {
+      "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1",
+      "coordinates": [
+        [
+          0.0,
+          696.0
+        ],
+        [
+          1700,
+          696.0
+        ],
+        [
+          1700,
+          2400
+        ],
+        [
+          0.0,
+          2400
+        ],
+        [
+          0.0,
+          696.0
+        ]
+      ],
+      "orientation": "h",
+      "children": [
+        {
+          "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-0",
+          "coordinates": [
+            [
+              0.0,
+              696.0
+            ],
+            [
+              680.0,
+              696.0
+            ],
+            [
+              680.0,
+              2400
+            ],
+            [
+              0.0,
+              2400
+            ],
+            [
+              0.0,
+              696.0
+            ]
+          ],
+          "orientation": "v",
+          "children": [
+            {
+              "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-0-0",
+              "coordinates": [
+                [
+                  655,
+                  1525
+                ],
+                [
+                  519,
+                  831
+                ],
+                [
+                  655,
+                  819
+                ],
+                [
+                  655,
+                  1525
+                ]
+              ],
+              "orientation": "h",
+              "children": [],
+              "non_rect": true,
+              "sliced": true,
+              "no_render": false,
+              "image": "datasets/image_dataset/db_illustrations_bw/1263013.jpg",
+              "speech_bubbles": []
+            },
+            {
+              "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-0-1",
+              "coordinates": [
+                [
+                  655,
+                  1791
+                ],
+                [
+                  655,
+                  2375
+                ],
+                [
+                  25,
+                  2375
+                ],
+                [
+                  25,
+                  879
+                ],
+                [
+                  468,
+                  836
+                ],
+                [
+                  655,
+                  1791
+                ]
+              ],
+              "orientation": "h",
+              "children": [],
+              "non_rect": true,
+              "sliced": true,
+              "no_render": false,
+              "image": "datasets/image_dataset/db_illustrations_bw/669108.jpg",
+              "speech_bubbles": [
+                {
+                  "texts": [
+                    {
+                      "English": "you will not go to school!",
+                      "Japanese": "\u5b66\u6821\u306b\u3082\u884c\u304b\u305b\u3093"
+                    }
+                  ],
+                  "texts_indices": [
+                    1167000
+                  ],
+                  "font": "datasets/font_dataset/font_files/NotoSansMonoCJKjp-Bold.otf",
+                  "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-99.png",
+                  "writing_areas": [
+                    {
+                      "x": 7.2727272727272725,
+                      "y": 4.174573055028463,
+                      "width": 84.93506493506493,
+                      "height": 67.55218216318785,
+                      "rotation": 0,
+                      "rectanglelabels": [
+                        "box"
+                      ],
+                      "original_width": 385,
+                      "original_height": 527
+                    }
+                  ],
+                  "resize_to": 106248.68267176436,
+                  "location": [
+                    158,
+                    1151
+                  ],
+                  "transforms": [
+                    "stretch_x",
+                    "flip horizontal"
+                  ],
+                  "text_orientation": "ttb"
+                },
+                {
+                  "texts": [
+                    {
+                      "English": "it cannot be done. he is warded.",
+                      "Japanese": "\u79c1\u306b\u306f\u7121\u7406\u3060 \u5f7c\u306f\u906e\u853d\u3057\u3066\u3044\u308b"
+                    }
+                  ],
+                  "texts_indices": [
+                    876486
+                  ],
+                  "font": "datasets/font_dataset/font_files/GenEiAntiquePv5-M.ttf",
+                  "speech_bubble": "datasets/speech_bubbles_dataset/files/white~yell.png",
+                  "writing_areas": [
+                    {
+                      "x": 20.8,
+                      "y": 33.94777265745007,
+                      "width": 58.93333333333333,
+                      "height": 37.94162826420891,
+                      "rotation": 0,
+                      "rectanglelabels": [
+                        "box"
+                      ],
+                      "original_width": 765,
+                      "original_height": 664
+                    }
+                  ],
+                  "resize_to": 101302.95757178037,
+                  "location": [
+                    200,
+                    1016
+                  ],
+                  "transforms": [
+                    "rotate",
+                    "stretch y"
+                  ],
+                  "text_orientation": "ttb"
+                }
+              ]
+            }
+          ],
+          "non_rect": false,
+          "sliced": false,
+          "no_render": false,
+          "image": null,
+          "speech_bubbles": []
+        },
+        {
+          "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-1",
+          "coordinates": [
+            [
+              680.0,
+              696.0
+            ],
+            [
+              1700,
+              696.0
+            ],
+            [
+              1700,
+              2400
+            ],
+            [
+              680.0,
+              2400
+            ],
+            [
+              680.0,
+              696.0
+            ]
+          ],
+          "orientation": "v",
+          "children": [
+            {
+              "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-1-0",
+              "coordinates": [
+                [
+                  1675,
+                  1617
+                ],
+                [
+                  1436,
+                  745
+                ],
+                [
+                  1675,
+                  723
+                ],
+                [
+                  1675,
+                  1617
+                ]
+              ],
+              "orientation": "h",
+              "children": [],
+              "non_rect": true,
+              "sliced": true,
+              "no_render": false,
+              "image": "datasets/image_dataset/db_illustrations_bw/1524076.jpg",
+              "speech_bubbles": []
+            },
+            {
+              "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-1-1",
+              "coordinates": [
+                [
+                  1675,
+                  1806
+                ],
+                [
+                  1675,
+                  2375
+                ],
+                [
+                  705,
+                  2375
+                ],
+                [
+                  705,
+                  815
+                ],
+                [
+                  1385,
+                  750
+                ],
+                [
+                  1675,
+                  1806
+                ]
+              ],
+              "orientation": "h",
+              "children": [],
+              "non_rect": true,
+              "sliced": true,
+              "no_render": false,
+              "image": "datasets/image_dataset/db_illustrations_bw/2393056.jpg",
+              "speech_bubbles": [
+                {
+                  "texts": [
+                    {
+                      "English": "i've seen...",
+                      "Japanese": "\u5e7b\u899a\u304c"
+                    }
+                  ],
+                  "texts_indices": [
+                    2285332
+                  ],
+                  "font": "datasets/font_dataset/font_files/SNsanafonkaku.ttf",
+                  "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-82.png",
+                  "writing_areas": [
+                    {
+                      "x": 19.382022471910112,
+                      "y": 24.677419354838708,
+                      "width": 55.61797752808989,
+                      "height": 35.483870967741936,
+                      "rotation": 0,
+                      "rectanglelabels": [
+                        "box"
+                      ],
+                      "original_width": 712,
+                      "original_height": 620
+                    }
+                  ],
+                  "resize_to": 245711.464026045,
+                  "location": [
+                    759,
+                    939
+                  ],
+                  "transforms": [
+                    "rotate",
+                    "stretch y"
+                  ],
+                  "text_orientation": "ttb"
+                },
+                {
+                  "texts": [
+                    {
+                      "English": "he was always such a foolish lad.",
+                      "Japanese": "\u3069\u3053\u307e\u3067\u3082\u611a\u304b\u306a\u7537\u3060"
+                    }
+                  ],
+                  "texts_indices": [
+                    292459
+                  ],
+                  "font": "datasets/font_dataset/font_files/GenEiAntiqueNv5-M.ttf",
+                  "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-33.png",
+                  "writing_areas": [
+                    {
+                      "x": 15.2,
+                      "y": 23.565573770491802,
+                      "width": 73.06666666666666,
+                      "height": 55.32786885245902,
+                      "rotation": 0,
+                      "rectanglelabels": [
+                        "box"
+                      ],
+                      "original_width": 960,
+                      "original_height": 625
+                    }
+                  ],
+                  "resize_to": 305554.3228593712,
+                  "location": [
+                    907,
+                    1173
+                  ],
+                  "transforms": [
+                    "stretch y",
+                    "rotate"
+                  ],
+                  "text_orientation": "ttb"
+                }
+              ]
+            }
+          ],
+          "non_rect": false,
+          "sliced": false,
+          "no_render": false,
+          "image": null,
+          "speech_bubbles": []
+        }
+      ],
+      "non_rect": false,
+      "sliced": false,
+      "no_render": false,
+      "image": null,
+      "speech_bubbles": []
+    }
+  ],
+  "speech_bubbles": []
+}
