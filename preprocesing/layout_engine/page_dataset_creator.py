@@ -1419,7 +1419,8 @@ def create_single_panel_metadata(panel,
                                  font_files,
                                  text_dataset,
                                  speech_bubble_files,
-                                 speech_bubble_tags
+                                 speech_bubble_tags,
+                                 minimum_speech_bubbles=0
                                  ):
     """
     This is a helper function that populates a single panel with
@@ -1457,6 +1458,11 @@ def create_single_panel_metadata(panel,
     writing area tags by filename
 
     :type speech_bubble_tags: list
+
+    :param minimum_speech_bubbles: Set whether panels
+    have a minimum number of speech bubbles, defaults to 0
+
+    :type  minimum_speech_bubbles: int
     """
 
     # Image to be used inside panel
@@ -1466,7 +1472,8 @@ def create_single_panel_metadata(panel,
     panel.image = image_dir_path+select_image
 
     # Select number of speech bubbles to assign to panel
-    num_speech_bubbles = np.random.randint(0, cfg.max_speech_bubbles_per_panel)
+    num_speech_bubbles = np.random.randint(minimum_speech_bubbles,
+                                           cfg.max_speech_bubbles_per_panel)
 
     # Get lengths of datasets
     text_dataset_len = len(text_dataset)
@@ -1541,7 +1548,9 @@ def populate_panels(page,
                     font_files,
                     text_dataset,
                     speech_bubble_files,
-                    speech_bubble_tags):
+                    speech_bubble_tags,
+                    minimum_speech_bubbles=0
+                    ):
     """
     This function takes all the panels and adds backgorund images
     and speech bubbles to them
@@ -1579,6 +1588,11 @@ def populate_panels(page,
 
     :type speech_bubble_tags: list
 
+    :param minimum_speech_bubbles: Set whether panels
+    have a minimum number of speech bubbles, defaults to 0
+
+    :type  minimum_speech_bubbles: int
+
     :return: Page with populated panels
 
     :rtype: Page
@@ -1592,7 +1606,8 @@ def populate_panels(page,
                                          font_files,
                                          text_dataset,
                                          speech_bubble_files,
-                                         speech_bubble_tags
+                                         speech_bubble_tags,
+                                         minimum_speech_bubbles
                                          )
     else:
         create_single_panel_metadata(page,
@@ -1601,7 +1616,8 @@ def populate_panels(page,
                                      font_files,
                                      text_dataset,
                                      speech_bubble_files,
-                                     speech_bubble_tags
+                                     speech_bubble_tags,
+                                     minimum_speech_bubbles
                                      )
     return page
 

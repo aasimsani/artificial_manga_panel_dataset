@@ -558,7 +558,8 @@ class SpeechBubble(object):
 
     :type location: list
 
-    :param transforms: The transformations that this speech bubble
+    :param transforms: A list of transformations to change
+    the shape of the speech bubble
 
     :type transforms: list, optional
 
