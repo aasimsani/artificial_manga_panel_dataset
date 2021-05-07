@@ -413,6 +413,8 @@ class Page(Panel):
                                 writing_areas=speech_bubble['writing_areas'],
                                 resize_to=speech_bubble['resize_to'],
                                 location=speech_bubble['location'],
+                                width=speech_bubble['width'],
+                                height=speech_bubble['height'],
                                 transforms=speech_bubble['transforms'],
                                 text_orientation=text_orientation
                                 )
