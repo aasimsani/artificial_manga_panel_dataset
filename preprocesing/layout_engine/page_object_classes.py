@@ -599,6 +599,11 @@ class SpeechBubble(object):
 
     :type transforms: list, optional
 
+    :param transform_metadata: Metadata associated with transformations,
+    defaults to None
+
+    :type transform_metadata: dict, optional
+
     :param text_orientation: Whether the text of this speech bubble
     is written left to right ot top to bottom
 
@@ -790,7 +795,7 @@ class SpeechBubble(object):
                 states.append("hflip")
 
             elif transform == "stretch x":
-                
+
                 stretch_factor = self.transform_metadata['stretch_x_factor']
                 new_size = (round(w*(1+stretch_factor)), h)
                 # Reassign for resizing later
