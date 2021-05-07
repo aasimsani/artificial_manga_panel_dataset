@@ -1501,10 +1501,10 @@ def create_single_panel_metadata(panel,
 
         # Select text for writing areas
         texts = []
-        texts_indices = []
+        text_indices = []
         for i in range(len(speech_bubble_writing_area)):
             text_idx = np.random.randint(0, text_dataset_len)
-            texts_indices.append(text_idx)
+            text_indices.append(text_idx)
             text = text_dataset.iloc[text_idx].to_dict()
             texts.append(text)
 
@@ -1532,7 +1532,7 @@ def create_single_panel_metadata(panel,
         w, h = speech_bubble_img.size
         # Create speech bubble
         speech_bubble = SpeechBubble(texts=texts,
-                                     text_indices=texts_indices,
+                                     text_indices=text_indices,
                                      font=font,
                                      speech_bubble=speech_bubble_file,
                                      writing_areas=speech_bubble_writing_area,

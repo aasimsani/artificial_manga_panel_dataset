@@ -411,7 +411,7 @@ class Page(Panel):
                     transform_metadata = speech_bubble['transform_metadata']
                     bubble = SpeechBubble(
                                 texts=speech_bubble['texts'],
-                                texts_indices=speech_bubble['text_indices'],
+                                text_indices=speech_bubble['text_indices'],
                                 font=speech_bubble['font'],
                                 speech_bubble=speech_bubble['speech_bubble'],
                                 writing_areas=speech_bubble['writing_areas'],
