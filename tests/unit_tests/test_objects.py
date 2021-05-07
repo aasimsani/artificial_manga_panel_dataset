@@ -92,7 +92,7 @@ def test_speech_bubble_dumping(data_files):
     data_keys = data.keys()
 
     assert "texts" in data_keys
-    assert "texts_indices" in data_keys
+    assert "text_indices" in data_keys
     assert "font" in data_keys
     assert "speech_bubble" in data_keys
     assert "writing_areas" in data_keys
@@ -101,6 +101,7 @@ def test_speech_bubble_dumping(data_files):
     assert "width" in data_keys
     assert "height" in data_keys
     assert "transforms" in data_keys
+    assert "transform_metadata" in data_keys
     assert "text_orientation" in data_keys
 
 
@@ -180,6 +181,13 @@ def test_speech_bubble_rendering(inverted,
 
     bubble = page.speech_bubbles[0]
     bubble.transforms = transforms
+
+    # Dummy metadata
+    bubble.transform_metadata = {
+        "stretch_x_factor": 0.2,
+        "stretch_y_factor": 0.2,
+        "rotation_amount": 20
+    }
 
     if inverted:
         bubble.transforms.append("invert")

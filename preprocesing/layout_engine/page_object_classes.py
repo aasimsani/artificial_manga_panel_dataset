@@ -234,9 +234,11 @@ class Panel(object):
 
         if len(data['speech_bubbles']) > 0:
             for speech_bubble in data['speech_bubbles']:
+
+                transform_metadata = speech_bubble['transform_metadata']
                 bubble = SpeechBubble(
                             texts=speech_bubble['texts'],
-                            texts_indices=speech_bubble['texts_indices'],
+                            text_indices=speech_bubble['text_indices'],
                             font=speech_bubble['font'],
                             speech_bubble=speech_bubble['speech_bubble'],
                             writing_areas=speech_bubble['writing_areas'],
@@ -245,6 +247,7 @@ class Panel(object):
                             width=speech_bubble['width'],
                             height=speech_bubble['height'],
                             transforms=speech_bubble['transforms'],
+                            transform_metadata=transform_metadata,
                             text_orientation=speech_bubble['text_orientation']
                             )
 
@@ -405,9 +408,10 @@ class Page(Panel):
                 for speech_bubble in data['speech_bubbles']:
                     # Line constraints
                     text_orientation = speech_bubble['text_orientation']
+                    transform_metadata = speech_bubble['transform_metadata']
                     bubble = SpeechBubble(
                                 texts=speech_bubble['texts'],
-                                texts_indices=speech_bubble['texts_indices'],
+                                texts_indices=speech_bubble['text_indices'],
                                 font=speech_bubble['font'],
                                 speech_bubble=speech_bubble['speech_bubble'],
                                 writing_areas=speech_bubble['writing_areas'],
@@ -416,6 +420,7 @@ class Page(Panel):
                                 width=speech_bubble['width'],
                                 height=speech_bubble['height'],
                                 transforms=speech_bubble['transforms'],
+                                transform_metadata=transform_metadata,
                                 text_orientation=text_orientation
                                 )
 
@@ -552,10 +557,10 @@ class SpeechBubble(object):
 
     :type texts: lists
 
-    :param texts_indices: The indices of the text from the dataframe
+    :param text_indices: The indices of the text from the dataframe
     for easy retrival
 
-    :type texts_indices: lists
+    :type text_indices: lists
 
     :param font: The path to the font used in the bubble
 
@@ -581,13 +586,13 @@ class SpeechBubble(object):
 
     :type location: list
 
-    :param width: Width of the speech bubble, defaults to 0
+    :param width: Width of the speech bubble
 
-    :type width: float, optional
+    :type width: float
 
-    :param height: Height of the speech bubble, defaults to 0
+    :param height: Height of the speech bubble
 
-    :type height: float, optional
+    :type height: float
 
     :param transforms: A list of transformations to change
     the shape of the speech bubble
@@ -601,15 +606,16 @@ class SpeechBubble(object):
     """
     def __init__(self,
                  texts,
-                 texts_indices,
+                 text_indices,
                  font,
                  speech_bubble,
                  writing_areas,
                  resize_to,
                  location,
-                 width=0,
-                 height=0,
+                 width,
+                 height,
                  transforms=None,
+                 transform_metadata=None,
                  text_orientation=None):
         """
         Constructor method
@@ -617,7 +623,7 @@ class SpeechBubble(object):
 
         self.texts = texts
         # Index of dataframe for the text
-        self.texts_indices = texts_indices
+        self.text_indices = text_indices
         self.font = font
         self.speech_bubble = speech_bubble
         self.writing_areas = writing_areas
@@ -625,21 +631,19 @@ class SpeechBubble(object):
 
         # Location on panel
         self.location = location
-        if width == 0:
-            img = Image.open(speech_bubble)
-            w, h = img.size
-            self.width = w
-            self.height = h
-        else:
-            self.width = width
-            self.height = height
+        self.width = width
+        self.height = height
+
+        self.transform_metadata = {}
+        if transform_metadata is not None:
+            self.transform_metadata = transform_metadata
 
         if transforms is None:
             possible_transforms = [
                 "flip horizontal",
                 "flip vertical",
                 "rotate",
-                "stretch_x",
+                "stretch x",
                 "stretch y",
                 ]
             # 1 in 50 chance of no transformation
@@ -653,6 +657,19 @@ class SpeechBubble(object):
                 # 1 in 20 chance of inversion
                 if np.random.rand() < 0.05:
                     self.transforms.append("invert")
+
+                if "stretch x" in self.transforms:
+                    # Up to 30% stretching
+                    factor = np.random.random()*0.3
+                    self.transform_metadata["stretch_x_factor"] = factor
+                if "stretch y" in self.transforms:
+                    factor = np.random.random()*0.3
+                    self.transform_metadata["stretch_y_factor"] = factor
+
+                if "rotate" in self.transforms:
+                    rotation = np.random.randint(10, 30)
+                    self.transform_metadata["rotation_amount"] = rotation
+
             else:
                 self.transforms = []
         else:
@@ -680,7 +697,7 @@ class SpeechBubble(object):
         """
         data = dict(
             texts=self.texts,
-            texts_indices=self.texts_indices,
+            text_indices=self.text_indices,
             font=self.font,
             speech_bubble=self.speech_bubble,
             writing_areas=self.writing_areas,
@@ -689,6 +706,7 @@ class SpeechBubble(object):
             width=self.width,
             height=self.height,
             transforms=self.transforms,
+            transform_metadata=self.transform_metadata,
             text_orientation=self.text_orientation
         )
 
@@ -772,10 +790,9 @@ class SpeechBubble(object):
                 states.append("hflip")
 
             elif transform == "stretch x":
-                # Up to 30% stretching
-                stretch_factor = np.random.random()*0.3
+                
+                stretch_factor = self.transform_metadata['stretch_x_factor']
                 new_size = (round(w*(1+stretch_factor)), h)
-
                 # Reassign for resizing later
                 w, h = new_size
                 bubble = bubble.resize(new_size)
@@ -796,7 +813,7 @@ class SpeechBubble(object):
                 states.append("xstretch")
 
             elif transform == "stretch y":
-                stretch_factor = np.random.random()*0.3
+                stretch_factor = self.transform_metadata['stretch_y_factor']
                 new_size = (w, round(h*(1+stretch_factor)))
 
                 # Reassign for resizing later
@@ -968,7 +985,7 @@ class SpeechBubble(object):
         # perform rotation if it was in transforms
         # TODO: Fix issue of bad crops with rotation
         if "rotate" in self.transforms:
-            rotation = np.random.randint(10, 30)
+            rotation = self.transform_metadata['rotation_amount']
             bubble = bubble.rotate(rotation)
             mask = mask.rotate(rotation)
 

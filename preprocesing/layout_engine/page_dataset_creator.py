@@ -1528,14 +1528,18 @@ def create_single_panel_metadata(panel,
             y_choice
         ]
 
+        speech_bubble_img = Image.open(speech_bubble_file)
+        w, h = speech_bubble_img.size
         # Create speech bubble
-        speech_bubble = SpeechBubble(texts,
-                                     texts_indices,
-                                     font,
-                                     speech_bubble_file,
-                                     speech_bubble_writing_area,
-                                     new_area,
-                                     location
+        speech_bubble = SpeechBubble(texts=texts,
+                                     text_indices=texts_indices,
+                                     font=font,
+                                     speech_bubble=speech_bubble_file,
+                                     writing_areas=speech_bubble_writing_area,
+                                     resize_to=new_area,
+                                     location=location,
+                                     width=w,
+                                     height=h,
                                      )
 
         panel.speech_bubbles.append(speech_bubble)
