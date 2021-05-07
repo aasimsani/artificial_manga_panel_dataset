@@ -1,7 +1,7 @@
 {
-  "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05",
+  "name": "e5e770ee-af77-11eb-b9f3-c4b301c68f05",
   "num_panels": 6,
-  "page_type": "vh",
+  "page_type": "h",
   "page_size": [
     1700,
     2400
@@ -9,478 +9,547 @@
   "background": null,
   "children": [
     {
-      "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-0",
+      "name": "e5e770ee-af77-11eb-b9f3-c4b301c68f05-0",
       "coordinates": [
         [
-          0.0,
-          0.0
+          1675,
+          483
         ],
         [
-          1700,
-          0.0
+          25,
+          483
         ],
         [
-          1700,
-          696.0
+          25,
+          25
         ],
         [
-          0.0,
-          696.0
+          1675,
+          25
         ],
         [
-          0.0,
-          0.0
+          1675,
+          483
         ]
       ],
       "orientation": "h",
-      "children": [
-        {
-          "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-0-0",
-          "coordinates": [
-            [
-              1675,
-              305
-            ],
-            [
-              964,
-              25
-            ],
-            [
-              1675,
-              25
-            ],
-            [
-              1675,
-              305
-            ]
-          ],
-          "orientation": "h",
-          "children": [],
-          "non_rect": true,
-          "sliced": true,
-          "no_render": false,
-          "image": "datasets/image_dataset/db_illustrations_bw/770043.jpg",
-          "speech_bubbles": []
-        },
-        {
-          "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-0-1",
-          "coordinates": [
-            [
-              1675,
-              358
-            ],
-            [
-              1675,
-              673
-            ],
-            [
-              25,
-              828
-            ],
-            [
-              25,
-              25
-            ],
-            [
-              829,
-              25
-            ],
-            [
-              1675,
-              358
-            ]
-          ],
-          "orientation": "h",
-          "children": [],
-          "non_rect": true,
-          "sliced": true,
-          "no_render": false,
-          "image": "datasets/image_dataset/db_illustrations_bw/1509077.jpg",
-          "speech_bubbles": []
-        }
-      ],
+      "children": [],
       "non_rect": false,
       "sliced": false,
       "no_render": false,
-      "image": null,
+      "image": "datasets/image_dataset/db_illustrations_bw/656101.jpg",
+      "speech_bubbles": [
+        {
+          "texts": [
+            {
+              "English": "hey, my partner here, he want to see the product.",
+              "Japanese": "\u306d\u3048\u3001\u79c1\u306e\u30d1\u30fc\u30c8\u30ca\u30fc\u306f\u3001\u3053\u3053\u3067\u3001 \u5f7c\u306f \u88fd\u54c1\u3092\u898b\u3066\u307f\u305f\u3044\u3002"
+            }
+          ],
+          "texts_indices": [
+            417730
+          ],
+          "font": "datasets/font_dataset/font_files/MintKiss.otf",
+          "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-88.png",
+          "writing_areas": [
+            {
+              "x": 12.04644412191582,
+              "y": 22.552447552447553,
+              "width": 75.76197387518143,
+              "height": 57.86713286713287,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 689,
+              "original_height": 572
+            }
+          ],
+          "resize_to": 233072.82048927998,
+          "location": [
+            437,
+            53
+          ],
+          "width": 689,
+          "height": 572,
+          "transforms": [
+            "rotate",
+            "stretch y"
+          ],
+          "text_orientation": "ttb"
+        }
+      ]
+    },
+    {
+      "name": "e5e770ee-af77-11eb-b9f3-c4b301c68f05-1",
+      "coordinates": [
+        [
+          1675,
+          847
+        ],
+        [
+          25,
+          847
+        ],
+        [
+          25,
+          533
+        ],
+        [
+          1675,
+          533
+        ],
+        [
+          1675,
+          847
+        ]
+      ],
+      "orientation": "h",
+      "children": [],
+      "non_rect": false,
+      "sliced": false,
+      "no_render": false,
+      "image": "datasets/image_dataset/db_illustrations_bw/1328050.jpg",
+      "speech_bubbles": [
+        {
+          "texts": [
+            {
+              "English": "and i thought hirosan finally woke up early today.",
+              "Japanese": "\u30d2\u30ed\u3055\u3093 \u3081\u305a\u3089\u3057\u304f \u65e9\u8d77\u304d\u3057\u3066\u304d\u305f\u3068\u601d\u3063\u305f\u306e\u306b"
+            }
+          ],
+          "texts_indices": [
+            1857660
+          ],
+          "font": "datasets/font_dataset/font_files/KodomoRounded-Light.otf",
+          "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-45.png",
+          "writing_areas": [
+            {
+              "x": 15.468113975576662,
+              "y": 5.69620253164557,
+              "width": 80.46132971506105,
+              "height": 85.65400843881856,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 737,
+              "original_height": 474
+            }
+          ],
+          "resize_to": 181284.8997757141,
+          "location": [
+            806,
+            633
+          ],
+          "width": 737,
+          "height": 474,
+          "transforms": [
+            "stretch y",
+            "flip horizontal"
+          ],
+          "text_orientation": "ttb"
+        },
+        {
+          "texts": [
+            {
+              "English": "let's let some light in the room i can feel, i can tell someone might break the spell any day now",
+              "Japanese": "\u546a\u3044\u304c\u89e3\u3051\u308b \u305d\u3093\u306a\u4e88\u611f\u304c\u3059\u308b"
+            },
+            {
+              "English": "would you mind joining us?",
+              "Japanese": "\u3082\u3057\u3088\u304b\u3063\u305f\u3089 \u4e00\u7dd2\u306b \u3069\u3046\u3067\u3059\u304b?"
+            },
+            {
+              "English": "i'll see you... i mean, i'll talk to you later.",
+              "Japanese": "\u5f8c\u3067\u306d \u3042\u3063\u30fb\u30fb\u30fb\u307e\u305f\u306d"
+            }
+          ],
+          "texts_indices": [
+            1849687,
+            1998165,
+            1674307
+          ],
+          "font": "datasets/font_dataset/font_files/PopRumCute.otf",
+          "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-12.png",
+          "writing_areas": [
+            {
+              "x": 18.666666666666668,
+              "y": 4.328523862375139,
+              "width": 72.8,
+              "height": 32.075471698113205,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 827,
+              "original_height": 993
+            },
+            {
+              "x": 7.733333333333333,
+              "y": 50.72142064372919,
+              "width": 69.73333333333333,
+              "height": 11.431742508324085,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 827,
+              "original_height": 993
+            },
+            {
+              "x": 33.6,
+              "y": 73.58490566037736,
+              "width": 42.266666666666666,
+              "height": 11.986681465038846,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 827,
+              "original_height": 993
+            }
+          ],
+          "resize_to": 141610.92160622278,
+          "location": [
+            249,
+            613
+          ],
+          "width": 827,
+          "height": 993,
+          "transforms": [
+            "flip horizontal",
+            "rotate"
+          ],
+          "text_orientation": "ttb"
+        }
+      ]
+    },
+    {
+      "name": "e5e770ee-af77-11eb-b9f3-c4b301c68f05-2",
+      "coordinates": [
+        [
+          1675,
+          1355
+        ],
+        [
+          25,
+          1355
+        ],
+        [
+          25,
+          897
+        ],
+        [
+          1675,
+          897
+        ],
+        [
+          1675,
+          1355
+        ]
+      ],
+      "orientation": "h",
+      "children": [],
+      "non_rect": false,
+      "sliced": false,
+      "no_render": false,
+      "image": "datasets/image_dataset/db_illustrations_bw/1465053.jpg",
+      "speech_bubbles": [
+        {
+          "texts": [
+            {
+              "English": "you chose the role of rescuer rather than fighter, like me.",
+              "Japanese": "\u3042\u306a\u305f\u306f\u6226\u3046\u3053\u3068\u3088\u308a\u3001\u3080\u3057\u308d\u6551\u52a9\u6d3b\u52d5\u306e\u9053\u3092\u9078\u3093\u3060\u3002"
+            }
+          ],
+          "texts_indices": [
+            646330
+          ],
+          "font": "datasets/font_dataset/font_files/\u00e9\u00aa\u00e9\u0398\u00e9\u2584\u00fc[P.ttf",
+          "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-27.png",
+          "writing_areas": [
+            {
+              "x": 10.119047619047619,
+              "y": 4.545454545454546,
+              "width": 85.51587301587301,
+              "height": 68.0622009569378,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 504,
+              "original_height": 836
+            }
+          ],
+          "resize_to": 279807.576644737,
+          "location": [
+            278,
+            996
+          ],
+          "width": 504,
+          "height": 836,
+          "transforms": [
+            "stretch y",
+            "stretch y"
+          ],
+          "text_orientation": "ttb"
+        }
+      ]
+    },
+    {
+      "name": "e5e770ee-af77-11eb-b9f3-c4b301c68f05-3",
+      "coordinates": [
+        [
+          1675,
+          1599
+        ],
+        [
+          25,
+          1599
+        ],
+        [
+          25,
+          1405
+        ],
+        [
+          1675,
+          1405
+        ],
+        [
+          1675,
+          1599
+        ]
+      ],
+      "orientation": "h",
+      "children": [],
+      "non_rect": false,
+      "sliced": false,
+      "no_render": false,
+      "image": "datasets/image_dataset/db_illustrations_bw/1334039.jpg",
+      "speech_bubbles": [
+        {
+          "texts": [
+            {
+              "English": "in the principal's office is a safe",
+              "Japanese": "\u6821\u9577\u5ba4\u306b \u30b9\u30bf\u30d3\u30e9\u30fc\u30bb\u30fc\u30d5\u793e\u88fd\u306e\u91d1\u5eab\u304c\u3042\u308b"
+            }
+          ],
+          "texts_indices": [
+            1093050
+          ],
+          "font": "datasets/font_dataset/font_files/\u00e9\u03a3\u00e9\u2555 \u00e2y\u00e2\u00f4\u00c4\u00dc N [P].ttf",
+          "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-99.png",
+          "writing_areas": [
+            {
+              "x": 7.2727272727272725,
+              "y": 4.174573055028463,
+              "width": 84.93506493506493,
+              "height": 67.55218216318785,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 385,
+              "original_height": 527
+            }
+          ],
+          "resize_to": 87261.84776827984,
+          "location": [
+            836,
+            1478
+          ],
+          "width": 385,
+          "height": 527,
+          "transforms": [
+            "stretch_x",
+            "rotate"
+          ],
+          "text_orientation": "ttb"
+        },
+        {
+          "texts": [
+            {
+              "English": "now from behind.",
+              "Japanese": "Now from behind \u4eca \u5f8c\u308d\u304b\u3089"
+            }
+          ],
+          "texts_indices": [
+            1941059
+          ],
+          "font": "datasets/font_dataset/font_files/KodomoRounded.otf",
+          "speech_bubble": "datasets/speech_bubbles_dataset/files/white~thinking.png",
+          "writing_areas": [
+            {
+              "x": 11.925287356321839,
+              "y": 18.840579710144926,
+              "width": 77.29885057471265,
+              "height": 59.78260869565217,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 696,
+              "original_height": 552
+            }
+          ],
+          "resize_to": 68804.23037539853,
+          "location": [
+            502,
+            1510
+          ],
+          "width": 696,
+          "height": 552,
+          "transforms": [
+            "stretch y",
+            "flip vertical"
+          ],
+          "text_orientation": "ttb"
+        }
+      ]
+    },
+    {
+      "name": "e5e770ee-af77-11eb-b9f3-c4b301c68f05-4",
+      "coordinates": [
+        [
+          1675,
+          1867
+        ],
+        [
+          25,
+          1867
+        ],
+        [
+          25,
+          1649
+        ],
+        [
+          1675,
+          1649
+        ],
+        [
+          1675,
+          1867
+        ]
+      ],
+      "orientation": "h",
+      "children": [],
+      "non_rect": false,
+      "sliced": false,
+      "no_render": false,
+      "image": "datasets/image_dataset/db_illustrations_bw/572107.jpg",
       "speech_bubbles": []
     },
     {
-      "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1",
+      "name": "e5e770ee-af77-11eb-b9f3-c4b301c68f05-5",
       "coordinates": [
         [
-          0.0,
-          696.0
+          1675,
+          2375
         ],
         [
-          1700,
-          696.0
+          25,
+          2375
         ],
         [
-          1700,
-          2400
+          25,
+          1917
         ],
         [
-          0.0,
-          2400
+          1675,
+          1917
         ],
         [
-          0.0,
-          696.0
+          1675,
+          2375
         ]
       ],
       "orientation": "h",
-      "children": [
-        {
-          "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-0",
-          "coordinates": [
-            [
-              0.0,
-              696.0
-            ],
-            [
-              680.0,
-              696.0
-            ],
-            [
-              680.0,
-              2400
-            ],
-            [
-              0.0,
-              2400
-            ],
-            [
-              0.0,
-              696.0
-            ]
-          ],
-          "orientation": "v",
-          "children": [
-            {
-              "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-0-0",
-              "coordinates": [
-                [
-                  655,
-                  1525
-                ],
-                [
-                  519,
-                  831
-                ],
-                [
-                  655,
-                  819
-                ],
-                [
-                  655,
-                  1525
-                ]
-              ],
-              "orientation": "h",
-              "children": [],
-              "non_rect": true,
-              "sliced": true,
-              "no_render": false,
-              "image": "datasets/image_dataset/db_illustrations_bw/1263013.jpg",
-              "speech_bubbles": []
-            },
-            {
-              "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-0-1",
-              "coordinates": [
-                [
-                  655,
-                  1791
-                ],
-                [
-                  655,
-                  2375
-                ],
-                [
-                  25,
-                  2375
-                ],
-                [
-                  25,
-                  879
-                ],
-                [
-                  468,
-                  836
-                ],
-                [
-                  655,
-                  1791
-                ]
-              ],
-              "orientation": "h",
-              "children": [],
-              "non_rect": true,
-              "sliced": true,
-              "no_render": false,
-              "image": "datasets/image_dataset/db_illustrations_bw/669108.jpg",
-              "speech_bubbles": [
-                {
-                  "texts": [
-                    {
-                      "English": "you will not go to school!",
-                      "Japanese": "\u5b66\u6821\u306b\u3082\u884c\u304b\u305b\u3093"
-                    }
-                  ],
-                  "texts_indices": [
-                    1167000
-                  ],
-                  "font": "datasets/font_dataset/font_files/NotoSansMonoCJKjp-Bold.otf",
-                  "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-99.png",
-                  "writing_areas": [
-                    {
-                      "x": 7.2727272727272725,
-                      "y": 4.174573055028463,
-                      "width": 84.93506493506493,
-                      "height": 67.55218216318785,
-                      "rotation": 0,
-                      "rectanglelabels": [
-                        "box"
-                      ],
-                      "original_width": 385,
-                      "original_height": 527
-                    }
-                  ],
-                  "resize_to": 106248.68267176436,
-                  "location": [
-                    158,
-                    1151
-                  ],
-                  "transforms": [
-                    "stretch_x",
-                    "flip horizontal"
-                  ],
-                  "text_orientation": "ttb"
-                },
-                {
-                  "texts": [
-                    {
-                      "English": "it cannot be done. he is warded.",
-                      "Japanese": "\u79c1\u306b\u306f\u7121\u7406\u3060 \u5f7c\u306f\u906e\u853d\u3057\u3066\u3044\u308b"
-                    }
-                  ],
-                  "texts_indices": [
-                    876486
-                  ],
-                  "font": "datasets/font_dataset/font_files/GenEiAntiquePv5-M.ttf",
-                  "speech_bubble": "datasets/speech_bubbles_dataset/files/white~yell.png",
-                  "writing_areas": [
-                    {
-                      "x": 20.8,
-                      "y": 33.94777265745007,
-                      "width": 58.93333333333333,
-                      "height": 37.94162826420891,
-                      "rotation": 0,
-                      "rectanglelabels": [
-                        "box"
-                      ],
-                      "original_width": 765,
-                      "original_height": 664
-                    }
-                  ],
-                  "resize_to": 101302.95757178037,
-                  "location": [
-                    200,
-                    1016
-                  ],
-                  "transforms": [
-                    "rotate",
-                    "stretch y"
-                  ],
-                  "text_orientation": "ttb"
-                }
-              ]
-            }
-          ],
-          "non_rect": false,
-          "sliced": false,
-          "no_render": false,
-          "image": null,
-          "speech_bubbles": []
-        },
-        {
-          "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-1",
-          "coordinates": [
-            [
-              680.0,
-              696.0
-            ],
-            [
-              1700,
-              696.0
-            ],
-            [
-              1700,
-              2400
-            ],
-            [
-              680.0,
-              2400
-            ],
-            [
-              680.0,
-              696.0
-            ]
-          ],
-          "orientation": "v",
-          "children": [
-            {
-              "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-1-0",
-              "coordinates": [
-                [
-                  1675,
-                  1617
-                ],
-                [
-                  1436,
-                  745
-                ],
-                [
-                  1675,
-                  723
-                ],
-                [
-                  1675,
-                  1617
-                ]
-              ],
-              "orientation": "h",
-              "children": [],
-              "non_rect": true,
-              "sliced": true,
-              "no_render": false,
-              "image": "datasets/image_dataset/db_illustrations_bw/1524076.jpg",
-              "speech_bubbles": []
-            },
-            {
-              "name": "54af7e14-ae00-11eb-afb6-c4b301c68f05-1-1-1",
-              "coordinates": [
-                [
-                  1675,
-                  1806
-                ],
-                [
-                  1675,
-                  2375
-                ],
-                [
-                  705,
-                  2375
-                ],
-                [
-                  705,
-                  815
-                ],
-                [
-                  1385,
-                  750
-                ],
-                [
-                  1675,
-                  1806
-                ]
-              ],
-              "orientation": "h",
-              "children": [],
-              "non_rect": true,
-              "sliced": true,
-              "no_render": false,
-              "image": "datasets/image_dataset/db_illustrations_bw/2393056.jpg",
-              "speech_bubbles": [
-                {
-                  "texts": [
-                    {
-                      "English": "i've seen...",
-                      "Japanese": "\u5e7b\u899a\u304c"
-                    }
-                  ],
-                  "texts_indices": [
-                    2285332
-                  ],
-                  "font": "datasets/font_dataset/font_files/SNsanafonkaku.ttf",
-                  "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-82.png",
-                  "writing_areas": [
-                    {
-                      "x": 19.382022471910112,
-                      "y": 24.677419354838708,
-                      "width": 55.61797752808989,
-                      "height": 35.483870967741936,
-                      "rotation": 0,
-                      "rectanglelabels": [
-                        "box"
-                      ],
-                      "original_width": 712,
-                      "original_height": 620
-                    }
-                  ],
-                  "resize_to": 245711.464026045,
-                  "location": [
-                    759,
-                    939
-                  ],
-                  "transforms": [
-                    "rotate",
-                    "stretch y"
-                  ],
-                  "text_orientation": "ttb"
-                },
-                {
-                  "texts": [
-                    {
-                      "English": "he was always such a foolish lad.",
-                      "Japanese": "\u3069\u3053\u307e\u3067\u3082\u611a\u304b\u306a\u7537\u3060"
-                    }
-                  ],
-                  "texts_indices": [
-                    292459
-                  ],
-                  "font": "datasets/font_dataset/font_files/GenEiAntiqueNv5-M.ttf",
-                  "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-33.png",
-                  "writing_areas": [
-                    {
-                      "x": 15.2,
-                      "y": 23.565573770491802,
-                      "width": 73.06666666666666,
-                      "height": 55.32786885245902,
-                      "rotation": 0,
-                      "rectanglelabels": [
-                        "box"
-                      ],
-                      "original_width": 960,
-                      "original_height": 625
-                    }
-                  ],
-                  "resize_to": 305554.3228593712,
-                  "location": [
-                    907,
-                    1173
-                  ],
-                  "transforms": [
-                    "stretch y",
-                    "rotate"
-                  ],
-                  "text_orientation": "ttb"
-                }
-              ]
-            }
-          ],
-          "non_rect": false,
-          "sliced": false,
-          "no_render": false,
-          "image": null,
-          "speech_bubbles": []
-        }
-      ],
+      "children": [],
       "non_rect": false,
       "sliced": false,
       "no_render": false,
-      "image": null,
-      "speech_bubbles": []
+      "image": "datasets/image_dataset/db_illustrations_bw/2333066.jpg",
+      "speech_bubbles": [
+        {
+          "texts": [
+            {
+              "English": "forgive me.",
+              "Japanese": "\u8a00\u3044\u65b9\u304c\u60aa\u304b\u3063\u305f"
+            }
+          ],
+          "texts_indices": [
+            2593250
+          ],
+          "font": "datasets/font_dataset/font_files/Ounen-mouhitsu.otf",
+          "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-2.png",
+          "writing_areas": [
+            {
+              "x": 4.814305364511692,
+              "y": 3.061224489795918,
+              "width": 90.23383768913342,
+              "height": 76.0204081632653,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 727,
+              "original_height": 980
+            }
+          ],
+          "resize_to": 176815.84785835582,
+          "location": [
+            212,
+            2008
+          ],
+          "width": 727,
+          "height": 980,
+          "transforms": [
+            "flip horizontal",
+            "rotate"
+          ],
+          "text_orientation": "ttb"
+        },
+        {
+          "texts": [
+            {
+              "English": "i delivered curtis like room service.",
+              "Japanese": "\u30eb\u30fc\u30e0\u30fb\u30b5\u30fc\u30d3\u30b9\u4ee3\u308f\u308a\u306b \u30ab\u30fc\u30c6\u30a3\u30b9\u3092\u4f7f\u3063\u305f\u3093\u3060"
+            }
+          ],
+          "texts_indices": [
+            607518
+          ],
+          "font": "datasets/font_dataset/font_files/f_feltpen04.otf",
+          "speech_bubble": "datasets/speech_bubbles_dataset/files/white~friendlystock-chat-bubble-37.png",
+          "writing_areas": [
+            {
+              "x": 16.666666666666668,
+              "y": 21.88006482982172,
+              "width": 60.13333333333333,
+              "height": 43.922204213938414,
+              "rotation": 0,
+              "rectanglelabels": [
+                "box"
+              ],
+              "original_width": 945,
+              "original_height": 777
+            }
+          ],
+          "resize_to": 275116.2454030656,
+          "location": [
+            730,
+            2145
+          ],
+          "width": 945,
+          "height": 777,
+          "transforms": [
+            "stretch y",
+            "stretch y"
+          ],
+          "text_orientation": "ttb"
+        }
+      ]
     }
   ],
   "speech_bubbles": []

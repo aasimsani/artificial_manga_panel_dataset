@@ -98,6 +98,8 @@ def test_speech_bubble_dumping(data_files):
     assert "writing_areas" in data_keys
     assert "resize_to" in data_keys
     assert "location" in data_keys
+    assert "width" in data_keys
+    assert "height" in data_keys
     assert "transforms" in data_keys
     assert "text_orientation" in data_keys
 

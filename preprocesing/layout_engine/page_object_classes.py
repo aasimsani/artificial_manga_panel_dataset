@@ -242,6 +242,8 @@ class Panel(object):
                             writing_areas=speech_bubble['writing_areas'],
                             resize_to=speech_bubble['resize_to'],
                             location=speech_bubble['location'],
+                            width=speech_bubble['width'],
+                            height=speech_bubble['height'],
                             transforms=speech_bubble['transforms'],
                             text_orientation=speech_bubble['text_orientation']
                             )
@@ -577,6 +579,14 @@ class SpeechBubble(object):
 
     :type location: list
 
+    :param width: Width of the speech bubble, defaults to 0
+
+    :type width: float, optional
+
+    :param height: Height of the speech bubble, defaults to 0
+
+    :type height: float, optional
+
     :param transforms: A list of transformations to change
     the shape of the speech bubble
 
@@ -595,6 +605,8 @@ class SpeechBubble(object):
                  writing_areas,
                  resize_to,
                  location,
+                 width=0,
+                 height=0,
                  transforms=None,
                  text_orientation=None):
         """
@@ -611,6 +623,14 @@ class SpeechBubble(object):
 
         # Location on panel
         self.location = location
+        if width == 0:
+            img = Image.open(speech_bubble)
+            w, h = img.size
+            self.width = w
+            self.height = h
+        else:
+            self.width = width
+            self.height = height
 
         if transforms is None:
             possible_transforms = [
@@ -664,6 +684,8 @@ class SpeechBubble(object):
             writing_areas=self.writing_areas,
             resize_to=self.resize_to,
             location=self.location,
+            width=self.width,
+            height=self.height,
             transforms=self.transforms,
             text_orientation=self.text_orientation
         )
@@ -926,8 +948,8 @@ class SpeechBubble(object):
         aspect_ratio = h/w
         new_height = round(np.sqrt(self.resize_to/aspect_ratio))
         new_width = round(new_height * aspect_ratio)
-        bubble = bubble.resize((new_height, new_width))
-        mask = mask.resize((new_height, new_width))
+        bubble = bubble.resize((new_width, new_height))
+        mask = mask.resize((new_width, new_height))
 
         # Make sure bubble doesn't bleed the page
         x1, y1 = self.location
