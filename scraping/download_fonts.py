@@ -5,13 +5,14 @@ import os
 
 preview_page_file = "datasets/font_dataset/browse_links.txt"
 font_links_file = "datasets/font_dataset/font_links.txt"
+
+
 def get_browse_page_links():
-    """
-    Goes through pages of freejapanesefont.com and
+    """Goes through pages of freejapanesefont.com and
     downloads each individual link to a font file page
     """
     root_url = "https://www.freejapanesefont.com/"
-    total_pages = 23 
+    total_pages = 23
 
     links = []
     for page_num in tqdm(range(1, total_pages+1)):
@@ -28,6 +29,7 @@ def get_browse_page_links():
     with open(preview_page_file, "w+") as links_file:
         for link in links:
             links_file.write(link+"\n")
+
 
 def get_font_links():
     """

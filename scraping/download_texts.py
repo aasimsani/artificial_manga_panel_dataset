@@ -5,8 +5,11 @@ import sys
 from tqdm import tqdm
 import tarfile
 
+
 def download_file(url, filepath):
     """
+    Download JESC dataset
+
     :param url: URL of file to download
 
     :type url: str
@@ -24,11 +27,16 @@ def download_file(url, filepath):
         # Content-Length is returned wrong
         total_length = int(99803000/1024)
         with open(filepath, 'wb') as f:
-            for data in tqdm(r.iter_content(chunk_size=1024), total=total_length, unit='KB', unit_scale=False, unit_divisor=1024): 
+            for data in tqdm(r.iter_content(chunk_size=1024),
+                             total=total_length,
+                             unit='KB',
+                             unit_scale=False,
+                             unit_divisor=1024
+                             ):
                 # If you have chunk encoded response uncomment if
                 # and set chunk_size parameter to None.
-                #if chunk: 
                 f.write(data)
+
 
 def download_and_extract_jesc():
     """
@@ -44,7 +52,7 @@ def download_and_extract_jesc():
         downloaded_file = download_file(url, filepath)
 
     text_dataset_dir = "datasets/text_dataset/"
-    if not os.path.isdir(text_dataset_dir): 
+    if not os.path.isdir(text_dataset_dir):
         os.mkdir(text_dataset_dir)
 
     print("Extracting archive now!")
@@ -54,8 +62,3 @@ def download_and_extract_jesc():
 
     os.rename(text_dataset_dir+"raw/raw", text_dataset_dir+"raw.txt")
     os.removedirs(text_dataset_dir+"raw/")
-    
-    
-    
-    
-
