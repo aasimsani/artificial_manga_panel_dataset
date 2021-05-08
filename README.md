@@ -14,7 +14,7 @@ If you just want to use the dataset and not change anything you can find it at <
 If you'd like to change the way the creator works, make your own files or contribute to the project pleae follow these instructions
 
 1. Libraqm is required for rendering CJK text properly. Follow instructions [here](https://github.com/HOST-Oman/libraqm)
-2. ```pip3 install -r requirements.txt``
+2. ```pip3 install -r requirements.txt```
 3. You can get the base materials for the dataset by [emailing me](mailto:aasimsani05@gmail.com) for the key and then running:
   ```
   export GOOGLE_APPLICATION_CREDENTIALS=config/ampd_key.json
