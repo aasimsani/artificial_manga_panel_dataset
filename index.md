@@ -1,6 +1,10 @@
-## What made me decide to make this?
+# What made me decide to make this?
 
 I love Manga, however I don't speak Japanese. A project I've always been hoping to work on is an automated manga translation software. Datasets in this space are rare and the largest I found Manga109 is hard to access and only available for academic research. I want to create a free and publicly available artificial dataset. 
+
+# Documentation
+
+You can find the documentation for this code [here](docs/html/docs_index.html)
 
 ## Where do I find the dataset?
 

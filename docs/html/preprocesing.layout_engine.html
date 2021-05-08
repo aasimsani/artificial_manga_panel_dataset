@@ -1,0 +1,1236 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>preprocesing.layout_engine package &mdash; ampd  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tests package" href="tests.html" />
+    <link rel="prev" title="preprocesing package" href="preprocesing.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href=docs_index.html" class="icon icon-home"> ampd
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">artificial_manga_panel_dataset</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html">main module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="preprocesing.html">preprocesing package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="preprocesing.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">preprocesing.layout_engine package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="preprocesing.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preprocesing.html#module-preprocesing.config_file">preprocesing.config_file module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preprocesing.html#module-preprocesing.convert_images">preprocesing.convert_images module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preprocesing.html#module-preprocesing.extract_and_verify_fonts">preprocesing.extract_and_verify_fonts module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preprocesing.html#module-preprocesing.text_dataset_format_changer">preprocesing.text_dataset_format_changer module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preprocesing.html#module-preprocesing">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=docs_index.html">ampd</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href=docs_index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">artificial_manga_panel_dataset</a> &raquo;</li>
+        
+          <li><a href="preprocesing.html">preprocesing package</a> &raquo;</li>
+        
+      <li>preprocesing.layout_engine package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/preprocesing.layout_engine.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="preprocesing-layout-engine-package">
+<h1>preprocesing.layout_engine package<a class="headerlink" href="#preprocesing-layout-engine-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-preprocesing.layout_engine.helpers">
+<span id="preprocesing-layout-engine-helpers-module"></span><h2>preprocesing.layout_engine.helpers module<a class="headerlink" href="#module-preprocesing.layout_engine.helpers" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="preprocesing.layout_engine.helpers.choose">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.helpers.</span></code><code class="sig-name descname"><span class="pre">choose</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.helpers.choose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Choose one panel from a parent
+panel’s children</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parent</strong> – Parent panel whose children are</p>
+</dd>
+</dl>
+<p>chosen from</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Index of chosen child panel</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.helpers.choose_and_return_other">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.helpers.</span></code><code class="sig-name descname"><span class="pre">choose_and_return_other</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.helpers.choose_and_return_other" title="Permalink to this definition">¶</a></dt>
+<dd><p>Choose a particular panel to return
+randomly and also return panels
+not chosen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parent</strong> – parent panel whose</p>
+</dd>
+</dl>
+<p>children are picked from</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple of a chosen child panel index</p>
+</dd>
+</dl>
+<p>and a list the indices of those that weren’t</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.helpers.crop_image_only_outside">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.helpers.</span></code><code class="sig-name descname"><span class="pre">crop_image_only_outside</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.helpers.crop_image_only_outside" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crop the outside of the image where
+the pixels are black</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>PIL.Image</em>) – image to be cropped</p></li>
+<li><p><strong>tol</strong> (<em>int</em><em>, </em><em>optional</em>) – tollerance level, defaults to 0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Cropped image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>PIL.Image</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.helpers.find_parent_with_multiple_children">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.helpers.</span></code><code class="sig-name descname"><span class="pre">find_parent_with_multiple_children</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.helpers.find_parent_with_multiple_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds parent panels which have
+a particular number of children</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page"><em>Page</em></a>) – Page to be searched</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – number of children</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The children of the page</p>
+</dd>
+</dl>
+<p>which hae n children</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.helpers.get_leaf_panels">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.helpers.</span></code><code class="sig-name descname"><span class="pre">get_leaf_panels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">panels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.helpers.get_leaf_panels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get panels which are to actually
+be rendered recursively i.e. they
+are the leaves of the Page-Panel
+tree</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page"><em>Page</em></a>) – Page to be searched</p></li>
+<li><p><strong>panels</strong> – A list of panels to be</p></li>
+</ul>
+</dd>
+</dl>
+<p>returned by refernce</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.helpers.get_min_area_panels">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.helpers.</span></code><code class="sig-name descname"><span class="pre">get_min_area_panels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ret_panels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.helpers.get_min_area_panels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively get a set of panels which have a
+particular minimum area</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>panel</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Panel" title="preprocesing.layout_engine.page_object_classes.Panel"><em>Panel</em></a>) – parent panel</p></li>
+<li><p><strong>min_area</strong> – Minimum area as a ratio</p></li>
+</ul>
+</dd>
+</dl>
+<p>of the page’s area, defaults to 0.1</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ret_panels</strong> (<em>list</em><em>, </em><em>optional</em>) – Panels to return, defaults to []</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.helpers.invert_for_next">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.helpers.</span></code><code class="sig-name descname"><span class="pre">invert_for_next</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.helpers.invert_for_next" title="Permalink to this definition">¶</a></dt>
+<dd><p>A helper function used to invert
+the orientation indicator of the
+next panel based on the current panel
+i.e. if a parent is horizontal a
+child panel must be vertical</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>current</strong> – Current parent</p>
+</dd>
+</dl>
+<p>orientation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>child panel orientation</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.helpers.move_child_to_line">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.helpers.</span></code><code class="sig-name descname"><span class="pre">move_child_to_line</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">change</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.helpers.move_child_to_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>A helper function that uses the triangle similarity
+theorem which specifies that if one triangle
+is just a sub triangle of another i.e. is just
+one line drawn from any two sides it’s sides
+share a ratio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point</strong> (<em>tuple</em>) – coordinate to be moved</p></li>
+<li><p><strong>change</strong> – amount the original line was moved</p></li>
+</ul>
+</dd>
+</dl>
+<p>as a length</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>old_line</strong> (<em>tuple</em>) – original line which was moved</p></li>
+<li><p><strong>orientation</strong> – orientation of panel whose</p></li>
+</ul>
+</dd>
+</dl>
+<p>line was moved therefore the line</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Amount the point needs to be adjusted</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.helpers.move_children_to_line">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.helpers.</span></code><code class="sig-name descname"><span class="pre">move_children_to_line</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">change</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.helpers.move_children_to_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>A helper function that recursively moves the children of a parent
+panel to a particular line which is where the parent panel’s
+new side lines using a basic trignometric formula of similar
+triangles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Panel" title="preprocesing.layout_engine.page_object_classes.Panel"><em>Panel</em></a>) – Parent panel which is being transformed</p></li>
+<li><p><strong>line</strong> – A set of xy coordinates to move the</p></li>
+</ul>
+</dd>
+</dl>
+<p>child panels to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>change</strong> (<em>float</em>) – How much the parent panel’s line moved</p></li>
+<li><p><strong>orientation</strong> – orientation of the parent panel</p></li>
+</ul>
+</dd>
+</dl>
+<p>i.e. horizontal or vertical</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>direction</strong> (<em>str</em>) – which of the line’s sides went up</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-preprocesing.layout_engine.page_creator">
+<span id="preprocesing-layout-engine-page-creator-module"></span><h2>preprocesing.layout_engine.page_creator module<a class="headerlink" href="#module-preprocesing.layout_engine.page_creator" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_creator.create_single_page">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_creator.</span></code><code class="sig-name descname"><span class="pre">create_single_page</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_creator.create_single_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to render a single page from a metadata json file
+to a target location.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>paths</strong> – a tuple of the page metadata and output path</p>
+</dd>
+</dl>
+<p>as well as whether or not to save the rendered file i.e. dry run or
+wet run</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_creator.render_pages">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_creator.</span></code><code class="sig-name descname"><span class="pre">render_pages</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">images_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_creator.render_pages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes metadata json files and renders page images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metadata_dir</strong> (<em>str</em>) – A directory containing all the metadata json files</p></li>
+<li><p><strong>images_dir</strong> (<em>str</em>) – The output directory for the rendered pages</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-preprocesing.layout_engine.page_dataset_creator">
+<span id="preprocesing-layout-engine-page-dataset-creator-module"></span><h2>preprocesing.layout_engine.page_dataset_creator module<a class="headerlink" href="#module-preprocesing.layout_engine.page_dataset_creator" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.add_background">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">add_background</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dir_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.add_background" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a background image to the page</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page"><em>Page</em></a>) – Page to add background to</p></li>
+<li><p><strong>image_dir</strong> (<em>list</em>) – A list of images</p></li>
+<li><p><strong>image_dir_path</strong> – path to images used for adding</p></li>
+</ul>
+</dd>
+</dl>
+<p>the full path to the page</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Page with background</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.add_transforms">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">add_transforms</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.add_transforms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds panel boundary transformations
+to the page</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>page</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page"><em>Page</em></a>) – Page to be transformed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Page with transformed panels</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.box_transform_page">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">box_transform_page</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.box_transform_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function takes all the first child panels of a page
+and moves them to form a zigzag or a rhombus pattern</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page"><em>Page</em></a>) – Page to be transformed</p></li>
+<li><p><strong>direction_list</strong> – A list of directions the page</p></li>
+</ul>
+</dd>
+</dl>
+<p>should move it’s child panel’s corner’s to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Transformed page</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.box_transform_panels">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">box_transform_panels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_choice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.box_transform_panels" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function move panel boundaries to transform them
+into trapezoids and rhombuses</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page"><em>Page</em></a>) – Page to be transformed</p></li>
+<li><p><strong>type_choice</strong> – If you want to specify</p></li>
+</ul>
+</dd>
+</dl>
+<p>a particular transform type: rhombus or trapezoid, defaults to None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pattern</strong> – Based on the type choice choose a pattern.</p>
+</dd>
+</dl>
+<p>For rhombus it’s left or right, for trapezoid it’s A or V
+defaults to None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Transformed Page</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.create_page_metadata">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">create_page_metadata</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speech_bubble_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speech_bubble_tags</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.create_page_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates page metadata for a single page. It includes
+transforms, background addition, random panel removal,
+panel shrinking, and the populating of panels with
+images and speech bubbles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_dir</strong> (<em>list</em>) – List of images to pick from</p></li>
+<li><p><strong>image_dir_path</strong> – Path of images dir to add to</p></li>
+</ul>
+</dd>
+</dl>
+<p>panels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>font_files</strong> – list of font files for speech bubble</p>
+</dd>
+</dl>
+<p>text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text_dataset</strong> – A dask dataframe of text to</p>
+</dd>
+</dl>
+<p>pick to render within speech bubble</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>speech_bubble_files</strong> – list of base speech bubble</p>
+</dd>
+</dl>
+<p>template files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>speech_bubble_tags</strong> – a list of speech bubble</p>
+</dd>
+</dl>
+<p>writing area tags by filename</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Created Page with all the bells and whistles</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.create_single_panel_metadata">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">create_single_panel_metadata</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speech_bubble_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speech_bubble_tags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_speech_bubbles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.create_single_panel_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a helper function that populates a single panel with
+an image, and a set of speech bubbles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>panel</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Panel" title="preprocesing.layout_engine.page_object_classes.Panel"><em>Panel</em></a>) – Panel to add image and speech bubble to</p></li>
+<li><p><strong>image_dir</strong> (<em>list</em>) – List of images to pick from</p></li>
+<li><p><strong>image_dir_path</strong> – Path of images dir to add to</p></li>
+</ul>
+</dd>
+</dl>
+<p>panels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>font_files</strong> – list of font files for speech bubble</p>
+</dd>
+</dl>
+<p>text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text_dataset</strong> – A dask dataframe of text to</p>
+</dd>
+</dl>
+<p>pick to render within speech bubble</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>speech_bubble_files</strong> – list of base speech bubble</p>
+</dd>
+</dl>
+<p>template files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>speech_bubble_tags</strong> – a list of speech bubble</p>
+</dd>
+</dl>
+<p>writing area tags by filename</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>minimum_speech_bubbles</strong> – Set whether panels</p>
+</dd>
+</dl>
+<p>have a minimum number of speech bubbles, defaults to 0</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.draw_n">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">draw_n</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal_vertical</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.draw_n" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to take a parent Panel and divide it into n
+sub-panel’s vertically or horizontally with each panels having
+equal size ratios along the axis perpendicular to their orientation</p>
+<p>NOTE: This function performs actions by reference</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of sub-panels</p></li>
+<li><p><strong>parent</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Panel" title="preprocesing.layout_engine.page_object_classes.Panel"><em>Panel</em></a>) – The parent panel being split</p></li>
+<li><p><strong>horizontal_vertical</strong> – Whether to render the sub-panels vertically</p></li>
+</ul>
+</dd>
+</dl>
+<p>or horizontally in regards to the page</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.draw_n_shifted">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">draw_n_shifted</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal_vertical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shifts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.draw_n_shifted" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to take a parent Panel and divide it into n
+sub-panel’s vertically or horizontally with each panels having
+specified size ratios along the axis perpendicular to their orientation</p>
+<p>NOTE: This function performs actions by reference</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – Number of sub-panels</p></li>
+<li><p><strong>parent</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Panel" title="preprocesing.layout_engine.page_object_classes.Panel"><em>Panel</em></a>) – The parent panel being split</p></li>
+<li><p><strong>horizontal_vertical</strong> – Whether to render the sub-panels vertically</p></li>
+</ul>
+</dd>
+</dl>
+<p>or horizontally in regards to the page</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shifts</strong> (<em>list</em>) – Ratios to divide the panel into sub-panels</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.draw_two_shifted">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">draw_two_shifted</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal_vertical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.draw_two_shifted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw two subpanels of a parent panel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> (<em>Parent</em>) – The parent panel to be split</p></li>
+<li><p><strong>horizontal_vertical</strong> – Orientation of sub-panels in refrence</p></li>
+</ul>
+</dd>
+</dl>
+<p>to the page</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shift</strong> (<em>float</em><em>, </em><em>optional</em>) – by what ratio should the 2 panels be split, defaults to None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.get_base_panels">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">get_base_panels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_panels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_choice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.get_base_panels" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates the base panels for one page
+it specifies how a page should be layed out and
+how many panels should be in it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_panels</strong> – how many panels should be on a page</p>
+</dd>
+</dl>
+<p>if 0 then the function chooses, defaults to 0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>layout_type</strong> – whether the page should consist of</p>
+</dd>
+</dl>
+<p>vertical, horizontal or both types of panels, defaults to None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>type_choice</strong> – If having selected vh panels select a type</p>
+</dd>
+</dl>
+<p>of layout specifically, defaults to None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>page_name</strong> (<em>str</em><em>, </em><em>optional</em>) – A specific name for the page</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Page object with the panels initalized</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.populate_panels">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">populate_panels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speech_bubble_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speech_bubble_tags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_speech_bubbles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.populate_panels" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function takes all the panels and adds backgorund images
+and speech bubbles to them</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page"><em>Page</em></a>) – Page with panels to populate</p></li>
+<li><p><strong>image_dir</strong> (<em>list</em>) – List of images to pick from</p></li>
+<li><p><strong>image_dir_path</strong> – Path of images dir to add to</p></li>
+</ul>
+</dd>
+</dl>
+<p>panels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>font_files</strong> – list of font files for speech bubble</p>
+</dd>
+</dl>
+<p>text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text_dataset</strong> – A dask dataframe of text to</p>
+</dd>
+</dl>
+<p>pick to render within speech bubble</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>speech_bubble_files</strong> – list of base speech bubble</p>
+</dd>
+</dl>
+<p>template files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>speech_bubble_tags</strong> – a list of speech bubble</p>
+</dd>
+</dl>
+<p>writing area tags by filename</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>minimum_speech_bubbles</strong> – Set whether panels</p>
+</dd>
+</dl>
+<p>have a minimum number of speech bubbles, defaults to 0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Page with populated panels</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.remove_panel">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">remove_panel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.remove_panel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function randomly removes
+a panel from pages which have
+more than n+1 panels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>page</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page"><em>Page</em></a>) – Page to remove panels from</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Page with panels removed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.shrink_panels">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">shrink_panels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.shrink_panels" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function that uses the pyclipper library]
+to reduce the size of the panel polygon</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>page</strong> – Page whose panels are to be</p>
+</dd>
+</dl>
+<p>shrunk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Page with shrunk panels</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="preprocesing.layout_engine.page_dataset_creator.single_slice_panels">
+<code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_dataset_creator.</span></code><code class="sig-name descname"><span class="pre">single_slice_panels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal_vertical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_choice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skew_side</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_to_slice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_dataset_creator.single_slice_panels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slices a panel once at an angle into two new panels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page"><em>Page</em></a>) – Page to have panels sliced</p></li>
+<li><p><strong>horizontal_vertical</strong> – Whether the slice should be horizontal</p></li>
+</ul>
+</dd>
+</dl>
+<p>or vertical</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>type_choice</strong> – Specify whether the panel should be</p>
+</dd>
+</dl>
+<p>sliced down the “center” or on a “side”, defaults to None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>skew_side</strong> – Based on the type of slicing which direction should</p>
+</dd>
+</dl>
+<p>it be sliced</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>number_to_slice</strong> (<em>int</em>) – Number of panels to slice</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>page with sliced panels</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Page" title="preprocesing.layout_engine.page_object_classes.Page">Page</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-preprocesing.layout_engine.page_object_classes">
+<span id="preprocesing-layout-engine-page-object-classes-module"></span><h2>preprocesing.layout_engine.page_object_classes module<a class="headerlink" href="#module-preprocesing.layout_engine.page_object_classes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="preprocesing.layout_engine.page_object_classes.Page">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_object_classes.</span></code><code class="sig-name descname"><span class="pre">Page</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_panels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Panel" title="preprocesing.layout_engine.page_object_classes.Panel"><code class="xref py py-class docutils literal notranslate"><span class="pre">preprocesing.layout_engine.page_object_classes.Panel</span></code></a></p>
+<p>A class that represents a full page consiting of multiple child panels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coords</strong> (<em>list</em>) – A list of the boundary coordinates of a page</p></li>
+<li><p><strong>page_type</strong> – Signifies whether a page consists of vertical</p></li>
+</ul>
+</dd>
+</dl>
+<p>or horizontal panels or both</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_panels</strong> (<em>int</em>) – Number of panels in this page</p></li>
+<li><p><strong>children</strong> (<em>list</em><em>, </em><em>optional:</em>) – List of direct child panels of this page</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Page.dump_data">
+<code class="sig-name descname"><span class="pre">dump_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Page.dump_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method to take all the Page’s relevant data
+and create a dictionary out of it so it can be
+exported to JSON so that it can then be loaded
+and rendered to images in parallel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_path</strong> (<em>str</em>) – Where to dump the JSON file</p></li>
+<li><p><strong>dry</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to just return or write the JSON file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Optional return when running dry of a json data dump</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Page.load_data">
+<code class="sig-name descname"><span class="pre">load_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Page.load_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method reverses the dump_data function and
+load’s the metadata of the page from the JSON
+file that has been loaded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – JSON filename to load</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Page.render">
+<code class="sig-name descname"><span class="pre">render</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Page.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to render this page to an image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>show</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return this image or to show it</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="preprocesing.layout_engine.page_object_classes.Panel">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_object_classes.</span></code><code class="sig-name descname"><span class="pre">Panel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_rect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Panel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to encapsulate a panel of the manga page.
+Since the script works in a parent-child relationship
+where each panel child is an area subset of some parent panel,
+some panels aren’t leaf nodes and thus not rendered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coords</strong> (<em>list</em>) – Coordinates of the boundary of the panel</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Unique name for the panel</p></li>
+<li><p><strong>parent</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Panel" title="preprocesing.layout_engine.page_object_classes.Panel"><em>Panel</em></a>) – The panel which this panel is a child of</p></li>
+<li><p><strong>orientation</strong> – Whether the panel consists of lines that are vertically</p></li>
+</ul>
+</dd>
+</dl>
+<p>or horizotnally oriented in reference to the page</p>
+<dl class="field-list simple">
+<dt class="field-odd">Children</dt>
+<dd class="field-odd"><p>Children panels of this panel</p>
+</dd>
+<dt class="field-even">Non_rect</dt>
+<dd class="field-even"><p>Whether the panel was transformed to be non rectangular</p>
+</dd>
+</dl>
+<p>and thus has less or more than 4 coords</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Panel.add_child">
+<code class="sig-name descname"><span class="pre">add_child</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Panel.add_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add child panels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>panel</strong> (<a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Panel" title="preprocesing.layout_engine.page_object_classes.Panel"><em>Panel</em></a>) – A child panel to the current panel</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Panel.add_children">
+<code class="sig-name descname"><span class="pre">add_children</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Panel.add_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to add multiple children at once</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>panels</strong> (<em>list</em>) – A list of Panel objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Panel.dump_data">
+<code class="sig-name descname"><span class="pre">dump_data</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Panel.dump_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method to take all the Panel’s relevant data
+and create a dictionary out of it so it can be
+exported to JSON via the Page(Panel) class’s
+dump_data method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary of the Panel’s data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Panel.get_child">
+<code class="sig-name descname"><span class="pre">get_child</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Panel.get_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a child panel by index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idx</strong> (<em>int</em>) – Index of a child panel</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The child at the idx</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#preprocesing.layout_engine.page_object_classes.Panel" title="preprocesing.layout_engine.page_object_classes.Panel">Panel</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Panel.get_polygon">
+<code class="sig-name descname"><span class="pre">get_polygon</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Panel.get_polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the coords in a format that can be used to render a polygon
+via Pillow</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple of coordinate tuples of the polygon’s vertices</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Panel.load_data">
+<code class="sig-name descname"><span class="pre">load_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Panel.load_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method reverses the dump_data function and
+load’s the metadata of the panel from the subsection
+of the JSON file that has been loaded</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A dictionary of this panel’s data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Panel.refresh_coords">
+<code class="sig-name descname"><span class="pre">refresh_coords</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Panel.refresh_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>When chances are made to the xy coordinates variables directly
+this function allows you to refresh the coords variable with
+the changes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.Panel.refresh_vars">
+<code class="sig-name descname"><span class="pre">refresh_vars</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.Panel.refresh_vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>When chances are made to the xy coordinates directly
+this function allows you to refresh the x1y1… variable with
+the changes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="preprocesing.layout_engine.page_object_classes.SpeechBubble">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">preprocesing.layout_engine.page_object_classes.</span></code><code class="sig-name descname"><span class="pre">SpeechBubble</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">speech_bubble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writing_areas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_to</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transforms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.SpeechBubble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent the metadata to render a speech bubble</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>texts</strong> – A list of texts from the text corpus to render in this</p>
+</dd>
+</dl>
+<p>bubble</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text_indices</strong> – The indices of the text from the dataframe</p>
+</dd>
+</dl>
+<p>for easy retrival</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>font</strong> (<em>str</em>) – The path to the font used in the bubble</p></li>
+<li><p><strong>speech_bubble</strong> – The path to the base speech bubble file</p></li>
+</ul>
+</dd>
+</dl>
+<p>used for this bubble</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>writing_areas</strong> – The areas within the bubble where it is okay</p>
+</dd>
+</dl>
+<p>to render text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resize_to</strong> – The amount of area this text bubble should consist of</p>
+</dd>
+</dl>
+<p>which is a ratio of the panel’s area</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>location</strong> – The location of the top left corner of the speech bubble</p>
+</dd>
+</dl>
+<p>on the page</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width</strong> (<em>float</em>) – Width of the speech bubble</p></li>
+<li><p><strong>height</strong> (<em>float</em>) – Height of the speech bubble</p></li>
+<li><p><strong>transforms</strong> – A list of transformations to change</p></li>
+</ul>
+</dd>
+</dl>
+<p>the shape of the speech bubble</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>transform_metadata</strong> – Metadata associated with transformations,</p>
+</dd>
+</dl>
+<p>defaults to None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text_orientation</strong> – Whether the text of this speech bubble</p>
+</dd>
+</dl>
+<p>is written left to right ot top to bottom</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.SpeechBubble.dump_data">
+<code class="sig-name descname"><span class="pre">dump_data</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.SpeechBubble.dump_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method to take all the SpeechBubble’s relevant data
+and create a dictionary out of it so it can be
+exported to JSON via the Page(Panel) class’s
+dump_data method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Data to be returned to Page(Panel) class’s</p>
+</dd>
+</dl>
+<p>dump_data method
+:rtype: dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="preprocesing.layout_engine.page_object_classes.SpeechBubble.render">
+<code class="sig-name descname"><span class="pre">render</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#preprocesing.layout_engine.page_object_classes.SpeechBubble.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to render this speech bubble</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of states of the speech bubble,</p>
+</dd>
+</dl>
+<p>the speech bubble itself, it’s mask and it’s location
+on the page
+:rtype: tuple</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-preprocesing.layout_engine">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-preprocesing.layout_engine" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="tests.html" class="btn btn-neutral float-right" title="tests package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="preprocesing.html" class="btn btn-neutral float-left" title="preprocesing package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Aasim Sani.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

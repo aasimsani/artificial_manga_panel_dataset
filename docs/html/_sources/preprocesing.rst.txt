@@ -1,0 +1,53 @@
+preprocesing package
+====================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   preprocesing.layout_engine
+
+Submodules
+----------
+
+preprocesing.config\_file module
+--------------------------------
+
+.. automodule:: preprocesing.config_file
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+preprocesing.convert\_images module
+-----------------------------------
+
+.. automodule:: preprocesing.convert_images
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+preprocesing.extract\_and\_verify\_fonts module
+-----------------------------------------------
+
+.. automodule:: preprocesing.extract_and_verify_fonts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+preprocesing.text\_dataset\_format\_changer module
+--------------------------------------------------
+
+.. automodule:: preprocesing.text_dataset_format_changer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: preprocesing
+   :members:
+   :undoc-members:
+   :show-inheritance:

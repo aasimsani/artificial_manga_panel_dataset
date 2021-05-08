@@ -1,0 +1,9 @@
+artificial_manga_panel_dataset
+==============================
+
+.. toctree::
+   :maxdepth: 4
+
+   main
+   preprocesing
+   tests
