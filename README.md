@@ -5,7 +5,8 @@ English. Sadly I couldn't find a dataset to train my speech bubble detector on s
 ## What is in this repo?
 This repository contains the associated files and links to create an artificial manga panel dataset.
 Here's a sample of an image created with this code:
-![Sample image](docs/misc_files/sample.png | width=425)
+<br>
+<img src="https://github.com/aasimsani/artificial_manga_panel_dataset/blob/main/docs/misc_files/sample.png" width=425>
 
 ## Setup and usage
 If you just want to use the dataset and not change anything you can find it at <put link to kaggle here>
