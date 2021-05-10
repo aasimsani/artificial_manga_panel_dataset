@@ -689,6 +689,12 @@ class SpeechBubble(object):
         else:
             self.text_orientation = text_orientation
 
+        min_font_size = cfg.min_font_size
+        max_font_size = cfg.max_font_size
+        self.font_size = np.random.randint(min_font_size,
+                                           max_font_size
+                                           )
+
     def dump_data(self):
         """
         A method to take all the SpeechBubble's relevant data
@@ -704,6 +710,7 @@ class SpeechBubble(object):
             texts=self.texts,
             text_indices=self.text_indices,
             font=self.font,
+            font_size=self.font_size,
             speech_bubble=self.speech_bubble,
             writing_areas=self.writing_areas,
             resize_to=self.resize_to,
@@ -731,11 +738,9 @@ class SpeechBubble(object):
         mask = bubble.copy()
 
         # Set variable font size
-        min_font_size = 54
-        max_font_size = 72
-        current_font_size = np.random.randint(min_font_size,
-                                              max_font_size
-                                              )
+        min_font_size = cfg.max_font_size
+        max_font_size = cfg.max_font_size
+        current_font_size = self.font_size
         font = ImageFont.truetype(self.font, current_font_size)
 
         # Center of bubble
