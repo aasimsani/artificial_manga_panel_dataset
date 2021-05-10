@@ -24,7 +24,8 @@ If you'd like to change the way the creator works, make your own files or contri
 5. Before you start just run ```python3 main.py --run_tests``` to make sure
 you have all the libraries installed and things are working fine
 6. Now you can run ```python3 main.py --generate_pages N``` to make pages
-7. You can modify ```preprocessing/config_file.py``` to change how the generator works
+  1. You can also run the metadta generation ```python3 main.py --create_page_metadata N``` and the page rendering ```python3 main.py --render_pages```     seperately. The render pages call will read the ```datasets/page_metadata/``` folder to find files to render.
+7. You can modify ```preprocessing/config_file.py``` to change how the generator works to render various parts of the page
 
 ## Current progress:
 
@@ -38,6 +39,7 @@ Steps:
 - [x] Create font transformations
 - [x] Replace layout templates with manga panel generator
 - [ ] Upload dataset to Kaggle
+- [ ] Create a custom speech bubble creator (Reach goal)
 
 ### Data variety
 - 196 fonts with >80% character coverage
@@ -45,7 +47,7 @@ Steps:
 - 2,801,388 sentence pairs in Japanese and English
 - 337,039 illustration
 
-### How this dataset was made?
+### How the base dataset was made?
 1. Downloaded JESC dataset to get sentence pairs of English and Japanese
 2. Found fonts from fonts website mentioned below
 3. Downloaded Tagged Anime Illustrations dataset from Kaggle
@@ -58,6 +60,27 @@ Steps:
   2. What textbubble is associated with it and it's metadata (font, text and render data)
 9. Bounce page and it's panel's metadata to json in parallel.
 9. Used renderer to create dataset from the generated json in parallel.
+
+### How does the creation and rendering work?
+#### Creating the metadata
+1. Each Manga Page Image is represented by a Page object which is a special type of Panel object which has children panels and those have sub-panels in a tree-like fashion.
+2. Each Page has N panels which is determined by segmenting the page into rectangles as follows:
+  1. First a top level set of panels are created. e.g. divide the page into 2 rectnagles 
+  2. Then based on which type of layout is selected one or both of the panels are further subdivided into panels e.g. I want 4 panels on this page. So I can divide two panels into two, one panel into three and leave one as is, etc.
+  3. These "formulas" of layouts for pages are hard coded per number of panels for now.
+  4. In addition to this, the dividion of panels into sub-panels is not equal and the panels are sub-divided randomly across one axis. e.g. 1 panel can have 30% of the area and the other 70%.
+  5. These panels as they are being subdivided are entered as children of a parent panel resulting in a tree originating at the Page as the root.
+3. Once this is done the panels are then are put through various affine transforms and slicing to result in the iconic "Manga Panel" like layout. Refer example above.
+4. After the transformations, the panels are then shrunk in size to create panel boundaries which are visible.
+5. Once shrinking is done, there's a chance of adding a background to the whole page and subsequently removing a panel or two randomly to create a white space or a foreground effect
+6. Once this is done each panel is then populated with a background image which is selected randomly and a number of speech bubbles are created as follows:
+  1. First a template image for a speech bubble is selected out of the 91 base templates. This template is then put through a series of transformations. (flipping it horizontally/vertically, rotating it slightly, inverting it, stretching it along the x or y axis)
+  2. Along with this the tagged writing area within the bubble is also transformed
+  3. Once this is done a selected font, with a random font size and a selected piece of text are then resized such that they can be rendered onto the bubble either top to bottom or left to right depending on a user-defined probability
+7. After this the metadata is written into a JSON file
+8. This creation of one page sequentially and is wrapped in a single function that allows it to be dumped to JSON in parallel
+#### Rendering the pages
+1. Once the JSON files are dumped, the folder where they were dumped is scanned, and then each file is loaded again via a load_data method in the Page class which recreates the data. This is then subsequently rendered by each page class's render method. This operation is done concurrently and in parallel for speed.
 
 ### Resources used for creating dataset:
 
@@ -85,28 +108,3 @@ archivePrefix = "arXiv",
 ```
 
 [**Speech bubble PSD file Licence**](https://friendlystock.com/terms-of-use/)
-
-### How does the layouting engine work?
-1. Each Manga Page Image is represented by a JSON file. The page description contains the following
-    1. Layout types and how they're denoted (here for easy search of particular panel types)
-        1. Horizontal panels only - ```h```
-        2. Vertical panel only - ```v```
-        3. Vertical and horizontal panels - ```vh```
-        4. All of the above with panel shape transforms - ```vht``` or ```ht```
-          1. Slicing panels
-          2. Turning full page panels into a a rhombus
-          3. Turning full page panels zig-zag (future)
-        5. All of the above on a background - ```vhtb```
-        7. All of the above with white space insertions - ```vhtbw```
-        8. Panel randomly overlaying each other (future)
-        9. Figures across panels (future)
-    2. Page size - Currently (1700 x 2400)
-    3. Page type (currently only single page types as above)
-    4. Panel boundary widths (future)
-    5. Panel boundary types (future)
-2. Each Page then has N panels which is determined by segmenting the page into rectangles from largest to smallest:
-    1. Each panel has a rectangular baseline
-      1. It's coordinates
-      2. It's metadata e.g. Has it been transformed etc.
-    2. Each panel also has a list of images that it's comprised of and how they've been inserted and speech bubbles around them
-3. With the Panels each page also has a number of text bubbles on them. Usually the number being within (#panels-2 <= #bubbles <= #panels+2) of each panel on the depending on how large the panel is. Most bubbles are within the vicinity of a panel or within them with a small % of them peaking between panels. 
