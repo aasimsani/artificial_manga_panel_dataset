@@ -15,11 +15,12 @@ If you'd like to change the way the creator works, make your own files or contri
 
 1. Libraqm is required for rendering CJK text properly. Follow instructions [here](https://github.com/HOST-Oman/libraqm)
 2. ```pip3 install -r requirements.txt```
-3. You can get the base materials for the dataset by [emailing me](mailto:aasimsani05@gmail.com) for the key and then running:
+3. ~~You can get the base materials for the dataset by [emailing me](mailto:aasimsani05@gmail.com) for the key and then running:~~
   ```
-  export GOOGLE_APPLICATION_CREDENTIALS=config/ampd_key.json
+ export GOOGLE_APPLICATION_CREDENTIALS=config/ampd_key.json
   dvc pull
   ```
+3. Base materials here: https://www.kaggle.com/aasimsani/ampd-base
 4. In case you want to modify individual scripts for scraping or cleaning this downloaded data you can find them in ```main.py```
 5. Before you start just run ```python3 main.py --run_tests``` to make sure
 you have all the libraries installed and things are working fine
@@ -38,7 +39,7 @@ Steps:
 - [x] Create manga panels by combining the above elements
 - [x] Create font transformations
 - [x] Replace layout templates with manga panel generator
-- [ ] Upload dataset to Kaggle
+- [x] Upload dataset to Kaggle
 - [ ] Create a custom speech bubble creator (Reach goal)
 
 ### Data variety
