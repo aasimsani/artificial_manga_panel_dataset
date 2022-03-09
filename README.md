@@ -20,7 +20,7 @@ If you'd like to change the way the creator works, make your own files or contri
  export GOOGLE_APPLICATION_CREDENTIALS=config/ampd_key.json
   dvc pull
   ```
-3. Base materials here: https://www.kaggle.com/aasimsani/ampd-base
+3. Base materials here: https://www.kaggle.com/aasimsani/ampd-base just create a `datasets/` folder and place the contents of the Kaggle repo in it.
 4. In case you want to modify individual scripts for scraping or cleaning this downloaded data you can find them in ```main.py```
 5. Before you start just run ```python3 main.py --run_tests``` to make sure
 you have all the libraries installed and things are working fine
