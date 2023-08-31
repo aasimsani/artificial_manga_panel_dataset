@@ -125,6 +125,7 @@ if __name__ == '__main__':
 
         speech_bubble_tags = pd.read_csv(speech_bubbles_path +
                                          "writing_area_labels.csv")
+        speech_bubble_tags['imagename'] = speech_bubble_tags['imagename'].str.replace('~', '-') # fix kaggle path error
         font_files_path = "datasets/font_dataset/"
         viable_font_files = []
         with open(font_files_path+"viable_fonts.csv") as viable_fonts:
@@ -183,6 +184,7 @@ if __name__ == '__main__':
 
         speech_bubble_tags = pd.read_csv(speech_bubbles_path +
                                          "writing_area_labels.csv")
+        speech_bubble_tags['imagename'] = speech_bubble_tags['imagename'].str.replace('~', '-') # fix kaggle path error
         font_files_path = "datasets/font_dataset/"
         viable_font_files = []
         with open(font_files_path+"viable_fonts.csv") as viable_fonts:
